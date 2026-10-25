@@ -1,0 +1,16 @@
+# B1 preflight diagnostic implementation plan
+
+**Goal:** Prepare a separately reviewed once-only read-only diagnostic for the failed B1 preflight. No server call is authorized by this preparation.
+**Architecture:** Additive `runtime/rw-b1-diagnostic-20261024`; original runtime package and failed execution evidence remain frozen. Execute the exact original preflight bytes with `__name__` excluding its CLI. A local compile wrapper in that namespace registers the actual code objects of source-hash-checked embedded helpers; the original builtins remain unchanged. Catch the existing exception and map traceback frames by code identity to fixed source IDs and bounded line numbers. No traceback formatting, error messages, arguments, locals, client records or secret values. Bootstrap, preflight and reply-validation phases remain distinct. Raw validation rules and original preflight action are unchanged.
+**Tech stack:** Python3.12 standard library, original verified IPv4 SSH transport, 240-second observation window and no retry. Metadata only, no archive content, own files/units, starts/stops, download/extraction/build/container, budget/ACL/routing or paid scan.
+
+- [x] New baseline binds original 72-file runtime index, consumed preflight execution checkpoint and original script hash; offline verifier checks frozen evidence before/after tests.
+- [x] RED/GREEN diagnostic core: source-bound actual-code registry, bounded fixed locations, explicit unmapped/truncation flags, strict reply filter, no authority from successful observation; malicious exception text and custom conversions never used.
+- [x] RED/GREEN reproducible generator: original bootstrap/preflight bytes unchanged, unique filename+source digest versions, no global compile replacement, exactly one call to original action, bounded generated script and source registry.
+- [x] RED/GREEN one-shot client: all source/script/review snapshots bound before profile access, exclusive attempt receipt, 4GiB C reserve, transport and persistence errors unknown, no normal preflight admission or start path.
+- [x] Combined local synthetic preflight/error-path tests and hash verification; independent Astra/medium SPEC/QUALITY review; resolve material findings without weakening checks.
+- [x] Freeze checkpoint and present exact new single-call native scope. Actual native probe requires a new explicit operator approval after this package is reviewable.
+
+**Limits:** Diagnosis identifies the observed exception phase/location, not automatically its cause. Unmapped/truncated frames remain explicit. Native Linux behavior, fresh guard success and current server state are unproven. No assumption about the original ValueError cause; no marker reset or reuse of consumed native slots. Existing stable algorithms, module/platform/governance gates and original evidence are untouched. User explicitly requested preparation/tests/review and final native gate, so no repeated design approval is required.
+
+**Lokaler Abschluss:**36Tests0Fehler/Failures/Skips,434Indexreferenzen unverändert,7Pythonquellen kompiliert; Astra/medium-Review0materielleBefunde. Tatsächlicher Lader offline geprüft, Original-/Core-Einbettung und26Quellregistereinträge überprüft. Keine Profil-/Serveraktion. Neuer nativer Einzelfreigabeumfang in NEXT_NATIVE_GATE.json; ursprüngliche Ursache bleibt unbekannt.

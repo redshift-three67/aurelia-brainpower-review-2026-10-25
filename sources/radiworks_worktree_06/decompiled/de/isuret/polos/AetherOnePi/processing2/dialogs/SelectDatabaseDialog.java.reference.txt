@@ -1,0 +1,79 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.dialogs;
+
+import de.isuret.polos.AetherOnePi.exceptions.AetherOneException;
+import de.isuret.polos.AetherOnePi.service.DataService;
+import java.awt.Dialog;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+
+public class SelectDatabaseDialog
+extends JDialog
+implements ActionListener {
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 700;
+    private DataService dataService = new DataService();
+    private String selectedDatabase;
+
+    public SelectDatabaseDialog(Dialog parentFrame) {
+        super(parentFrame, "Select Database", true);
+        this.setSize(1000, 700);
+        this.setLayout(null);
+        try {
+            this.init();
+        }
+        catch (AetherOneException e) {
+            e.printStackTrace();
+        }
+        this.setVisible(true);
+    }
+
+    private void init() throws AetherOneException {
+        this.dataService.refreshDatabaseList();
+        List<String> list = this.dataService.getAllDatabaseNames();
+        list.sort((o1, o2) -> o1.compareTo((String)o2));
+        int y = 0;
+        int x = 0;
+        for (String name : list) {
+            JButton button = new JButton(name);
+            button.setBounds(x, y, 200, 20);
+            button.addActionListener(this);
+            this.add(button);
+            if ((y += 20) < 660) continue;
+            y = 0;
+            x += 200;
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String database = e.getActionCommand();
+        if (database != null && database.length() > 0) {
+            this.selectedDatabase = database;
+        }
+        System.out.println("Selected database is " + this.selectedDatabase);
+        this.dispose();
+    }
+
+    public DataService getDataService() {
+        return this.dataService;
+    }
+
+    public void setDataService(DataService dataService) {
+        this.dataService = dataService;
+    }
+
+    public String getSelectedDatabase() {
+        return this.selectedDatabase;
+    }
+
+    public void setSelectedDatabase(String selectedDatabase) {
+        this.selectedDatabase = selectedDatabase;
+    }
+}
+

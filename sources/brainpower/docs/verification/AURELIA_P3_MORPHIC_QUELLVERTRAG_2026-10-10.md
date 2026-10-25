@@ -1,0 +1,36 @@
+# Aurelia P3 – RadiMorphic: aktive Quellverträge und offene Laufzeitprüfungen
+
+Stand 10.10.2026. Begrenzte reine Quellaufnahme von `C:/morphic_v1` und dem separat registrierten Arbeitsstand `C:/morphic_v1/.worktrees/operator-workbench-phase1`. Beide Quellen erzeugen `app = create_app()` und binden die nachstehend beschriebenen Routen. Ob und welcher Stand tatsächlich läuft, wurde nicht geprüft. Keine Klienten-/Jobdateien, Datenbankzeilen, Umgebungswerte oder Secrets gelesen; keine Dienste, CLI-Prozesse, Cloudzugriffe oder Produktänderungen ausgeführt.
+
+## Quellenbindung
+
+| Quelle | Gitstand | Tracked-only Zustand |
+|---|---|---|
+| Hauptordner | `411ff09ff8964f820b7d15839994b1ad3502675a` | Änderungen in `PROJECT_MEMORY/00_CURRENT_STATE.md`, `apps/web/static/app.js`, `apps/web/static/index.html` vorhanden. |
+| Registrierter Arbeitsstand | `151e2bb0a69d49677a0b1e40e0bffd0f172d34c4` | Keine getrackten Änderungen. |
+
+Untracked-Dateien ausdrücklich nicht inventarisiert. Luna6/max untersuchte 18 gebundene Quelldateien; die Leitung prüfte deren Bytehashes und beide Gitstände frisch nach. Beleg: `runtime/aurelia-three-modules-20261009/reference-plan/p3-boundaries-20261010-140025Z/MORPHIC_SOURCE_BINDINGS.json`. Zeilennummern folgen physischem Text-`splitlines()`; anfängliche `Measure-Object`-Zeilenzahlen waren ungeeignet und wurden berichtigt. Keine automatische Auswahl eines führenden Produktstands oder Änderung der Governors-Registrierung.
+
+## Beobachtete aktive Verträge
+
+Fundstellen mit `W:` beziehen sich auf den registrierten Arbeitsstand; `R:` auf den Hauptordner. Es sind Quellbelege, keine bestandenen Laufzeittests.
+
+| Bereich | Hauptordner | Registrierter Arbeitsstand | Für P3/P4 noch zu prüfen |
+|---|---|---|---|
+| Scan starten/lesen/stoppen/Ergebnis | `R:apps/web/main.py:337–414` startet ohne Owner und liest generisch. Scanstatus liegt im Prozessspeicher; stdout/stderr sind Dateien (`R:apps/web/scan_jobs.py:218–324`). | Start bindet Idempotenzschlüssel und Owner; Abgleich, Lesen, Stoppen, Ergebnisse und gemounteter WebSocket verwenden Owner-Prüfungen. JSON-/Logpersistenz und Wiederaufnahme sind vorhanden (`W:main.py:1051,1253–1399`; `W:scan_jobs.py:2241–2314,2474–2501,2707–2910`; `W:scan_live.py`). | Zwei synthetische Owner: fremde Zugriffe ablehnen, Schlüssel-Replay/Hashkonflikt und Abgleich ohne echten CLI-Start testen. `retry-same-key` ist Startabgleich, keine Job-Retry-Funktion. Im geprüften Routensatz keine Liste/Job-Retry gefunden. |
+| Scan-Owner | Kein Owner im geprüften HTTP-Start. | `W:core/compliance/operator_context.py:42` verlangt Tenant- und Operator-ID; kompaktes JSON-Tupel wird als SHA-256 mit `owner-v1-`-Präfix gebunden. | Tatsächliche Herkunft/Autorisierung des Operator-Kontexts und tenantübergreifende Negativtests. Ein Ownerhash ersetzt keine Zugriffsfreigabe. |
+| Harmonisierung | Start/Stop deklarieren API-Key-Abhängigkeit; Status liest generisch, Routen geben keinen Tenant/Owner weiter (`R:main.py`, `R:harmonization.py`). Root-Workerpersistenz nicht geprüft. | Start hält Tenant/Operator, Report-ID, Workbenchmodus und Idempotenz fest; Status/Stop nutzen owned-Varianten. Worker hält JSON-Zustand, Heartbeat und Prozessautorität; Recovery im Lifespan, Lease standardmäßig30s (`W:main.py:869–1025`; `W:harmonization.py:149–168,287–334`; `W:services/harmonization_worker.py:184–266,1032–1100,1796–1886,1942–2033`). | Getrennte Operator-/Tenantrechte, frische/abgelaufene Heartbeats, Restart und unklare Prozessautorität synthetisch testen. Keine allgemeine Retry-/Jobliste im geprüften Routensatz. |
+| Resultatdateien und Reports | Scanresultate rekonstruieren Klient-/Sitzungsverzeichnis aus Command; Reportrouten nutzen konfigurierte Standardroots. | Scanresultate verwenden persistierte Artefaktpfade mit Grenze unter Command-Exportroot (`W:main.py:1471–1490`). Launcher ruft `apps.cli.main scan top3-scan --export` auf (`W:launcher.py`); nachgelagerter CLI-Writer nicht verfolgt. Reports verwenden standardmäßig tenantabgeleitete Roots; explizite Roots können Defaults ersetzen (`W:reports.py`). | CLI-Writer→Job→Artefakt→Report lückenlos binden; zwei Testroots, Shared-Root-Injektion, Download/Preview, Klientenrechte, Retention und Restore prüfen. ReportCatalog ist Dateisystemindex, nicht die Katalog-SQLite. |
+| Allgemeiner API-Key | Vorhandene Deklaration allein belegt keine aktive Laufzeitkonfiguration. | `W:security.py:361–386` akzeptiert lokalen Modus bei fehlendem konfiguriertem Key. Runtime-Werte wurden nicht gelesen. | Authkonfiguration und effektive Rechte im isolierten Referenzbetrieb negativ prüfen; daraus keine aktuelle Exposition behaupten. |
+| Administrativer Katalog | Katalogrouter im geprüften Hauptordner nicht gemountet. | Gemounteter Adminrouter bildet Kontext aus Operator/Workspace/Tenant und ruft Draft/Publish/Aktivierung/Rollback. `require_admin_request` prüft Konfiguration, Token, Origin/Host; fehlende Konfiguration503, fehlender Token401, ungültiger403 (`W:admin_catalog.py:108–130,177–178`; `W:admin_security.py:293`). | Rechtewiderruf, Admin-/Nutzersicht, Kontexttrennung und Publish-/Rollbackzustände tatsächlich testen; keine Plattform-Aboverwaltung daraus ableiten. |
+| Katalogspeicher/Pfade | Nicht Teil der aktiven Root-Katalogrouten. | SQLite-Kontextschlüssel enthalten Operator, Workspace, Tenant und Scope (`W:core/admin_catalog/store.py:1157–1214`). Pfad unter Root/Kontextnamespace; Systemscope-Schreiben standardmäßig gesperrt, Reparse-/Rootgrenzen geprüft (`W:core/admin_catalog/paths.py:181`). Factory erfordert Validierungsschlüssel. | Punkt-in-Zeit-Pfadprüfung vor mkdir/SQLite-Open wiederholen, Schlüsselcustody/Backup/Restore und vollständige Rechtewirkung prüfen. |
+
+Generische unowned Servicemethoden existieren im Arbeitsstand weiterhin. Die geprüften HTTP-Auftragsrouten verwenden owned-Varianten; aus der bloßen Helperexistenz wird kein aktiver Bypass behauptet. Das gilt ebenso für Wiederherstellung: vorgefundene Recoveryfunktionen belegen keinen erfolgreichen Restart.
+
+## Folgerungen für die gemeinsame Matrix
+
+P4/P5 muss führenden Quellstand und Writerhoheit, Tenant/Operator/Workspace, Klient/Fall, Sitzung, Job/Versuch, Idempotenz, Lease/Prozessautorität, Katalog-/Kontextrevision, Artefaktpfad/-eigentum sowie Report-/Restorekette getrennt erfassen. Diese lokale SQLite-/JSON-/Dateistruktur wird als Istzustand übernommen, nicht als bereits entschiedene zentrale Aurelia-Architektur.
+
+Nächster Morphic-Prüfblock: kontrollierte synthetische Auftrags-/Owner-/Lease-/Katalogproben mit Fake-Prozessautorität und isolierten Stores, danach nachgelagerte Writer und echte API/UI-/CLI-/Restoreabdeckung. Vor Produktübernahme beide Quellstände vergleichen und den führenden Stand ausdrücklich festlegen. RadiMorphic bleibt getrennt vom Bohm-Modul im Resonance Explorer.
+
+P3 insgesamt nicht abgeschlossen. P0-Runtime bleibt offen; vollständige Explorer-/Thom-P1/P2-Laufzeitparität weiter an isolierte Linux-Basis gebunden. RadiFarben-VBA-/Queries-/Formulare/Timer/Berichte noch vollständig aufnehmen. Erst vollständige siebenmodulige P4-Matrix, dann Betreiberentscheidung P5, danach normative Templates-/Kernvorbereitung P6 und Integrationen P7/P8/S4.8. Produktquellen, laufende RadiWorks-Instanzen und Governors unverändert.

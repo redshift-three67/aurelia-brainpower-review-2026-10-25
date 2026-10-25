@@ -1,0 +1,9 @@
+# RadiWorks R6 – Quell- und Modul_Templates-Abgleich
+
+Stand 2026-10-08T23:24:20.608607+02:00. **200/200 manifestierte Produktdateien** im kanonischen RadiWorks-Quellordner SHA-gleich mit dem abgenommenen R6-Release:98 unverändert,33 ersetzt,69 ergänzt. Produktmanifest zusätzlich übernommen. Kein unbekannter Drift gegenüber der zuvor synchronisierten C23-Baseline. Drei additive Template-Nachträge mit aktueller Kopfnotiz; normative API-/Hostverträge unverändert.
+
+Vorher-Sicherung auf F: `F:\Hauptprojekt\Aurelia\20261008-232420`: 36 Quell-/Referenzdateien rückgelesen; alle fehlenden Dateien im Vorherplan verzeichnet. CAS pro Ziel vor atomarem Overlay. Homes, Fälle, Schlüssel, virtuelle Umgebung und laufende Dauerinstanzen nicht angefasst. Diese Sicherung ist **keine vollständige Projektkopie**. Engine-Version0.2.0 und RESTv1 unverändert; keine Git-Commit-Aussage.
+
+Aktualisiert: MODULE_REGISTRY.md, standards/RADIOWORKS_LOCAL_PROFILE_V1_1_DRAFT.md und modules/radiworks/PORT_PLAN.md. Belegt aktuelle Verfahren, Zufallsmodi, immutablen Kontext, persönliche Laufzeit, GV/Watchlist/Historie, bis fünf Bildlayer und geprüfte Audio-/Pulsprofile; alte Nachträge bleiben als Historie. Lokale Process-Scopes und Hashes ersetzen keine Hostautorität. Katalog-/DB-Struktur, Rechte/RLS, Quotas, Ubuntu und S4.8 bleiben offen. Gemeinsame MODUL_STANDARD/API_CONTRACT unverändert.
+
+Start5 0.4.0-rc1 in separater Erstellung und Prüfung; danach komplette private F:-Gesamtsicherung mit Konfigurations-/Gedächtnisständen. Nachweis: runtime/rw-r6-sync-20261008/SYNC_APPLIED.json. Frisch82 gezielte kanonische Kontext-/Bild-/Medien-/Pulsregressionen bestanden, 37 JavaScript-Dateien syntaxgeprüft. Alle sieben Live-PIDs unverändert. Keine neue Vollsuite behauptet. Einzelne bekannte Starlette/httpx-Deprecationwarnung, kein Testfehler.

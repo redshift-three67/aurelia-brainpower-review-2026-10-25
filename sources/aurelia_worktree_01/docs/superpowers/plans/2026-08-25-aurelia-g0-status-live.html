@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AURELIA G0 Status</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6978;
+      --line: #d8dee8;
+      --blue: #1d4ed8;
+      --green: #157347;
+      --amber: #9a5b00;
+      --red: #a61b1b;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 15px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    main {
+      width: min(1180px, calc(100vw - 40px));
+      margin: 28px auto;
+    }
+    h1, h2 { line-height: 1.2; margin: 0 0 12px; }
+    h1 { font-size: 28px; }
+    h2 { font-size: 18px; margin-top: 24px; }
+    p { margin: 0 0 14px; color: var(--muted); }
+    code {
+      font: 13px/1.35 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      background: #eef2f7;
+      border: 1px solid #d9e1ec;
+      border-radius: 6px;
+      padding: 1px 5px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 12px 28px rgba(23, 32, 42, 0.06);
+      margin-bottom: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fbfcfe;
+    }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 4px; font-size: 15px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+    }
+    th { color: #334155; background: #eef2f7; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      border: 1px solid currentColor;
+      white-space: nowrap;
+    }
+    .done { color: var(--green); }
+    .work { color: var(--amber); }
+    .stop { color: var(--red); }
+    .info { color: var(--blue); }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(110px, 1fr));
+      gap: 10px;
+      align-items: stretch;
+      margin-top: 8px;
+    }
+    .node {
+      min-height: 86px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 10px;
+      position: relative;
+    }
+    .node:not(:last-child)::after {
+      content: "->";
+      position: absolute;
+      right: -18px;
+      top: 32px;
+      color: #8b98a8;
+      font-weight: 700;
+    }
+    .node strong { display: block; margin-bottom: 4px; }
+    .node small { color: var(--muted); }
+    @media (max-width: 900px) {
+      .grid, .flow { grid-template-columns: 1fr; }
+      .node::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>AURELIA G0 Status</h1>
+      <p>Lokale Arbeitsansicht fuer den wiederaufgenommenen G0-Planungsabschluss. Stand: 2026-08-25, nach Einfuehrung der Review- und Token-Direktive V2.</p>
+      <div class="grid">
+        <div class="metric"><span>GitHub main</span><strong><code>b858ccd</code></strong></div>
+        <div class="metric"><span>Lokaler G0-Anker</span><strong><code>a6a8e7d</code></strong></div>
+        <div class="metric"><span>G0-Planserie</span><strong>14 Dateien lokal, noch nicht committed</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Prozessfluss</h2>
+      <div class="flow">
+        <div class="node done"><strong>D</strong><small>G0-Design final freigegeben</small></div>
+        <div class="node done"><strong>Planserie</strong><small>01-13 + Master lokal erstellt</small></div>
+        <div class="node work"><strong>Direktive V2</strong><small>Review-/Token-Ergonomie fixiert</small></div>
+        <div class="node work"><strong>Planfixes</strong><small>Wave Runner, Rollen, Operator-Verifikation</small></div>
+        <div class="node stop"><strong>Externe Reviews</strong><small>Prompt durch Orchestrator, Ausgabe vom Operator</small></div>
+        <div class="node stop"><strong>Lokaler Commit</strong><small>erst nach Zero-P0-P2 und Checks</small></div>
+        <div class="node stop"><strong>GitHub</strong><small>kein Push ohne Freigabe</small></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Statusmatrix</h2>
+      <table>
+        <thead><tr><th>Bereich</th><th>Status</th><th>Naechster Schritt</th></tr></thead>
+        <tbody>
+          <tr><td>GitHub</td><td><span class="tag info">remote main only</span> <code>b858ccd</code></td><td>Kein Push, kein Connector; nur lesende Remote-Pruefung.</td></tr>
+          <tr><td>Worktree</td><td><span class="tag work">lokal</span> <code>codex/aurelia-g0-governance</code> bei <code>a6a8e7d</code></td><td>Planserie statisch pruefen, dann Review-Prompt erstellen.</td></tr>
+          <tr><td>Direktive</td><td><span class="tag done">V2 dokumentiert</span></td><td>Ab sofort vor komplexen Schritten Modell/Reasoning deklarieren.</td></tr>
+          <tr><td>Reviews</td><td><span class="tag work">external-review-first</span></td><td>Operator uebergibt Prompts an externes LLM und bringt Findings zurueck.</td></tr>
+          <tr><td>Reasoning</td><td><span class="tag work">sparsam eskalieren</span></td><td>xHigh nur fuer Sicherheits-/Governance-Entscheidungen.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

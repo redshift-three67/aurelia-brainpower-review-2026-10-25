@@ -1,0 +1,27 @@
+# Repository Guidelines
+
+## Project Structure & Module Organization
+
+Radi144 combines several entry points around one Python core. `main.py` creates the FastAPI application and serves the standalone `user_workflow.html`, `user_workflow.css`, and `user_workflow.js` assets. API routes live in `app/api/`; Pydantic request and domain schemas are in `app/schemas/`; matrix, signature, EMF, and amplifier logic belongs in `app/algorithms/`. File-backed client, session, report, audit, erasure, and bus behavior is split between `app/models/`, `app/services/`, and `app/interchange_bus/`.
+
+`dev_cli.py` and `generate_matrix.ps1` provide Windows-oriented CLI workflows over the same engine. Reference inputs are stored in `data/` and `db_import/`; generated runtime state and analysis exports must not be treated as source. Deployment assets are under `deploy/`, tests under `tests/`, and architecture/audit material under `docs/`. Ignore restore-point and archived legacy copies when identifying the maintained implementation.
+
+## Build, Test, and Development Commands
+
+- `install_dependencies.bat` creates `.venv`, installs `requirements.txt`, and verifies required runtime dependencies.
+- `run.bat` performs the API runtime preflight and starts the development server. The direct equivalent is `.venv\Scripts\python.exe main.py`; it defaults to `127.0.0.1:8090`.
+- `.venv\Scripts\python.exe -m pytest tests -q` runs the full suite.
+- `.venv\Scripts\python.exe -m pytest tests\test_engine_smoke.py -q` runs one test module; append `::test_name` to target one test.
+- `run_test.bat` runs the CLI preflight and a fixed smoke invocation of `dev_cli.py`.
+
+## Coding Style & Naming Conventions
+
+No repository formatter or linter configuration is currently enforced. Follow the existing Python conventions: four-space indentation, `snake_case` functions and modules, `PascalCase` classes, uppercase module constants, and type annotations on public service/API boundaries. Keep the browser workflow dependency-free and compatible with the existing vanilla HTML/CSS/JavaScript files.
+
+## Testing Guidelines
+
+Pytest is configured by `pytest.ini` to collect from `tests/`. Name modules `test_*.py` and reuse `tests/conftest.py` for shared setup. Changes spanning API, persistence, or browser behavior should exercise the corresponding focused tests before the full suite. Tests must not leave runtime client/session/report data in tracked directories.
+
+## Commit & Pull Request Guidelines
+
+Recent history primarily uses Conventional Commit prefixes such as `feat:`, `fix:`, `docs:`, `data:`, and `chore:`, sometimes with a scope (`fix(frontend):`). Keep subjects imperative and specific. Pull requests should state the affected entry points, list verification commands and results, and call out changes to runtime dependencies, persisted data formats, API contracts, or deployment configuration.

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <copy todir="C:\Users\Hubert111\CascadeProjects\java\AetherOnePi-2.2.0\META-INF\maven\commons-logging\commons-logging\target/apidocs/META-INF">
+    <fileset dir="C:\Users\Hubert111\CascadeProjects\java\AetherOnePi-2.2.0\META-INF\maven\commons-logging\commons-logging">
+      <include name="LICENSE.txt"/>
+      <include name="NOTICE.txt"/>
+    </fileset>
+  </copy>
+</target>
+</project>

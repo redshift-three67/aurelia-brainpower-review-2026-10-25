@@ -1,0 +1,28 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.Case;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CaseList {
+    private List<Case> caseList = new ArrayList<Case>();
+
+    public CaseList() {
+    }
+
+    public CaseList(List<Case> caseList) {
+        this.caseList = caseList;
+    }
+
+    public List<Case> getCaseList() {
+        return this.caseList;
+    }
+
+    public void setCaseList(List<Case> caseList) {
+        this.caseList = caseList;
+    }
+}
+

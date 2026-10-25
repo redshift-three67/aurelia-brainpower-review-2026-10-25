@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>S3c C4 – lokale Browser-Fixture</title>
+<style>
+body{font:16px/1.5 system-ui,sans-serif;margin:24px;background:#f4f6f8;color:#1f2937}button{padding:9px 13px;margin:5px;cursor:pointer}button:disabled{cursor:default;opacity:.5}textarea{display:block;width:95%;min-height:65px;margin:12px 0}dialog{width:min(800px,90vw);max-height:85vh;overflow:auto;border:1px solid #94a3b8;border-radius:8px;padding:24px}dialog::backdrop{background:#0006}label{display:block;margin:8px 0}code,pre{display:block;white-space:pre-wrap;overflow-wrap:anywhere}.small{font-size:14px}.warn{color:#914600}.pilot-receipt{background:#f1f5f9;padding:12px;margin:12px 0}.fixture-tools{border:2px solid #6366f1;padding:12px;margin:12px 0;background:#eef2ff}.fixture-log{max-height:160px;overflow:auto;font-size:12px}[data-notice]{white-space:pre-wrap}
+</style></head><body>
+<h1>S3c/C4 Browser-Fixture</h1>
+<p>Nur synthetische Daten und simulierte API-Aufrufe. Keine Server-, Datei- oder Modellaktionen. Netzwerkzugriffe sind durch CSP gesperrt. Die Dialogfunktion unten wurde unverändert aus app.js extrahiert.</p>
+<p>Prüfablauf: Dialog öffnen → A und B markieren → Vorschau → H0 begründen und festhalten → A/H1 simulieren → Historie aktualisieren → H1 prüfen und begründen → H1 bestätigen → B separat vorschlagen. Danach H2 und Rücknahme simulieren. „Fixture zurücksetzen“ löscht ausschließlich diesen Browser-Testzustand.</p>
+<button id="open">Produktionsdialog öffnen</button><button id="reset">Fixture zurücksetzen</button>
+<div id="fixture-root"></div><p data-notice role="status"></p>
+<script>
+'use strict';
+const pending=new Set();
+const key='governor-s3c-c4-fixture-v1';
+let fixture={snapshot:null,consents:[],requests:[],proposals:0};
+try{const saved=sessionStorage.getItem(key);if(saved)fixture=JSON.parse(saved);}catch(error){document.querySelector('[data-notice]').textContent='Session-Speicherung nicht verfügbar: '+error.message;}
+const node=(tag,cls,text)=>{const element=document.createElement(tag);if(cls)element.className=cls;if(text!=null)element.textContent=text;return element;};
+const pilotBusy=()=>pending.size>0;
+const notify=(message)=>document.querySelectorAll('[data-notice]').forEach(item=>item.textContent=message);
+const activateTab=()=>{};
+const loadState=async()=>{};
+const plan={id:'synthetic-candidate',proposal:{steps:[{id:'A',title:'A – erste synthetische Änderung',action:'change'},{id:'B',title:'B – abhängige synthetische Änderung',action:'change'}]}};
+const hashes={H0:'0'.repeat(64),H1:'1'.repeat(64),H2:'2'.repeat(64)};
+function persist(){try{sessionStorage.setItem(key,JSON.stringify(fixture));}catch(error){notify('Session-Speicherung nicht verfügbar: '+error.message);}renderCounters();}
+function renderCounters(){
+  document.querySelectorAll('[data-count]').forEach(item=>item.textContent=`Simulierte API-Anfragen: ${fixture.requests.length} · Simulierte B-Vorschläge: ${fixture.proposals} · Echte Modellaufrufe: 0`);
+  document.querySelectorAll('[data-log]').forEach(item=>item.textContent=fixture.requests.map((request,index)=>`${index+1}. ${request.path} ${JSON.stringify(request.payload)}`).join('\n'));
+}
+function eventFor(step){return {kind:'transition',id:step.toLowerCase()+'-event',note:'Synthetischer Abschluss '+step,evidence:{transaction:{id:'tx-'+step.toLowerCase()},technical_receipt:{binding:{observed_scope_hash:hashes[step==='A'?'H1':'H2']}}}};}
+function simulate(mode){
+  if(!fixture.snapshot){notify('Zuerst den Ausgangsstand im Produktionsdialog festhalten.');return;}
+  const snapshot=fixture.snapshot;
+  if(mode==='A'){snapshot.events=[eventFor('A')];snapshot.transition_count=1;snapshot.active_transition_ids=['a-event'];snapshot.scope_hash=hashes.H1;snapshot.requires_new_plan=false;snapshot.head_id='a-event';}
+  if(mode==='H2'){snapshot.events=[eventFor('A'),eventFor('B')];snapshot.transition_count=2;snapshot.active_transition_ids=['a-event','b-event'];snapshot.scope_hash=hashes.H2;snapshot.requires_new_plan=false;snapshot.head_id='b-event';}
+  if(mode==='rollback'){snapshot.events=[eventFor('A'),eventFor('B'),{kind:'rollback',id:'rollback-b',target_id:'b-event',note:'Synthetische Rücknahme B'}];snapshot.transition_count=2;snapshot.active_transition_ids=['a-event'];snapshot.scope_hash=hashes.H1;snapshot.requires_new_plan=true;snapshot.head_id='rollback-b';}
+  snapshot.head_hash='synthetic-'+snapshot.head_id;persist();notify('Fixture-Stand geändert. Im Produktionsdialog „Kettenhistorie aktualisieren“ anklicken.');
+}
+function fixtureTools(){
+  const section=node('section','fixture-tools');section.append(node('strong',null,'Nur Fixture-Steuerung – keine Produktaktionen'));
+  for(const [mode,label] of [['A','A/H1 simulieren'],['H2','B/H2 simulieren'],['rollback','Rücknahme B simulieren']]){const button=node('button',null,label);button.addEventListener('click',()=>simulate(mode));section.append(button);}
+  const count=node('p');count.dataset.count='';const log=node('pre','fixture-log');log.dataset.log='';const notice=node('p');notice.dataset.notice='';notice.setAttribute('role','status');section.append(count,log,notice);return section;
+}
+async function api(path,payload){
+  fixture.requests.push({path,payload});persist();
+  const snapshot=fixture.snapshot;
+  if(path==='/api/change-chains/state')return structuredClone({chains:snapshot?[snapshot]:[],consents:fixture.consents});
+  if(path==='/api/change-chains/preview')return {eligible:!snapshot,reason:snapshot?'Ausgangsstand bereits vorhanden.':'Synthetische Vorschau: A vor B, getrennte Schreibbereiche.',binding_hash:'baseline-binding',binding:{scope_hash:hashes.H0,step_ids:['A','B']},steps:[{title:'A',readiness:'ready'},{title:'B',readiness:'conditional',waiting_for:['A']}]};
+  if(path==='/api/change-chains/begin'){
+    if(snapshot)throw Error('Ausgangsstand schon gespeichert.');
+    fixture.snapshot={chain:{id:'synthetic-chain',binding:{scope_hash:hashes.H0,step_ids:['A','B']},note:payload.note},events:[],transition_count:0,active_transition_ids:[],scope_hash:hashes.H0,head_id:null,head_hash:'synthetic-baseline',requires_new_plan:false};persist();return {chain:structuredClone(fixture.snapshot.chain)};
+  }
+  if(path==='/api/change-chains/successor-preview'){
+    const eligible=Boolean(snapshot && snapshot.transition_count===1 && !snapshot.requires_new_plan);
+    return {eligible,reason:eligible?'H1 synthetisch aktuell. Keine Ausführung.':'Synthetischer H1-Stand nicht bereit.',binding_hash:eligible?'h1-binding':null,binding:eligible?{original_scope_hash:hashes.H0,effective_scope_hash:hashes.H1,predecessor_event_id:'a-event',step_id:'B'}:null};
+  }
+  if(path==='/api/change-chains/acknowledge'){
+    if(!snapshot || snapshot.transition_count!==1 || snapshot.requires_new_plan)throw Error('H1 nicht bereit.');
+    const consent={id:'synthetic-consent',binding_hash:'h1-binding',note:payload.note};fixture.consents=[consent];persist();return {consent:structuredClone(consent)};
+  }
+  if(path==='/api/change-chains/propose'){
+    if(!fixture.consents.length || snapshot?.transition_count!==1 || snapshot.requires_new_plan)throw Error('Keine aktuelle synthetische Zustimmung.');
+    fixture.proposals++;persist();return {job:{id:'synthetic-proposal-'+fixture.proposals}};
+  }
+  throw Error('Unerwarteter Fixture-Endpunkt: '+path);
+}
+  function showChangeChainPreview(plan,dependencyReport){
+    const dialog=node('dialog','sequence-dialog');dialog.setAttribute('aria-label','Abhängige Änderungen vorschauen');
+    dialog.append(node('h2',null,'Zwei abhängige Änderungen prüfen'),node('p',null,'A → B: Ausgangsstand und Übergänge ausdrücklich bestätigen. Jeder Schritt benötigt eigene Tests, Review und Übernahme. Öffnen und Aktualisieren starten keine Ausführung.'));
+    const choices=node('div'),output=node('div'),history=node('section','pilot-receipt'),successorOutput=node('div');
+    const baselineNote=node('textarea');baselineNote.maxLength=2000;baselineNote.setAttribute('aria-label','Begründung zum Ausgangsstand H0');
+    const successorNote=node('textarea');successorNote.maxLength=2000;successorNote.setAttribute('aria-label','Begründung zur H1-Bestätigung');
+    const preview=node('button','button secondary','Änderungsfolge prüfen'),begin=node('button','button secondary','Ausgangsstand H0 ausdrücklich festhalten');
+    const reload=node('button','button secondary','Kettenhistorie aktualisieren'),successor=node('button','button secondary','H1 für B frisch prüfen');
+    const acknowledge=node('button','button secondary','Diesen H1-Stand ausdrücklich bestätigen'),propose=node('button','button','B mit Modellen im Arbeitsbereich vorschlagen');
+    const close=node('button','button secondary','Schließen');
+    let busy=false,loaded=false,revision=0,report=null,snapshot=null,consents=[],h1=null,consent=null,submitted=false;
+    const ids=()=>[...choices.querySelectorAll('input:checked')].map(i=>i.value);
+    const refresh=()=>{
+      preview.disabled=busy || !loaded || Boolean(snapshot) || ids().length!==2;
+      begin.disabled=busy || !loaded || Boolean(snapshot) || !report?.eligible || !baselineNote.value.trim() || pilotBusy();
+      reload.disabled=busy;successor.disabled=busy || !loaded || !snapshot || snapshot.requires_new_plan || snapshot.transition_count!==1;
+      acknowledge.disabled=busy || !h1?.eligible || !successorNote.value.trim() || Boolean(consent) || pilotBusy();
+      propose.disabled=busy || !h1?.eligible || !consent || submitted || pilotBusy();
+      choices.querySelectorAll('input').forEach(input=>input.disabled=busy || Boolean(snapshot));
+    };
+    const renderHistory=()=>{
+      history.replaceChildren(node('h3',null,'Gespeicherte Kettenhistorie'));
+      if(!snapshot){history.append(node('p','small','Noch kein Ausgangsstand für diesen Kandidaten gespeichert.'));return;}
+      history.append(node('p','small',`Kette ${snapshot.chain.id} · A: ${snapshot.chain.binding.step_ids[0]} · B: ${snapshot.chain.binding.step_ids[1]}`),node('p','readable-text',snapshot.chain.note),node('code','evidence-hash',`H0: ${snapshot.chain.binding.scope_hash}`));
+      let transitionIndex=0;
+      for(const event of snapshot.events || []){
+        if(event.kind==='transition')history.append(node('code','evidence-hash',`H${++transitionIndex}: ${event.evidence.technical_receipt.binding.observed_scope_hash}`));
+        history.append(node('p','small',`${event.kind==='rollback'?'Rücknahme':'Quellenübergang'} · ${event.id} · ${event.note}`));
+      }
+      history.append(node('code','evidence-hash',`Gespeicherte Spitze: ${snapshot.scope_hash}\nJournalhash: ${snapshot.head_hash}`),node('p','small muted','Historische Kontinuität ist kein aktueller Datei- oder Funktionstest. H1 vor B separat prüfen.'));
+      const active=snapshot.active_transition_ids || [],latest=(snapshot.events || []).find(event=>event.id===active[active.length-1]);
+      history.append(node('p','small warn',latest?`Nur das jüngste aktive Glied zuerst zurücknehmen: Transaktion ${latest.evidence.transaction.id}. B vor A; Rücknahme separat beim Transaktionsbeleg. Keine Kaskade.`:'Keine bestätigte aktive Kantenübernahme. Offene Transaktionen im Auftragsjournal prüfen.'));
+      if(snapshot.requires_new_plan)history.append(node('p','small warn','Rücknahme protokolliert: Neue Planrevision erforderlich. Alte Freigaben werden nicht reaktiviert.'));
+      for(const item of consents)history.append(node('p','small',`Historische H1-Bestätigung ${item.id}: ${item.note}`));
+    };
+    const loadHistory=async()=>{
+      loaded=false;report=null;h1=null;consent=null;output.replaceChildren();successorOutput.replaceChildren();
+      const value=await api('/api/change-chains/state',{candidate_id:plan.id});
+      if(!dialog.isConnected)return;
+      snapshot=value.chains[0] || null;consents=value.consents || [];loaded=true;renderHistory();
+    };
+    const run=async(action,mutating=false)=>{
+      if(busy || (mutating && pilotBusy()))return;busy=true;if(mutating)pending.add('pilot:action');refresh();
+      try{await action();}catch(error){report=null;h1=null;consent=null;notify(error.message,true);}
+      finally{busy=false;if(mutating)pending.delete('pilot:action');refresh();}
+    };
+    const steps=dependencyReport?.steps || (plan.proposal?.steps || []).map(step=>({...step,selected:true}));
+    for(const step of steps.filter(s=>s.selected && s.action==='change')){
+      const label=node('label'),input=node('input');input.type='checkbox';input.value=step.id;
+      input.addEventListener('change',()=>{revision++;report=null;output.replaceChildren();refresh();});
+      label.append(input,document.createTextNode(step.title));choices.append(label);
+    }
+    preview.addEventListener('click',()=>{
+      if(preview.disabled)return;const observed=revision;
+      run(async()=>{
+        const value=await api('/api/change-chains/preview',{candidate_id:plan.id,step_ids:ids()});
+        if(observed!==revision || !dialog.isConnected)return;
+        report=value;
+        output.replaceChildren(node('p',value.eligible?'small':'small warn',value.reason));
+        const ordered=node('ol');for(const step of value.steps || [])ordered.append(node('li',null,`${step.title} · ${step.readiness==='conditional'?'Bedingt – benötigt Abschluss: '+step.waiting_for.join(', '):'Voraussetzungen beobachtet; keine Ausführungsfreigabe'}`));output.append(ordered);
+        if(value.binding)output.append(node('code','evidence-hash',`H0: ${value.binding.scope_hash}\nVorschaubindung: ${value.binding_hash}`));
+        output.append(node('p','small warn','Momentaufnahme. Ausgangsstand separat festhalten; dies startet keine Änderung.'));
+      });
+    });
+    baselineNote.addEventListener('input',refresh);successorNote.addEventListener('input',refresh);
+    begin.addEventListener('click',()=>{if(!begin.disabled)run(async()=>{
+      await api('/api/change-chains/begin',{candidate_id:plan.id,step_ids:report.binding.step_ids,binding_hash:report.binding_hash,note:baselineNote.value});
+      await loadHistory();notify('Ausgangsstand gespeichert. A separat vorschlagen, prüfen und übernehmen.');
+    },true);});
+    reload.addEventListener('click',()=>run(loadHistory));
+    successor.addEventListener('click',()=>{if(!successor.disabled)run(async()=>{
+      h1=null;consent=null;
+      const value=await api('/api/change-chains/successor-preview',{chain_id:snapshot.chain.id});
+      if(!dialog.isConnected)return;h1=value;
+      successorOutput.replaceChildren(node('p',value.eligible?'small':'small warn',value.reason));
+      if(value.binding)successorOutput.append(node('code','evidence-hash',`H0: ${value.binding.original_scope_hash}\nH1: ${value.binding.effective_scope_hash}\nVorgänger: ${value.binding.predecessor_event_id}\nSchritt B: ${value.binding.step_id}\nVorschaubindung: ${value.binding_hash}`));
+      consent=value.eligible?consents.find(item=>item.binding_hash===value.binding_hash) || null:null;
+    });});
+    acknowledge.addEventListener('click',()=>{if(!acknowledge.disabled)run(async()=>{
+      const value=await api('/api/change-chains/acknowledge',{chain_id:snapshot.chain.id,binding_hash:h1.binding_hash,note:successorNote.value});
+      consent=value.consent;consents=[consent];renderHistory();notify('H1 ausdrücklich bestätigt. B wurde noch nicht vorgeschlagen.');
+    },true);});
+    propose.addEventListener('click',()=>{if(!propose.disabled)run(async()=>{
+      const value=await api('/api/change-chains/propose',{consent_id:consent.id});submitted=true;
+      notify(`B-Vorschlagsauftrag ${value.job.id} angenommen. Eigene Tests, Review und Übernahme bleiben erforderlich.`);
+      dialog.close();activateTab('jobs');await loadState();
+    },true);});
+    close.addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>dialog.remove(),{once:true});
+    dialog.append(history,reload,choices,preview,output,baselineNote,begin,node('h3',null,'Separater Nachfolger B'),successor,successorOutput,successorNote,acknowledge,
+      node('p','small warn','Der separate B-Vorschlag sendet den freigegebenen Projektkontext, gebundene Dateiquellen und die Begründung über das konfigurierte Terra-Routing und den ausgewählten Supervisor. Modellaufrufe können Kosten verursachen. Nur isolierter Arbeitsbereich; keine Übernahme. B benötigt eigene neue Tests und Reviews.'),propose,close);
+    document.body.append(dialog);dialog.showModal();run(loadHistory);
+  }
+document.getElementById('fixture-root').append(fixtureTools());
+document.getElementById('open').addEventListener('click',()=>{showChangeChainPreview(plan);document.querySelector('dialog').prepend(fixtureTools());renderCounters();});
+document.getElementById('reset').addEventListener('click',()=>{document.querySelectorAll('dialog').forEach(dialog=>dialog.close());fixture={snapshot:null,consents:[],requests:[],proposals:0};persist();notify('Nur Fixture-Zustand zurückgesetzt.');});
+renderCounters();
+</script></body></html>

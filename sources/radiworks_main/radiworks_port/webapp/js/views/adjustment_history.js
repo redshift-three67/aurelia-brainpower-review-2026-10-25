@@ -1,0 +1,6 @@
+export function initAdjustmentHistory(api, eventBus) {
+ const status=document.getElementById('adjustments-status'),body=document.getElementById('adjustments-body');let epoch=0;
+ const LABELS={'accepted':'Angenommen','not-accepted':'Nicht angenommen','interrupted-before-acceptance':'Vor Annahme unterbrochen','not-requested':'Kein Folgeauftrag'};
+ async function refresh(){const token=++epoch;try{const data=await api.broadcastAdjustments();if(token!==epoch)return;body.replaceChildren();for(const row of data.decisions){const tr=document.createElement('tr');for(const value of [row.parentJobId.slice(0,8),row.depth,row.referenceGv,row.measuredGv,row.seconds===null?'—':row.seconds+' s',(LABELS[row.childAdmission]||row.childAdmission)+(row.childState?' · '+row.childState:'')]){const td=document.createElement('td');td.textContent=String(value);tr.append(td);}body.append(tr);}status.textContent=data.decisions.length?`${data.decisions.length} Entscheidungen in dieser Instanz.`:'Noch keine dynamische Anpassung.';}catch(error){if(token===epoch)status.textContent='Historie nicht verfügbar: '+error.message;}}
+ document.getElementById('adjustments-refresh').addEventListener('click',refresh);eventBus.addEventListener('broadcast.adjustment',refresh);refresh();
+}

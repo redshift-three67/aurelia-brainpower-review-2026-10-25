@@ -1,0 +1,454 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.dialogs;
+
+import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
+import processing.core.PApplet;
+import processing.core.PImage;
+
+public class BroadcastUnit
+extends PApplet {
+    public static final int WIDTH = 320;
+    public static final int HEIGHT = 180;
+    private Integer multiplier;
+    private Integer seconds;
+    private String signature;
+    private Long start;
+    private Random random;
+    private SecureRandom random2;
+    private Integer saveFrames = 0;
+    private Integer movingWaveAmount = 0;
+    private static Long lastBroadcast = null;
+    private List<PImage> imageList;
+
+    public static void main(String[] args) {
+        BroadcastUnit.startBroadcastUnit(480, "Sulfur", 1);
+    }
+
+    public static void startBroadcastUnit(int seconds, String signature, Integer multiplier) {
+        BroadcastUnit.startBroadcastUnit(seconds, signature, null, multiplier);
+    }
+
+    public static void startBroadcastUnit(int seconds, String signature, List<PImage> imageList, Integer multiplier) {
+        Long now = Calendar.getInstance().getTimeInMillis();
+        if (lastBroadcast != null && now < lastBroadcast + 500L) {
+            return;
+        }
+        BroadcastUnit broadcastUnit = new BroadcastUnit(seconds, signature, multiplier);
+        broadcastUnit.imageList = imageList;
+        String[] args2 = new String[]{""};
+        PApplet.runSketch(args2, broadcastUnit);
+        if (!new File("images").exists()) {
+            new File("images").mkdir();
+        }
+        lastBroadcast = now;
+    }
+
+    @Override
+    public void exit() {
+        this.surface.setVisible(false);
+        this.dispose();
+        System.out.println("CLOSED");
+    }
+
+    public BroadcastUnit(int seconds, String signature, Integer multiplier) {
+        this.seconds = seconds;
+        this.signature = signature;
+        this.multiplier = multiplier;
+        try {
+            this.random2 = SecureRandom.getInstanceStrong();
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void settings() {
+        this.size(320, 180);
+    }
+
+    public void setTitle(String title) {
+        this.surface.setTitle(title);
+    }
+
+    @Override
+    public void setup() {
+        this.background(200);
+        this.surface.setTitle(this.signature);
+    }
+
+    @Override
+    public void draw() {
+        if (this.seconds == null) {
+            return;
+        }
+        if (this.signature == null) {
+            return;
+        }
+        if (this.start == null) {
+            this.start = Calendar.getInstance().getTimeInMillis();
+            this.random = new Random(this.start);
+            this.background(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        }
+        if (Calendar.getInstance().getTimeInMillis() > this.start + (long)(1000 * this.seconds)) {
+            this.exit();
+        }
+        if (this.random.nextInt(13) >= 12) {
+            this.paintSignatureCharacter();
+        } else if (this.random.nextInt(21) >= 20) {
+            max = this.random.nextInt(1000) + 1;
+            if (max > 90) {
+                this.paintOverlay();
+            }
+            for (int x = 0; x > max; ++x) {
+                this.paintOneLayer();
+            }
+        } else if (this.random.nextInt(33) >= 32) {
+            this.paintOverlay();
+            max = this.random.nextInt(10000) + 1;
+            if (max > 9000) {
+                this.paintSignatureText();
+            }
+            for (int x = 0; x > max; ++x) {
+                this.paintOneLayer();
+            }
+        } else if (this.random.nextInt(54) >= 53) {
+            this.paintOverlay(20);
+        } else if (this.random.nextInt(89) >= 89) {
+            this.paintOverlay(50);
+        }
+        this.paintOneLayer();
+        this.paintProgressBar();
+        if (this.saveFrames > 0) {
+            this.saveFrame("images/radionicBroadcasting-######.png");
+            Integer n = this.saveFrames;
+            this.saveFrames = this.saveFrames - 1;
+        }
+    }
+
+    public void paintProgressBar() {
+        this.noStroke();
+        this.fill(255.0f, 0.0f, 0.0f);
+        Float sec = new Float(this.seconds.intValue());
+        Float wid = new Float(320.0f);
+        Float millisAfterStart = new Float(Calendar.getInstance().getTimeInMillis() - this.start);
+        Float delta = Float.valueOf(100.0f / wid.floatValue() / sec.floatValue());
+        Float progress = Float.valueOf(millisAfterStart.floatValue() * delta.floatValue());
+        this.rect(0.0f, 0.0f, progress.floatValue(), 3.0f);
+    }
+
+    private void paintOverlay() {
+        this.paintOverlay(5);
+    }
+
+    private void paintOverlay(int alpha) {
+        this.choseRandomColorAlpha(alpha);
+        this.rect(0.0f, 0.0f, 320.0f, 180.0f);
+    }
+
+    private void paintOneLayer() {
+        int x;
+        int max;
+        this.paintPoint();
+        if (this.random2.nextInt(21) >= 20) {
+            this.partialInvert();
+        }
+        if (this.random2.nextInt(33) >= 32) {
+            max = this.random.nextInt(100) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintPoint();
+            }
+        }
+        this.paintBezier(54, 53);
+        if (this.random2.nextInt(54) >= 53) {
+            max = this.random.nextInt(100) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintSignatureCharacter();
+            }
+            max = this.random.nextInt(1000) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintPoint();
+            }
+        }
+        this.paintBezier(89, 88);
+        if (this.random2.nextInt(89) >= 88) {
+            this.paintSignatureCharacter();
+            this.partialInvert(this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180));
+        }
+        this.paintLine(144, 143);
+        this.paintArc(144, 143);
+        this.paintBezier(144, 143);
+        this.paintRectangle(144, 143, 4);
+        this.paintEllipse(144, 143, 4);
+        this.paintRectangle(233, 232, 10);
+        this.paintEllipse(233, 232, 10);
+        this.paintRectangle(377, 373, 20);
+        this.paintEllipse(377, 373, 20);
+        this.paintRectangle(610, 609, 40);
+        this.paintEllipse(610, 609, 40);
+        this.paintRectangle(987, 986, 80);
+        this.paintEllipse(987, 986, 80);
+        this.paintTriangle(987, 986);
+        this.paintPolygon(987, 986);
+        this.paintRadionicCard(3, 2);
+        this.paintRadionicCardWave(3, 2);
+        if (this.imageList != null && !this.imageList.isEmpty()) {
+            for (PImage image : this.imageList) {
+                if (this.random2.nextInt(1000) < 998) continue;
+                image.resize(this.width, this.height);
+                this.blend(image, 0, 0, this.width, this.height, 0, 0, this.width, this.height, 32);
+            }
+        }
+        if (this.random2.nextInt(6765 + this.multiplier) >= 6764 + this.multiplier) {
+            this.movingWaveAmount = 1;
+        }
+    }
+
+    private void paintRadionicCard(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.noFill();
+            this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.ellipse(this.width / 2, this.height / 2, this.height - 4, this.height - 4);
+            this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.ellipse(this.width / 2, this.height / 2, this.height - 14, this.height - 14);
+            this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.ellipse(this.width / 2, this.height / 2, this.height - 24, this.height - 24);
+            if (this.random.nextInt(5) == 1) {
+                this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+                this.lineAngle(this.width / 2, this.height / 2, this.random.nextInt(360), (this.height - 24) / 2);
+            }
+        }
+    }
+
+    private void paintRadionicCardWave(int i, int i2) {
+        if (this.movingWaveAmount == 0) {
+            return;
+        }
+        if (this.movingWaveAmount > 200) {
+            this.movingWaveAmount = 0;
+            return;
+        }
+        System.out.println(this.movingWaveAmount);
+        this.movingWaveAmount = this.movingWaveAmount + 4;
+        this.noFill();
+        this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.ellipse(this.width / 2, this.height / 2, this.height - 4 - this.movingWaveAmount, this.height - 4 - this.movingWaveAmount);
+        this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.ellipse(this.width / 2, this.height / 2, this.height - 4 + this.movingWaveAmount, this.height - 4 + this.movingWaveAmount);
+    }
+
+    private void lineAngle(int x, int y, float angle, float length) {
+        this.line((float)x + BroadcastUnit.cos(angle) * length, (float)y - BroadcastUnit.sin(angle) * length, (float)x + BroadcastUnit.cos(angle) * length / 2.0f, (float)y - BroadcastUnit.sin(angle) * length / 2.0f);
+    }
+
+    private void partialInvert() {
+        this.loadPixels();
+        for (int i = 0; i < this.width * this.height; ++i) {
+            float red = this.red(this.pixels[i]);
+            float green = this.green(this.pixels[i]);
+            float blue = this.blue(this.pixels[i]);
+            if (this.random.nextInt(this.width * this.height) >= this.width * this.height - 1) {
+                this.paintOverlay(5);
+                break;
+            }
+            if (this.random.nextInt(this.width * this.height) >= this.width * this.height / 2) {
+                red = 250.0f - red;
+                green = 250.0f - green;
+                blue = 250.0f - blue;
+            } else {
+                red = 255.0f - red;
+                green = 255.0f - green;
+                blue = 255.0f - blue;
+            }
+            this.pixels[i] = this.color(red, green, blue);
+        }
+        this.updatePixels();
+    }
+
+    private void partialInvert(int x, int y, int w, int h) {
+        this.loadPixels();
+        int xx = 0;
+        int yy = 0;
+        for (int i = 0; i < this.width * this.height; ++i) {
+            if (++xx >= this.width) {
+                xx = 0;
+                ++yy;
+            }
+            if (xx < x || xx > x + w || yy < y || yy > y + h) continue;
+            float red = this.red(this.pixels[i]);
+            float green = this.green(this.pixels[i]);
+            float blue = this.blue(this.pixels[i]);
+            red = 255.0f - red;
+            green = 255.0f - green;
+            blue = 255.0f - blue;
+            this.pixels[i] = this.color(red, green, blue);
+        }
+        this.updatePixels();
+    }
+
+    private void paintPoint() {
+        this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.point(this.random.nextInt(320), this.random.nextInt(180));
+    }
+
+    private void paintLine(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.line(this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180));
+        }
+    }
+
+    private void paintArc(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.noFill();
+            this.arc(this.random.nextInt(320), this.random.nextInt(180), 60.0f, 60.0f, 1.5707964f, (float)Math.PI);
+            this.arc(this.random.nextInt(320), this.random.nextInt(180), 70.0f, 70.0f, (float)Math.PI, 3.926991f);
+            this.arc(this.random.nextInt(320), this.random.nextInt(180), 80.0f, 80.0f, 3.926991f, (float)Math.PI * 2);
+        }
+    }
+
+    private void paintBezier(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.noFill();
+            this.bezier(this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180));
+        }
+    }
+
+    private void paintRectangle(int i, int i2, int i3) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.rect(this.random.nextInt(320), this.random.nextInt(180), i3, i3);
+        }
+    }
+
+    private void paintEllipse(int i, int i2, int i3) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.ellipse(this.random.nextInt(320), this.random.nextInt(180), i3, i3);
+        }
+    }
+
+    private void paintTriangle(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.triangle(this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180), this.random.nextInt(320), this.random.nextInt(180));
+        }
+    }
+
+    private void paintPolygon(int i1, int i2) {
+        if (this.random.nextInt(i1) >= i2) {
+            this.choseRandomColorAlpha();
+            this.beginShape();
+            for (int c = 0; c < this.random.nextInt(50) + 3; ++c) {
+                this.vertex(this.random.nextInt(320), this.random.nextInt(180));
+            }
+            this.endShape();
+        }
+    }
+
+    private void choseRandomColorAlpha(int alpha) {
+        this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), alpha);
+        this.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), alpha);
+    }
+
+    private void choseRandomColorAlpha() {
+        this.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+    }
+
+    private void paintSignatureCharacter() {
+        this.paintPoint();
+        for (int c = 0; c < this.random.nextInt(9) + 1; ++c) {
+            int pos = this.random.nextInt(this.signature.length());
+            String one = this.signature.substring(pos, pos + 1);
+            this.textSize(12 + this.random.nextInt(this.multiplier));
+            this.text(one, (float)this.random.nextInt(320), (float)this.random.nextInt(180));
+            this.textSize(12.0f);
+        }
+    }
+
+    private void paintSignatureText() {
+        this.paintPoint();
+        this.text(this.signature, (float)this.random.nextInt(320), (float)this.random.nextInt(180));
+    }
+
+    @Override
+    public void mousePressed() {
+        this.saveFrames = 100;
+    }
+
+    public Integer getSeconds() {
+        return this.seconds;
+    }
+
+    public void setSeconds(Integer seconds) {
+        this.seconds = seconds;
+    }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public Long getStart() {
+        return this.start;
+    }
+
+    public void setStart(Long start) {
+        this.start = start;
+    }
+
+    public Random getRandom() {
+        return this.random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public SecureRandom getRandom2() {
+        return this.random2;
+    }
+
+    public void setRandom2(SecureRandom random2) {
+        this.random2 = random2;
+    }
+
+    public Integer getSaveFrames() {
+        return this.saveFrames;
+    }
+
+    public void setSaveFrames(Integer saveFrames) {
+        this.saveFrames = saveFrames;
+    }
+
+    public Integer getMovingWaveAmount() {
+        return this.movingWaveAmount;
+    }
+
+    public void setMovingWaveAmount(Integer movingWaveAmount) {
+        this.movingWaveAmount = movingWaveAmount;
+    }
+
+    public static Long getLastBroadcast() {
+        return lastBroadcast;
+    }
+
+    public static void setLastBroadcast(Long lastBroadcast) {
+        BroadcastUnit.lastBroadcast = lastBroadcast;
+    }
+}
+

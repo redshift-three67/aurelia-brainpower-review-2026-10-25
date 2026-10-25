@@ -1,0 +1,75 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+
+public class RateObjectWrapper {
+    private Integer occurrence = 0;
+    private Integer overallEnergeticValue = 0;
+    private Integer overallGV = 0;
+    private RateObject rateObject;
+    private String name;
+
+    public void addRate(RateObject rate) {
+        this.name = rate.getNameOrRate();
+        this.incrementOccurrence();
+        this.addEnergeticValue(rate.getEnergeticValue());
+        this.addGV(rate.getGv());
+    }
+
+    private void incrementOccurrence() {
+        Integer n = this.occurrence;
+        this.occurrence = this.occurrence + 1;
+    }
+
+    private void addEnergeticValue(Integer energeticValue) {
+        this.overallEnergeticValue = this.overallEnergeticValue + energeticValue;
+    }
+
+    private void addGV(Integer gv) {
+        this.overallGV = this.overallGV + gv;
+    }
+
+    public Integer getOccurrence() {
+        return this.occurrence;
+    }
+
+    public void setOccurrence(Integer occurrence) {
+        this.occurrence = occurrence;
+    }
+
+    public Integer getOverallEnergeticValue() {
+        return this.overallEnergeticValue;
+    }
+
+    public void setOverallEnergeticValue(Integer overallEnergeticValue) {
+        this.overallEnergeticValue = overallEnergeticValue;
+    }
+
+    public Integer getOverallGV() {
+        return this.overallGV;
+    }
+
+    public void setOverallGV(Integer overallGV) {
+        this.overallGV = overallGV;
+    }
+
+    public RateObject getRateObject() {
+        return this.rateObject;
+    }
+
+    public void setRateObject(RateObject rateObject) {
+        this.rateObject = rateObject;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+

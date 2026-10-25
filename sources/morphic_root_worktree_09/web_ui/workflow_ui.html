@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morphic Engine V1 - 12-Step Workflow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="workflow_ui.css?v=3">
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width:1100px;margin:0 auto;">
+    <span class="badge">Naturheilpraxis - Morphic Engine V1</span>
+    <h1>Heilsame Resonanzmatrix</h1>
+    <div class="sub">12-Step Workflow nach Radi144-Blueprint <span class="status-dot" id="apiStatus"></span></div>
+    <div style="margin-top:10px;font-size:13px;">
+      <a href="/workflow-stepping" target="_blank" style="color:var(--accent);text-decoration:none;">12-Step Referenzansicht oeffnen</a>
+    </div>
+  </div>
+</div>
+
+<nav class="stepper"><div class="stepper-inner" id="stepperNav"></div></nav>
+
+<div class="progress">
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<div class="nav-btns">
+  <button class="btn btn-outline" id="btnPrev" onclick="navigate(-1)">&larr; Zurueck</button>
+  <span style="font-size:13px;color:var(--fg2)" id="stepLabel">1/12</span>
+  <button class="btn btn-primary" id="btnNext" onclick="navigate(1)">Weiter &rarr;</button>
+</div>
+
+<div class="main">
+
+<!-- Step 0: System-Init -->
+<section class="section active" data-step="0">
+  <div class="card">
+    <h2>Step 1: System-Init</h2>
+    <p style="color:var(--fg2);font-size:14px;line-height:1.6;">Hardware-Erkennung (CPU/GPU/RAM), Entropie-Quelle-Auswahl mit Fallback-Kaskade, h_level-Berechnung.</p>
+    <div id="sysStatus" style="font-size:13px;color:var(--fg2);margin-top:12px;">Pruefe Server-Verbindung...</div>
+    <div class="result-grid" id="initGrid" style="margin-top:12px;"></div>
+  </div>
+</section>
+
+<!-- Step 1: Eingabe -->
+<section class="section" data-step="1">
+  <div class="card">
+    <h2>Step 2: Eingabe - Klientendaten</h2>
+    <div class="form-grid">
+      <div class="form-group"><label>Vorname *</label><input id="firstName" type="text" placeholder="Klaus"></div>
+      <div class="form-group"><label>Nachname *</label><input id="lastName" type="text" placeholder="Mustermann"></div>
+      <div class="form-group"><label>Geburtsdatum (DDMMYYYY) *</label><input id="birthDate" type="text" placeholder="09041966"></div>
+      <div class="form-group"><label>Geburtsort *</label><input id="birthPlace" type="text" placeholder="Augsburg"></div>
+      <div class="form-group"><label>Bild-Pfad (optional)</label><input id="imagePath" type="text" placeholder="C:\bild.jpg"></div>
+      <div class="form-group"><label>Planetar-Typ (optional)</label><input id="planetType" type="text" placeholder="Mars"></div>
+    </div>
+    <h3 style="margin-top:16px;">Personalprofil</h3>
+    <div class="form-grid">
+      <div class="form-group"><label>Emotion (0-1)</label><input id="pEmotion" type="number" min="0" max="1" step="0.1" value="0.5"></div>
+      <div class="form-group"><label>Physisch (0-1)</label><input id="pPhysisch" type="number" min="0" max="1" step="0.1" value="0.5"></div>
+      <div class="form-group"><label>Mental (0-1)</label><input id="pMental" type="number" min="0" max="1" step="0.1" value="0.5"></div>
+      <div class="form-group"><label>Astral (0-1)</label><input id="pAstral" type="number" min="0" max="1" step="0.1" value="0.5"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 2: Signatur -->
+<section class="section" data-step="2">
+  <div class="card">
+    <h2>Step 3: Klienten-Signatur (6-Schicht)</h2>
+    <p style="color:var(--fg2);font-size:14px;">6-Schicht-Pipeline: Name(15%) + Geburtsdaten(20%) + Bild(25%) + Organuhr(10%) + Planetarisch(15%) + EMF(5%).</p>
+    <div id="signatureInfo" style="margin-top:12px;font-size:13px;color:var(--fg2);">Signatur wird nach Eingabe der Klientendaten berechnet.</div>
+  </div>
+</section>
+
+<!-- Step 3: Fokus -->
+<section class="section" data-step="3">
+  <div class="card">
+    <h2>Step 4: Fokus-Vektor</h2>
+    <div class="form-group"><label>Fokus / Symptom (optional, mehrere mit Semikolon)</label><textarea id="focus" rows="3" placeholder="Lunge; Atmungsorgane; Bronchien"></textarea></div>
+    <h3>Presets</h3>
+    <div class="preset-grid" id="focusPresets"></div>
+  </div>
+</section>
+
+<!-- Step 4: Optionen -->
+<section class="section" data-step="4">
+  <div class="card">
+    <h2>Step 5: Workflow-Optionen</h2>
+    <p style="font-size:13px;color:var(--fg2);margin-bottom:12px;">Hier werden nur die fuer den produktiven PS1-Flow relevanten Optionen gesetzt.</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Profil-Level</label>
+        <select id="profileLevel">
+          <option value="1">Level 1 - Basis (5)</option>
+          <option value="2">Level 2 - Standard (35)</option>
+          <option value="3" selected>Level 3 - Erweitert (55)</option>
+          <option value="4">Level 4 - Komplett (153+)</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Top-N Profile</label>
+        <select id="topN"><option>3</option><option selected>5</option><option>7</option><option>9</option><option>10</option></select>
+      </div>
+      <div class="form-group"><label>Intention</label>
+        <select id="intention"><option>harmonization</option><option>healing</option><option>balance</option><option>clarity</option></select>
+      </div>
+      <div class="form-group"><label>Harmonisierung nach Analyse</label>
+        <label class="tgl"><input type="checkbox" id="harmonize"><span class="tgl-s"></span></label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 5: Analyse-Start vorbereiten -->
+<section class="section" data-step="5">
+  <div class="card">
+    <h2>Step 6: Analyse-Start vorbereiten</h2>
+    <p style="font-size:13px;color:var(--fg2);margin-bottom:12px;">Im produktiven Flow entspricht dies dem Uebergang von den Eingaben zur eigentlichen Top-N Profilanalyse nach PS1-Referenz.</p>
+    <div id="summaryContent" style="font-size:14px;color:var(--fg2);line-height:1.8;"></div>
+  </div>
+</section>
+
+<!-- Step 6: Workflow starten -->
+<section class="section" data-step="6">
+  <div class="card">
+    <h2>Step 7: Top-N Workflow starten</h2>
+    <div id="analysisStatus" style="font-size:14px;color:var(--fg2);margin-bottom:12px;">Bereit zum Start. Es wird der produktive PS1-/CLI-Flow ausgefuehrt: Screening - Top-Auswahl - Vollanalysen - Synergy - Remedy - Deutung - Trend - Archivierung.</div>
+    <div class="progress-bar" style="margin-bottom:12px;"><div class="progress-fill" id="analysisProgFill" style="width:0%"></div></div>
+    <button class="btn btn-accent" id="btnStart" onclick="startAnalysis()" style="font-size:16px;padding:14px 32px;">Top-N Workflow starten</button>
+    <div class="grid-2" style="margin-top:14px;">
+      <div>
+        <h3>PS1-Phasen / Substeps</h3>
+        <div id="phaseHistory" style="font-size:13px;color:var(--fg2);line-height:1.7;"></div>
+      </div>
+      <div>
+        <h3>Live-Log</h3>
+        <pre id="analysisLog" style="max-height:240px;overflow:auto;background:#fff;border:1px solid var(--bd);border-radius:8px;padding:12px;font-size:12px;color:var(--fg2);font-family:var(--font-mono);"></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 7: Profilberichte -->
+<section class="section" data-step="7">
+  <div class="card">
+    <h2>Step 8: Profilanalysen abgeschlossen</h2>
+    <div class="result-grid" id="resultGrid"></div>
+    <table style="margin-top:16px;"><thead><tr><th>#</th><th>Hinweis</th><th>Status</th><th>Archiv</th><th>Fokus</th></tr></thead><tbody id="resultsTable"></tbody></table>
+  </div>
+</section>
+
+<!-- Step 8: Synergy / Remedy -->
+<section class="section" data-step="8">
+  <div class="card">
+    <h2>Step 9: Synergy- und Remedy-Berichte</h2>
+    <div class="grid-2">
+      <div class="card"><h3>Synergy-Berichte</h3><div id="reportSynergy" style="font-size:13px;color:var(--fg2);"></div></div>
+      <div class="card"><h3>Remedy-Berichte</h3><div id="reportRemedies" style="font-size:13px;color:var(--fg2);"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 9: Deutung / Trend -->
+<section class="section" data-step="9">
+  <div class="card">
+    <h2>Step 10: Deutungs- und Trendberichte</h2>
+    <div class="grid-2">
+      <div class="card"><h3>Deutungs-Berichte</h3><div id="reportDeutung" style="font-size:13px;color:var(--fg2);"></div></div>
+      <div class="card"><h3>Trend-Berichte</h3><div id="reportTrends" style="font-size:13px;color:var(--fg2);"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 10: Harmonisierung -->
+<section class="section" data-step="10">
+  <div class="card">
+    <h2>Step 11: Harmonisierung der Session</h2>
+    <p style="font-size:13px;color:var(--fg2);">Puls 21s / Pause 14s. Audio-Engine: 5-Layer (Base + Fifth + Solfeggio + Octave + Amplifier).</p>
+    <div class="form-grid" style="margin-top:12px;">
+      <div class="form-group"><label>Frequenz (Hz)</label><input id="harmFreq" type="number" value="432" step="0.1"></div>
+      <div class="form-group"><label>Dauer (Minuten)</label><input id="harmDuration" type="number" value="5" min="1" max="60"></div>
+    </div>
+    <div class="audio-bar">
+      <button class="btn btn-primary" id="audioBtn" onclick="toggleAudio()">Audio starten</button>
+      <span class="freq" id="audioInfo">432 Hz</span>
+    </div>
+    <button class="btn btn-accent" onclick="startHarmonization()" style="margin-top:12px;">Harmonisierung starten</button>
+    <div id="harmStatus" style="margin-top:12px;font-size:14px;color:var(--fg2);"></div>
+  </div>
+</section>
+
+<!-- Step 11: Export -->
+<section class="section" data-step="11">
+  <div class="card">
+    <h2>Step 12: Archivierung und Berichte</h2>
+    <div class="grid-2">
+      <div class="card"><h3>Resonanz-Berichte</h3><div id="reportArchive" style="font-size:13px;color:var(--fg2);"></div></div>
+      <div class="card"><h3>Session-Zusammenfassung</h3><div id="archiveSummary" style="font-size:13px;color:var(--fg2);"></div></div>
+    </div>
+    <button class="btn btn-outline" onclick="loadReports()" style="margin-top:12px;">Berichte neu laden</button>
+    <button class="btn btn-primary" onclick="navigateTo(0)" style="margin-left:8px;">Neue Analyse</button>
+  </div>
+  <div class="card">
+    <h2>Berichtsvorschau</h2>
+    <div style="font-size:13px;color:var(--fg2);margin-bottom:10px;">Klicken Sie auf einen Berichtseintrag, um ihn direkt hier zu laden.</div>
+    <iframe id="reportPreviewFrame" style="width:100%;height:720px;border:1px solid var(--bd);border-radius:8px;background:#fff;"></iframe>
+  </div>
+</section>
+
+</div>
+
+<div class="footer">
+  <p>Morphic Engine V1 - Web-UI | Generiert am <span id="footerDate"></span></p>
+  <p style="margin-top:6px;font-size:11px;">Diese Deutung dient als Orientierungshilfe und ersetzt keine medizinische Diagnose.</p>
+</div>
+
+<script src="workflow_ui.js?v=3"></script>
+</body>
+</html>

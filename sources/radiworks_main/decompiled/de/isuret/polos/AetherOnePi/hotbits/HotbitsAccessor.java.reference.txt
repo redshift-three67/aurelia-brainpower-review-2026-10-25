@@ -1,0 +1,68 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.hotbits;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class HotbitsAccessor {
+    private static Long counterError = 0L;
+    private static Log logger = LogFactory.getLog(HotbitsAccessor.class);
+
+    private HotbitsAccessor() {
+    }
+
+    /*
+     * WARNING - Removed try catching itself - possible behaviour change.
+     */
+    public static Byte[] getBytes(Integer n) {
+        FileInputStream in = null;
+        try {
+            in = HotbitsAccessor.getFileInputStream();
+            Byte[] data = new Byte[n.intValue()];
+            for (int x = 0; x < n; ++x) {
+                data[x] = (byte)in.read();
+            }
+            Byte[] byteArray = data;
+            return byteArray;
+        }
+        catch (FileNotFoundException e) {
+            logger.trace("Error while accessing hotbits = " + e.getMessage());
+            Byte[] byteArray = null;
+            return byteArray;
+        }
+        catch (Exception e) {
+            Long l = counterError;
+            counterError = counterError + 1L;
+            logger.trace("Error while accessing hotbits = " + e.getMessage());
+            logger.trace("wait a little and then proceed");
+            try {
+                Thread.sleep(250L);
+            }
+            catch (InterruptedException interruptedException) {
+                // empty catch block
+            }
+            logger.info("continue");
+        }
+        finally {
+            if (in != null) {
+                try {
+                    in.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static FileInputStream getFileInputStream() throws FileNotFoundException {
+        return new FileInputStream("/dev/hwrng");
+    }
+}
+

@@ -1,0 +1,30 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+public class Potency {
+    private String potencyType;
+    private Integer potencyStrength;
+
+    public String getPotencyType() {
+        return this.potencyType;
+    }
+
+    public void setPotencyType(String potencyType) {
+        this.potencyType = potencyType;
+    }
+
+    public Integer getPotencyStrength() {
+        return this.potencyStrength;
+    }
+
+    public void setPotencyStrength(Integer potencyStrength) {
+        this.potencyStrength = potencyStrength;
+    }
+
+    public String toString() {
+        return this.potencyType + " " + this.potencyStrength;
+    }
+}
+

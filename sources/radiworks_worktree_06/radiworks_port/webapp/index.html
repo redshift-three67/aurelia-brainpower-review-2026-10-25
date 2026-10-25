@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="de" data-module-theme="radiworks" data-accent="wellenreiter">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RadiWorks Werkbank — digitale Radionik als dokumentierte Wellbeing-Praxis. Kein Medizinprodukt.">
+  <title>RadiWorks — Werkbank</title>
+  <link rel="icon" type="image/png" href="favicon-32.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/module-theme.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1 class="brand-title">RadiWorks <span class="brand-sub">Werkbank</span></h1>
+      <span id="case-badge" class="case-badge" title="Aktiver Fall">kein Fall geladen</span>
+    </div>
+    <div class="header-controls">
+      <label class="control">
+        <span class="control-label">Akzent</span>
+        <select id="accent-select" aria-label="Modul-Akzent wählen">
+          <option value="sage">Sage (Plattform)</option>
+          <option value="wellenreiter">Wellenreiter</option>
+          <option value="sunrise">Sonnenaufgang</option>
+        </select>
+      </label>
+      <button id="mode-toggle" class="btn btn-ghost" type="button" aria-pressed="false">Dunkel</button>
+      <span id="ws-status" class="status-led" role="status" aria-label="Verbindungsstatus">
+        <span class="led" aria-hidden="true"></span><span class="led-text">verbinde …</span>
+      </span>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Modulbereiche">
+    <button class="tab" type="button" role="tab" aria-selected="true" data-tab="start" id="tab-start">Start</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="analyse" id="tab-analyse">Analyse</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="rates" id="tab-rates">Raten · Stick-Pad</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="broadcast" id="tab-broadcast">Broadcast</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="images" id="tab-images">Bild &amp; Area</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="peggotty" id="tab-peggotty">Peggotty</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="entropy" id="tab-entropy">Entropie</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="cases" id="tab-cases">Fälle</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="settings" id="tab-settings">Einstellungen</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" data-tab="info" id="tab-info">Über &amp; Quellen</button>
+  </nav>
+
+  <main id="main" class="app-main">
+    <!-- ============ START (Radiquant5-Designsprache) ============ -->
+    <section class="view" id="view-start" role="tabpanel" aria-labelledby="tab-start">
+      <div class="hero">
+        <p class="hero-kicker">Eine ruhige Werkbank für achtsame Resonanzarbeit</p>
+        <h2 class="hero-title">Resonanz verstehen.<span class="hero-title-accent">Klar analysieren.</span></h2>
+        <p class="hero-sub">RadiWorks ist die Korrelations-Engine der Aurelia-Pipeline:
+        Mustererkennung und Korrelations-Matrix der Felder — lokal, dokumentiert, in Ihrer Datenhoheit.</p>
+        <div id="recent-cases" class="chips" hidden aria-label="Zuletzt geladene Fälle"></div>
+      </div>
+
+      <h3 class="section-title">Workflow-Pipeline · 6 Module</h3>
+      <div class="phase-grid">
+        <article class="phase-card" style="--phase: var(--phase-erfassung)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Phase 1 · erfasst</p>
+          <h4>Radi144</h4>
+          <p class="phase-role">144-Felder-Resonanz-Baseline — Erfassung der Ausgangs-Resonanz.</p>
+        </article>
+        <article class="phase-card phase-active" style="--phase: var(--phase-analyse)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Phase 2 · analyse</p>
+          <h4>RadiWorks <span class="badge">dieses Modul</span></h4>
+          <p class="phase-role">Korrelations-Engine — Mustererkennung und Korrelations-Matrix der Felder.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-analyse)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Phase 3 · analyse</p>
+          <h4>RadiMorphic · RadiBlohm</h4>
+          <p class="phase-role">Morphische Resonanzanalyse und Frequenz-Spektrum.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-harmonisierung)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Phase 4 · harmonisierung</p>
+          <h4>RadiThoms</h4>
+          <p class="phase-role">Meridian-Profil — TCM-Meridiane und HRV-Integration.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-reflexion)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Phase 5 · reflexion</p>
+          <h4>RadiCopen</h4>
+          <p class="phase-role">Copen-Rate auf Fibonacci-Basis und finaler Synergy-Score.</p>
+        </article>
+      </div>
+
+      <h3 class="section-title">Drei Prinzipien</h3>
+      <div class="principle-grid">
+        <div class="principle">
+          <h4>Lokale Datenhoheit</h4>
+          <p>Analysen laufen lokal; jeder Lauf trägt einen Computation Passport mit Quelle und Seed.</p>
+        </div>
+        <div class="principle">
+          <h4>Heilsames Design</h4>
+          <p>Ruhige Farben aus einer Basis, klare Sprache, Bedienung ohne Zeitdruck — WCAG 2.2 AA.</p>
+        </div>
+        <div class="principle">
+          <h4>Innovation mit Bedacht</h4>
+          <p>Kernlogik bitidentisch zum Original verifiziert; neue Wege nur hinter expliziten Festlegungen.</p>
+        </div>
+      </div>
+
+      <div class="notice" role="note">
+        <strong>Hinweis:</strong> Alle Analysen erzeugen zunächst einen Prüfdraft — nichts wird ohne
+        Ihre Freigabe weitergeleitet (Aurelia D18). Wellbeing-Dokumentation, kein Medizinprodukt.
+      </div>
+    </section>
+
+    <!-- ============ ANALYSE ============ -->
+    <section class="view" id="view-analyse" role="tabpanel" aria-labelledby="tab-analyse" hidden>
+      <form id="analyze-form" class="panel form-grid" aria-label="Analyse starten">
+        <label class="control grow">
+          <span class="control-label">Raten-Datenbank</span>
+          <select id="db-select" required aria-describedby="db-help"></select>
+        </label>
+        <label class="control">
+          <span class="control-label">Seed (optional)</span>
+          <input id="seed-input" type="number" inputmode="numeric" placeholder="—" min="0">
+        </label>
+        <label class="control">
+          <span class="control-label">Entropie</span>
+          <select id="mode-select">
+            <option value="">Einstellung (Server)</option>
+            <option value="seeded">seeded</option>
+            <option value="stochastic">stochastic (Hotbits)</option>
+          </select>
+        </label>
+        <label class="control">
+          <span class="control-label">Max. Treffer</span>
+          <select id="maxhits-select">
+            <option value="100">100</option>
+            <option value="1000">1000</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Analyse starten</button>
+        <button class="btn" id="grounding-btn" type="button" title="Broadcast: GROUNDING TO THE EARTH CORE (10 s)">Grounding</button>
+        <button class="btn" id="clear-btn" type="button" title="UV-Reinigungs-Overlay (visual)">Clear</button>
+        <button class="btn" id="training-start-btn" type="button">Training [Start]</button>
+        <button class="btn" id="training-uncover-btn" type="button">Training [Uncover]</button>
+      </form>
+      <div class="category-row" id="category-row" aria-label="Kategorie-Schnellwahl">
+        <button class="btn cat-btn" type="button" data-cat="HOMEOPATHY">Homeopathie</button>
+        <button class="btn cat-btn" type="button" data-cat="BIOLOGICAL">Biologisch</button>
+        <button class="btn cat-btn" type="button" data-cat="SYMBOLISM">Symbolik</button>
+        <button class="btn cat-btn" type="button" data-cat="ESSENCES">Essenzen</button>
+        <button class="btn cat-btn" type="button" data-cat="CHEMICAL">Chemie</button>
+        <button class="btn cat-btn" type="button" data-cat="ENERGY">Energie</button>
+        <button class="btn cat-btn" type="button" data-cat="AGRICULTURE">Agriculture</button>
+        <button class="btn cat-btn" type="button" data-cat="ANALYSIS">Analyse-Raten</button>
+      </div>
+      <p class="hint" id="selected-db-hint">Keine Datenbank gewählt.</p>
+      <div id="training-bar" class="training-bar" hidden>
+        <strong>TRAINING MODE</strong> — Signatur verdeckt gewählt. Decke sie erst auf, wenn Du geübt hast.
+        <span id="training-signature"></span>
+      </div>
+      <div id="uv-flash" class="uv-flash" aria-hidden="true" hidden></div>
+      <p id="db-help" class="hint">Analysen erzeugen einen Prüfdraft — nichts wird ohne Ihre Freigabe gesendet (Aurelia D18).
+      Mit Seed: gleicher Seed + gleiche Datenbank = identisches Ergebnis (Reproduzierbarkeit). Ohne Seed im Entropie-Modus „Einstellung (Server)“: jeder Lauf variiert wie im Original.</p>
+
+      <div class="panel-row">
+        <div id="gv-panel" class="panel panel-gv" aria-live="polite">
+          <h2 class="panel-title">General Vitality</h2>
+          <div class="gv-value" id="gv-value">—</div>
+          <p class="hint" id="gv-meta">GENERAL VITALITY: — (runs = 0)</p>
+          <div class="draft-actions" style="justify-content:center">
+            <button class="btn btn-primary" id="gv-btn" type="button">GV-Runde</button>
+            <button class="btn" id="auto-on-btn" type="button">Auto AN</button>
+            <button class="btn" id="auto-off-btn" type="button">Auto AUS</button>
+          </div>
+          <canvas id="gv-graph" width="280" height="110" aria-label="General-Vitality-Verlauf" role="img"></canvas>
+        </div>
+
+        <div id="draft-panel" class="panel panel-draft" aria-live="polite">
+          <h2 class="panel-title">Prüfdraft (Zwischenablage)</h2>
+          <p class="hint" id="draft-empty">Noch kein Draft — starten Sie eine Analyse.</p>
+          <div id="draft-body" hidden>
+            <dl class="draft-meta">
+              <dt>Status</dt><dd id="draft-status">draft</dd>
+              <dt>CopyGuard</dt><dd id="draft-copyguard">allow</dd>
+              <dt>Kernel</dt><dd id="draft-kernel">—</dd>
+            </dl>
+            <div class="draft-actions">
+              <button class="btn" id="draft-ready-btn" type="button">Prüfen → bereit</button>
+              <button class="btn btn-primary" id="draft-promote-btn" type="button" disabled>Freigeben (Promote)</button>
+            </div>
+            <p class="hint" id="draft-hint">Erst Prüfen, dann Freigeben — der Server blockt ungeprüfte Promotes (409).</p>
+          </div>
+          <hr class="soft-rule">
+          <div class="draft-actions">
+            <button class="btn" id="eq-btn" type="button">Essenzielle Fragen</button>
+            <button class="btn" id="clipboard-btn" type="button" title="Top-21-Raten + Prompt in die Zwischenablage (nur lokal)">Analyse → KI-Zwischenablage</button>
+          </div>
+          <pre id="eq-report" class="eq-report" hidden></pre>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Analyseergebnis <span id="result-count" class="badge"></span></h2>
+        <p class="hint" id="result-empty">Kein Ergebnis vorhanden.</p>
+        <div class="draft-actions" id="session-nav" hidden style="margin-bottom:8px">
+          <button class="btn" id="session-prev" type="button" aria-label="Ältere Session">←</button>
+          <span class="hint" id="session-indicator">Session —/—</span>
+          <button class="btn" id="session-next" type="button" aria-label="Neuere Session">→</button>
+          <button class="btn" id="edit-case-btn" type="button">Fall bearbeiten</button>
+        </div>
+        <div class="table-wrap" id="result-wrap" hidden>
+          <table class="data-table" id="result-table">
+            <thead>
+              <tr>
+                <th scope="col">Nr</th><th scope="col">EW</th><th scope="col">Rate / Signatur</th>
+                <th scope="col">Potenz</th><th scope="col">Lvl</th><th scope="col">HIT</th>
+                <th scope="col">GV</th><th scope="col">GV-RE</th><th scope="col">REC</th><th scope="col">Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+          <nav class="pager" id="pager" aria-label="Ergebnisseiten"></nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ RATEN / STICK-PAD ============ -->
+    <section class="view" id="view-rates" role="tabpanel" aria-labelledby="tab-rates" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Stick-Pad — „Leertaste halten, Intention fokussieren"</h2>
+        <p class="hint">Wie im Original: Positionen werden deterministisch auf Raten abgebildet
+        (Rate = Random(x), Wert = Random(y)+1 — bitexakte Java-Random-Emulation).</p>
+        <div id="pad-area" class="pad-area" tabindex="0" role="application"
+             aria-label="Stick-Pad-Feld: Zeiger bewegen oder Taste halten und Positionen sammeln">
+          <p id="pad-hint" class="hint">Hier Zeiger führen oder gedrückt halten — jede Position zählt.</p>
+        </div>
+        <p class="hint" id="pad-count">0 Positionen gesammelt.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Datenbank</span>
+            <select id="pad-db"></select>
+          </label>
+          <button class="btn btn-primary" id="pad-analyze-btn" type="button">Analysieren</button>
+          <button class="btn" id="pad-gv-btn" type="button">Stick-Pad-GV</button>
+          <button class="btn btn-danger" id="pad-clear-btn" type="button">Leeren</button>
+        </div>
+        <p class="hint" id="pad-gv-out"></p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Stick-Pad-Ergebnis</h2>
+        <p class="hint" id="pad-result-empty">Noch kein Ergebnis.</p>
+        <div class="table-wrap" id="pad-result-wrap" hidden>
+          <table class="data-table">
+            <thead><tr><th scope="col">Rate</th><th scope="col">Energetischer Wert</th></tr></thead>
+            <tbody id="pad-result-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BROADCAST ============ -->
+    <section class="view" id="view-broadcast" role="tabpanel" aria-labelledby="tab-broadcast" hidden>
+      <form id="broadcast-form" class="panel form-grid" aria-label="Broadcast senden">
+        <label class="control grow">
+          <span class="control-label">Signatur</span>
+          <input id="sig-input" type="text" required placeholder="z. B. GROUNDING TO THE EARTH CORE">
+        </label>
+        <label class="control">
+          <span class="control-label">Sekunden</span>
+          <input id="sec-input" type="number" value="60" min="1" max="86400">
+        </label>
+        <label class="control">
+          <span class="control-label">Multiplikator</span>
+          <input id="mul-input" type="number" value="1" min="1" max="1000">
+        </label>
+        <label class="control control-check">
+          <input id="clear-input" type="checkbox">
+          <span class="control-label">Clear-Modus</span>
+        </label>
+        <label class="control control-check">
+          <input id="binaural-toggle" type="checkbox">
+          <span class="control-label">Binaural (bei Resonanz)</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Senden</button>
+        <button class="btn btn-danger" id="stop-all-btn" type="button">Alle stoppen</button>
+      </form>
+
+      <div class="panel">
+        <h2 class="panel-title">Aktive Broadcasts <span id="queue-count" class="badge">0</span></h2>
+        <div id="broadcast-stage" class="broadcast-stage"></div>
+        <p class="hint" id="broadcast-hint">Panels: Fibonacci-Ästhetik des Originals (13 · 21 · 33 · 54 · 89 · 144 … 987), Resonanz ab 6765 + Multiplikator. Bei „Bewegung reduzieren" gilt ein statischer Rahmen mit Textstatus.</p>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel">
+          <h2 class="panel-title">LED-Choreografie (VirtualEmitter)</h2>
+          <p class="hint">Signatur → Ziffern → LED-Gruppen des Originals (weiß 0/9 · infrarot 1/6 · rot 2/5 · grün 3/7 · blau 4/8 · Clear: UV via 1/6).</p>
+          <div id="led-strip" class="led-strip" aria-live="polite"><p class="hint">Noch keine Sequenz.</p></div>
+        </div>
+        <div class="panel">
+          <h2 class="panel-title">Resonanzliste</h2>
+          <ul id="resonance-list" class="resonance-list" aria-live="polite"><li class="hint">Noch keine Resonanz.</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BILD & AREA ============ -->
+    <section class="view" id="view-images" role="tabpanel" aria-labelledby="tab-images" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Bildschichten (Aether_5)</h2>
+        <p class="hint">Bilder bleiben im Browser — die Engine erhält nur die Anzahl der Schichten
+        und zieht je Schicht 256 Entropiewerte (Runden bis max ≥ 162, wie im Original).
+        MD5 führst Du als Zeugen-Hash (Passport-<code>input_hash</code>-Denke).</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Schichten (ausgewählte Bilder)</span>
+            <input id="img-count" type="number" value="1" min="1" max="50">
+          </label>
+          <input id="img-files" type="file" accept="image/*" multiple class="control">
+          <button class="btn btn-primary" id="img-analyze-btn" type="button">Bilder analysieren</button>
+        </div>
+        <table class="data-table" id="img-table" hidden>
+          <thead><tr><th scope="col">Schicht</th><th scope="col">Datei</th><th scope="col">MD5</th><th scope="col">GV</th><th scope="col">Aktion</th></tr></thead>
+          <tbody id="img-body"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Area-Scan (Aether_7 — „SCAN FOR TARGET")</h2>
+        <div class="draft-actions">
+          <input id="area-file" type="file" accept="image/*" class="control">
+          <label class="control"><span class="control-label">Rasterbreite</span>
+            <input id="area-w" type="number" value="16" min="2" max="64"></label>
+          <label class="control"><span class="control-label">Rasterhöhe</span>
+            <input id="area-h" type="number" value="10" min="2" max="64"></label>
+          <button class="btn btn-primary" id="area-scan-btn" type="button">Fläche scannen</button>
+        </div>
+        <div class="area-wrap"><canvas id="area-canvas" width="480" height="300" role="img" aria-label="Area-Scan-Heatmap"></canvas></div>
+        <p class="hint" id="area-out"></p>
+      </div>
+    </section>
+
+    <!-- ============ PEGGOTTY (RadionicScript) ============ -->
+    <section class="view" id="view-peggotty" role="tabpanel" aria-labelledby="tab-peggotty" hidden>
+      <div class="panel">
+        <h2 class="panel-title">RadionicScript — Interpreter</h2>
+        <p class="hint">Befehle wie im Original: <code>var = ANALYZE datenbank</code> ·
+        <code>PRINT name|text</code> · <code>GOTO label</code> · <code>label:</code> ·
+        <code>## Kommentar</code>. Analyseziehungen folgen dem Entropie-Modus.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Gespeicherte Skripte</span>
+            <select id="pg-name"></select>
+          </label>
+          <button class="btn" id="pg-load-btn" type="button">Skript laden</button>
+        </div>
+        <textarea id="pg-text" class="script-editor" rows="8" spellcheck="false"
+          aria-label="Skript-Editor">## RadiWorks Skript
+ziel = ANALYZE HOMEOPATHY_Clarke
+PRINT Ziel-Analyse abgeschlossen.
+PRINT ziel</textarea>
+        <div class="draft-actions">
+          <button class="btn btn-primary" id="pg-run-btn" type="button">Ausführen</button>
+        </div>
+        <pre id="pg-output" class="eq-report" hidden></pre>
+      </div>
+    </section>
+
+    <!-- ============ ENTROPIE (HOTBITS) ============ -->
+    <section class="view" id="view-entropy" role="tabpanel" aria-labelledby="tab-entropy" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Webcam-Entropie (Aether_8 — „GET HOTBITS")</h2>
+        <p class="hint"><strong>Freiwillig &amp; transparent:</strong> Die Kamera läuft nur,
+        solange Du sie aktiviert hast. Es werden <strong>keine Bilddaten gespeichert oder
+        übertragen</strong> — nur abgeleitete Ganzzahlen (Pixel-Vergleich, wie im Original),
+        die als Entropie-Seeds dienen.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Kamera (nach Aktivierung wählbar)</span>
+            <select id="cam-select" aria-label="Kamera wählen"><option value="">—</option></select>
+          </label>
+          <button class="btn btn-primary" id="cam-start-btn" type="button">Kamera aktivieren</button>
+          <button class="btn" id="cam-stop-btn" type="button">Stoppen</button>
+          <span class="hint" id="cam-status">Aus.</span>
+        </div>
+        <video id="cam-preview" class="cam-preview" autoplay playsinline muted hidden></video>
+        <p class="hint" id="feed-status">Feed: 0 Werte.</p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Hinweis</h2>
+        <p class="hint">Im stochastischen Modus hat der Webcam-Feed Vorrang vor random.org
+        (Original-Verhalten: hotbits-Dateien werden zuerst geleert). Der Seed-Modus bleibt
+        unberührt — Reproduzierbarkeit geht immer vor.</p>
+      </div>
+    </section>
+
+    <!-- ============ FÄLLE ============ -->
+    <section class="view" id="view-cases" role="tabpanel" aria-labelledby="tab-cases" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Fall anlegen / speichern (Aether_2)</h2>
+        <div class="form-grid">
+          <label class="control grow"><span class="control-label">Name</span>
+            <input id="case-name" type="text" placeholder="z. B. Demo-Fall (synthetisch)"></label>
+          <label class="control grow"><span class="control-label">Beschreibung</span>
+            <input id="case-desc" type="text" placeholder="optional"></label>
+          <button class="btn btn-primary" id="case-save-btn" type="button">Analysen in Fall sichern</button>
+        </div>
+        <p class="hint">Datenschutz-Konvention (Aurelia-vorbereitet): Als Dateiname dient die
+        interne ID, der Anzeigename bleibt Dokument.</p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Gespeicherte Fälle</h2>
+        <p class="hint" id="case-list-empty">Noch keine Fälle.</p>
+        <ul id="case-list" class="case-list" hidden></ul>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Fall-Statistik (StatisticsGenerator)</h2>
+        <p class="hint" id="stat-empty">Fall laden, dann Statistik anzeigen.</p>
+        <div class="table-wrap" id="stat-wrap" hidden>
+          <table class="data-table">
+            <thead><tr><th scope="col">Häufigkeit</th><th scope="col">GV-Summe</th><th scope="col">EV-Summe</th><th scope="col">Rate</th></tr></thead>
+            <tbody id="stat-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="clarke-dialog" class="edit-dialog" aria-labelledby="clarke-title" style="max-width:720px">
+      <h2 class="panel-title" id="clarke-title">Klinischer Materia-Medica-Vergleich</h2>
+      <div id="clarke-content" class="clarke-content"></div>
+      <div class="draft-actions" style="margin-top:12px">
+        <button class="btn" id="clarke-close-btn" type="button">Schließen</button>
+      </div>
+    </dialog>
+
+    <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-title">
+      <h2 class="panel-title" id="edit-title">Fall bearbeiten</h2>
+      <label class="control"><span class="control-label">Name</span>
+        <input id="edit-name" type="text"></label>
+      <label class="control"><span class="control-label">Beschreibung</span>
+        <input id="edit-desc" type="text"></label>
+      <label class="control"><span class="control-label">Absicht (letzte Session)</span>
+        <input id="edit-intention" type="text" placeholder="optional"></label>
+      <div class="draft-actions" style="margin-top:12px">
+        <button class="btn btn-primary" id="edit-save-btn" type="button">Speichern</button>
+        <button class="btn" id="edit-cancel-btn" type="button">Abbrechen</button>
+      </div>
+    </dialog>
+
+    <!-- ============ EINSTELLUNGEN ============ -->
+    <section class="view" id="view-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Schalter (Booleans)</h2>
+        <div id="settings-booleans" class="settings-list"></div>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Zahlen (Integers)</h2>
+        <div id="settings-integers" class="settings-list"></div>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Texte (Strings)</h2>
+        <div id="settings-strings" class="settings-list"></div>
+      </div>
+      <div class="draft-actions">
+        <button class="btn btn-primary" id="settings-save-btn" type="button">Einstellungen speichern</button>
+        <span class="hint" id="settings-out" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <!-- ============ INFO ============ -->
+    <section class="view" id="view-info" role="tabpanel" aria-labelledby="tab-info" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Kernel-Ausweis (Kernel-ABI v1)</h2>
+        <dl class="manifest-list" id="manifest-list"><dt>Lädt …</dt></dl>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Entropie</h2>
+        <dl class="manifest-list" id="entropy-list"><dt>Lädt …</dt></dl>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Datenquellen &amp; Herkunft</h2>
+        <ul class="source-list">
+          <li>Raten-Datenbank: radionics-rates (isuretpolos) + Clarke-Korpus, 1008 Remedies</li>
+          <li>Kernlogik: 1:1-Port von AetherOnePi 2.2.0 — bitidentisch verifiziert gegen den Original-Bytecode (Goldwert-Test)</li>
+          <li>Entscheidungshistorie: Modul_Templates/modules/radiworks/FESTLEGUNGEN.md (2026-08-29)</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ PERMANENTE STATUSLEISTE (wie Original-Dashboard) ============ -->
+  <aside class="statusbar" aria-label="Dauerstatus: Broadcast-Queue, Resonated Rates, General Vitality">
+    <div class="statusbar-col statusbar-leds">
+      <span class="sled" id="sled-pi">PI</span>
+      <span class="sled" id="sled-broadcasting">BROADCASTING</span>
+      <span class="sled" id="sled-clearing">CLEARING</span>
+      <span class="sled" id="sled-grounding">GROUNDING</span>
+      <span class="sled" id="sled-copying">COPYING</span>
+      <div class="meter-grid">
+        <span class="meter" id="meter-packages">PACKAGES 0</span>
+        <span class="meter" id="meter-cache">CACHE 0</span>
+        <span class="meter" id="meter-progress">PROGRESS 0 %</span>
+        <span class="meter" id="meter-queue">QUEUE 0</span>
+      </div>
+    </div>
+    <div class="statusbar-col">
+      <h3>Broadcast-Queue</h3>
+      <div id="queue-bars" class="queue-bars"><p class="hint">Leer.</p></div>
+    </div>
+    <div class="statusbar-col">
+      <h3>Resonated Rates</h3>
+      <ol id="resonated-mini" class="resonated-mini"><li class="hint">Noch keine Resonanz.</li></ol>
+    </div>
+    <div class="statusbar-col">
+      <h3>General Vitality</h3>
+      <canvas id="gv-mini" width="200" height="80" role="img" aria-label="GV-Verlauf (Miniatur)"></canvas>
+      <p class="hint" id="gv-mini-text">GV — (runs = 0)</p>
+    </div>
+  </aside>
+
+  <footer class="app-footer">
+    <p><strong>Hinweis:</strong> Wellbeing-Dokumentationssoftware. Kein Medizinprodukt, keine Diagnose, keine Therapie, kein Ersatz ärztlicher Leistung.</p>
+    <p id="footer-build" class="footer-build">RadiWorks Engine</p>
+  </footer>
+
+  <script type="module" src="js/boot.js"></script>
+</body>
+</html>

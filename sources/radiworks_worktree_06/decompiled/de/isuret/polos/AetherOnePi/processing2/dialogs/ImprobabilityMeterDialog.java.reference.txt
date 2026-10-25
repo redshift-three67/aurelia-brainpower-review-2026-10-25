@@ -1,0 +1,149 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.dialogs;
+
+import de.isuret.polos.AetherOnePi.processing2.hotbits.HotbitsHandler;
+import java.util.ArrayList;
+import java.util.List;
+import processing.core.PApplet;
+
+public class ImprobabilityMeterDialog
+extends PApplet {
+    public static int WIDTH = 960;
+    public static int HEIGHT = 500;
+    public static int CENTER = WIDTH / 2;
+    public static int BEGIN_Y = 20;
+    public static int BOTTOM_Y = HEIGHT - HEIGHT / 4;
+    public static int PIXEL_SIZE = 10;
+    public static int MAX_AGE = (BOTTOM_Y - BEGIN_Y) / PIXEL_SIZE;
+    private HotbitsHandler hotbitsHandler;
+    private Pixel[][] pixels = new Pixel[WIDTH / PIXEL_SIZE][(BOTTOM_Y - BEGIN_Y) / PIXEL_SIZE];
+    private List<Integer> graphBar = new ArrayList<Integer>();
+
+    public static void main(String[] args) {
+        ImprobabilityMeterDialog.init(new HotbitsHandler(null));
+    }
+
+    public static void init(HotbitsHandler hotbitsHandler) {
+        ImprobabilityMeterDialog improbabilityMeterDialog = new ImprobabilityMeterDialog(hotbitsHandler);
+        String[] args2 = new String[]{""};
+        PApplet.runSketch(args2, improbabilityMeterDialog);
+    }
+
+    @Override
+    public void exit() {
+        this.surface.setVisible(false);
+        this.dispose();
+        System.out.println("CLOSED");
+    }
+
+    public ImprobabilityMeterDialog(HotbitsHandler hotbitsHandler) {
+        System.out.println(this.pixels.length);
+        System.out.println(this.pixels[0].length);
+        this.hotbitsHandler = hotbitsHandler;
+    }
+
+    @Override
+    public void settings() {
+        this.size(WIDTH, HEIGHT);
+    }
+
+    public void setTitle(String title) {
+        this.surface.setTitle(title);
+    }
+
+    @Override
+    public void setup() {
+        this.background(0);
+        this.surface.setTitle("Improbability Meter");
+        for (int x = 0; x < this.pixels.length; ++x) {
+            this.pixels[x] = new Pixel[(BOTTOM_Y - BEGIN_Y) / PIXEL_SIZE];
+            this.graphBar.add(0);
+            for (int y = 0; y < this.pixels[x].length; ++y) {
+                this.pixels[x][y] = null;
+            }
+        }
+    }
+
+    @Override
+    public void draw() {
+        int x;
+        this.background(0);
+        if (this.pixels[this.pixels.length / 2][0] == null) {
+            this.pixels[this.pixels.length / 2][0] = new Pixel(this, CENTER, BEGIN_Y);
+        }
+        for (x = 0; x < this.pixels.length; ++x) {
+            for (int y = this.pixels[x].length - 1; y > -1; --y) {
+                Pixel pixel = this.pixels[x][y];
+                if (pixel == null) continue;
+                this.fill(255.0f, 255 - y * 3, 255 - y * 3);
+                this.rect(pixel.x, pixel.y, PIXEL_SIZE, PIXEL_SIZE);
+                if (pixel.y < BOTTOM_Y - 2 * PIXEL_SIZE) {
+                    pixel.y += PIXEL_SIZE;
+                    if (this.hotbitsHandler.getBoolean()) {
+                        if (this.pixels[x + 1][y + 1] != null) {
+                            ++this.pixels[x + 1][y + 1].age;
+                            ++pixel.age;
+                            this.fill(255 - pixel.age, 0.0f, 0.0f);
+                        } else {
+                            pixel.x += PIXEL_SIZE;
+                            pixel.age = 0;
+                            this.pixels[x + 1][y + 1] = pixel;
+                            this.pixels[x][y] = null;
+                        }
+                    } else if (this.pixels[x - 1][y + 1] != null) {
+                        ++this.pixels[x - 1][y + 1].age;
+                        ++pixel.age;
+                        this.fill(255 - pixel.age, 0.0f, 0.0f);
+                    } else {
+                        pixel.x -= PIXEL_SIZE;
+                        pixel.age = 0;
+                        this.pixels[x - 1][y + 1] = pixel;
+                        this.pixels[x][y] = null;
+                    }
+                } else {
+                    ++pixel.age;
+                    this.pixels[x][y] = pixel;
+                    if (pixel.age >= MAX_AGE) {
+                        this.pixels[x][y] = null;
+                    }
+                    this.fill(255 - pixel.age, 0.0f, 0.0f);
+                }
+                this.rect(pixel.x, pixel.y, PIXEL_SIZE, PIXEL_SIZE);
+            }
+        }
+        this.stroke(25);
+        this.noFill();
+        this.rect(CENTER - this.pixels.length / 2 * PIXEL_SIZE, BEGIN_Y, this.pixels.length * PIXEL_SIZE, this.pixels.length * PIXEL_SIZE - BEGIN_Y);
+        for (x = 0; x < this.pixels.length; ++x) {
+            this.line(x * PIXEL_SIZE, BEGIN_Y, x * PIXEL_SIZE, BOTTOM_Y);
+            Integer graphBarValue = this.graphBar.get(x);
+            graphBarValue = this.pixels[x][this.pixels[x].length - 1] != null ? Integer.valueOf(graphBarValue + 255) : Integer.valueOf(graphBarValue - 1);
+            this.graphBar.set(x, graphBarValue);
+            if (graphBarValue < 0) {
+                graphBarValue = 1;
+            }
+            if (graphBarValue > 255) {
+                graphBarValue = 255;
+            }
+            this.fill(255.0f, graphBarValue.intValue(), 0.0f);
+            this.rect(x * PIXEL_SIZE, BOTTOM_Y + PIXEL_SIZE, PIXEL_SIZE, graphBarValue / 3);
+        }
+        for (int y = this.pixels[0].length - 1; y > -1; --y) {
+            this.line(CENTER - this.pixels.length / 2 * PIXEL_SIZE, y * PIXEL_SIZE + BEGIN_Y, this.pixels.length * PIXEL_SIZE, y * PIXEL_SIZE + BEGIN_Y);
+        }
+    }
+
+    private class Pixel {
+        int x;
+        int y;
+        int age = 0;
+
+        public Pixel(ImprobabilityMeterDialog improbabilityMeterDialog, int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+}
+

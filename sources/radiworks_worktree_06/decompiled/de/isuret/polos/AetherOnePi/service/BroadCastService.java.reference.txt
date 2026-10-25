@@ -1,0 +1,169 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.service;
+
+import de.isuret.polos.AetherOnePi.domain.BroadCastData;
+import de.isuret.polos.AetherOnePi.enums.AetherOnePins;
+import de.isuret.polos.AetherOnePi.service.PiService;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class BroadCastService {
+    private Log logger = LogFactory.getLog(BroadCastService.class);
+    private PiService piService;
+    private Boolean broadcasting = false;
+    private List<Integer> ultraviolet = new ArrayList<Integer>();
+    private List<Integer> reds = new ArrayList<Integer>();
+    private List<Integer> greens = new ArrayList<Integer>();
+    private List<Integer> blues = new ArrayList<Integer>();
+    private List<Integer> whites = new ArrayList<Integer>();
+    private List<Integer> infrared = new ArrayList<Integer>();
+    private List<Integer> internal13 = new ArrayList<Integer>();
+
+    public BroadCastService() {
+        this.ultraviolet.add(1);
+        this.ultraviolet.add(2);
+        this.ultraviolet.add(3);
+        this.ultraviolet.add(5);
+        this.ultraviolet.add(8);
+        this.reds.add(2);
+        this.reds.add(5);
+        this.greens.add(3);
+        this.greens.add(7);
+        this.blues.add(4);
+        this.blues.add(8);
+        this.whites.add(0);
+        this.whites.add(9);
+        this.infrared.add(1);
+        this.infrared.add(6);
+        this.internal13.add(1);
+        this.internal13.add(2);
+        this.internal13.add(3);
+        this.internal13.add(5);
+    }
+
+    public BroadCastData broadcast(BroadCastData data) {
+        this.logger.info("Broadcasting " + data.toString());
+        this.broadcastNow(data);
+        return data;
+    }
+
+    public void broadcastNow(BroadCastData data) {
+        this.broadcasting = true;
+        this.piService.low(AetherOnePins.CONTROL);
+        Double percent = (double)data.getRepeat().intValue() / 100.0;
+        String signature = data.getSignature().replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("-", "").replaceAll(" ", "").trim();
+        for (int r = 0; r < data.getRepeat(); ++r) {
+            for (int x = 0; x < signature.length(); ++x) {
+                this.piService.setAllLow();
+                char c = signature.charAt(x);
+                int i = c - 48;
+                if (i < 0) {
+                    i *= -1;
+                }
+                String stringPart = String.valueOf(i);
+                for (int y = 0; y < stringPart.length(); ++y) {
+                    char part = stringPart.charAt(y);
+                    Integer n = Integer.parseInt(Character.toString(part));
+                    if (data.getClear().booleanValue()) {
+                        this.blinkLED(data, n, this.infrared, AetherOnePins.ULTRAVIOLET);
+                    } else {
+                        this.blinkLED(data, n, this.whites, AetherOnePins.WHITE);
+                        this.blinkLED(data, n, this.infrared, AetherOnePins.INFRARED);
+                        this.blinkLED(data, n, this.reds, AetherOnePins.RED);
+                        this.blinkLED(data, n, this.greens, AetherOnePins.GREEN);
+                        this.blinkLED(data, n, this.blues, AetherOnePins.BLUE);
+                    }
+                    this.piService.delay(data.getDelay());
+                }
+            }
+        }
+        this.piService.high(AetherOnePins.CONTROL);
+        this.piService.setAllLow();
+        this.broadcasting = false;
+    }
+
+    private void blinkLED(BroadCastData data, Integer n, List<Integer> numbers, AetherOnePins pin) {
+        if (numbers.contains(n)) {
+            this.piService.high(pin);
+            this.piService.delay(data.getDelay());
+            this.piService.low(pin);
+        }
+    }
+
+    public PiService getPiService() {
+        return this.piService;
+    }
+
+    public void setPiService(PiService piService) {
+        this.piService = piService;
+    }
+
+    public Boolean getBroadcasting() {
+        return this.broadcasting;
+    }
+
+    public void setBroadcasting(Boolean broadcasting) {
+        this.broadcasting = broadcasting;
+    }
+
+    public List<Integer> getUltraviolet() {
+        return this.ultraviolet;
+    }
+
+    public void setUltraviolet(List<Integer> ultraviolet) {
+        this.ultraviolet = ultraviolet;
+    }
+
+    public List<Integer> getReds() {
+        return this.reds;
+    }
+
+    public void setReds(List<Integer> reds) {
+        this.reds = reds;
+    }
+
+    public List<Integer> getGreens() {
+        return this.greens;
+    }
+
+    public void setGreens(List<Integer> greens) {
+        this.greens = greens;
+    }
+
+    public List<Integer> getBlues() {
+        return this.blues;
+    }
+
+    public void setBlues(List<Integer> blues) {
+        this.blues = blues;
+    }
+
+    public List<Integer> getWhites() {
+        return this.whites;
+    }
+
+    public void setWhites(List<Integer> whites) {
+        this.whites = whites;
+    }
+
+    public List<Integer> getInfrared() {
+        return this.infrared;
+    }
+
+    public void setInfrared(List<Integer> infrared) {
+        this.infrared = infrared;
+    }
+
+    public List<Integer> getInternal13() {
+        return this.internal13;
+    }
+
+    public void setInternal13(List<Integer> internal13) {
+        this.internal13 = internal13;
+    }
+}
+

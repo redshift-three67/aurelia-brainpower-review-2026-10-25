@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELIA · Phasen &amp; Prioritätenkette (Mermaid)</title>
+<style>
+  :root{
+    --bg:#f3efe6; --card:#fffdf8; --border:#e3dbc9; --ink:#1f2a24; --ink2:#5b6b62;
+    --sage:#2c4a3e; --sage-soft:#eae9e0; --good:#15803d; --warn:#ca8a04;
+    --mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:1.35rem}
+  .sub{color:var(--ink2);font-size:.84rem;margin-top:4px}
+  .back{display:inline-block;margin-top:10px;font-size:.8rem;color:var(--sage);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;background:var(--card)}
+  section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:16px}
+  h2{font-size:1rem;margin-bottom:10px;color:var(--sage)}
+  h2 small{color:var(--ink2);font-weight:400;font-size:.74rem;margin-left:8px}
+  .note{font-size:.78rem;color:var(--ink2);margin-top:10px}
+  .mermaid{background:#fffdf8;border-radius:8px;padding:10px;display:flex;justify-content:center}
+  .mermaid svg{max-width:100%;height:auto}
+  footer{color:var(--ink2);font-size:.74rem;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AURELIA — Phasen &amp; Prioritätenkette</h1>
+  <p class="sub">Mermaid-Unterseite zum Status-Live · Stand 2026-08-28, Abend</p>
+  <a class="back" href="aurelia-status-live.html">← zurück zum Status-Live</a>
+
+  <section>
+    <h2>Phasenlandkarte <small>grün = abgenommen · satt = Umsetzung begonnen · hell = nur Konzept · durchgestrichen = gestrichen</small></h2>
+    <pre class="mermaid">
+flowchart LR
+  P0["Phase 0 · Konzept<br/>100 % · abgenommen"]
+  G0["G0-SRV · Server Ground Zero<br/>≈ 20 % · wartet G0-SRV-0"]
+  P1["Phase 1 · Gehäuse<br/>≈ 65 % · pausiert"]
+  P2["Phase 2 · Praxisorganisation<br/>≈ 22 %"]
+  P3["Phase 3 · Kernel-ABI + Raten<br/>≈ 21 %"]
+  P4["Phase 4 · Analyse strikt<br/>≈ 21 %"]
+  P5["Phase 5 · Harmonisierung<br/>≈ 21 %"]
+  P6["Phase 6 · Archiv/Trend/Report<br/>≈ 18 %"]
+  P7["Phase 7 · GPU-Härtung<br/>≈ 20 %"]
+  P8["Phase 8 · Quantum opt-in<br/>≈ 18 %"]
+  P10["Phase 10 · Betrieb<br/>≈ 18 %"]
+  P9["Phase 9 · WebRTC + Medien<br/>GESTRICHEN (D10, O08)"]
+  P0 --> G0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8 --> P10
+  P9 -.gestrichen.-> P10
+  classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+  classDef active fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+  classDef running fill:#e3ebe7,stroke:#2c4a3e,color:#1f2a24
+  classDef concept fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+  classDef gone fill:#eceae3,stroke:#5b6b62,color:#5b6b62,stroke-dasharray:4 3
+  class P0 done
+  class G0 active
+  class P1 running
+  class P2,P3,P4,P5,P6,P7,P8,P10 concept
+  class P9 gone
+    </pre>
+    <p class="note">Kein Prozentpunkt der Phasen ≥ 2 ist durch Umsetzung gedeckt — gewollt und verfassungskonform. Gesamtfortschritt ≈ 33 % (gewichtet ≈ 35 %).</p>
+  </section>
+
+  <section>
+    <h2>Prioritätenkette <small>✓ erledigt · ◐ teilerledigt · Empfehlung: Stufe 5 (Replikation) vor dem Overlap-TDD-Lauf</small></h2>
+    <pre class="mermaid">
+flowchart TD
+  S1["1 · Qualitätskette im Worktree<br/>E1: 199/214 · L3.4 präzisiert"]
+  S2["2 · gh re-authentifizieren<br/>E2: 0 PRs/Tags/CI · Protection 403"]
+  S3["3 · K1-Task-3 Reviews<br/>Spec-PASS ✓ · Quality-Findings → Option B"]
+  S5["5 · Replikationskapsel A→B→C<br/>+ Restaurationsnachweis + FF-Push<br/>★ EMPFOHLEN ALS NÄCHSTES"]
+  S3b["3b · Overlap-TDD-Lauf<br/>(namentliche Freigabe nötig)<br/>→ Spec- + Quality-Review"]
+  S4["4 · K1-Tasks 4–14<br/>Kanonmatrix · Windows-Runner · Auth"]
+  S6["6 · G0-SRV-0-Nachweis<br/>Backup/Restore extern"]
+  S7["7 · Gatefolge 1–12<br/>parallel: Constraints · CSP · RLS · CI"]
+  S1 --> S2 --> S3
+  S3 --> S5
+  S5 --> S3b --> S4 --> S6 --> S7
+  classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+  classDef partial fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+  classDef next fill:#e3ebe7,stroke:#2c4a3e,color:#1f2a24,stroke-width:2.5px
+  classDef open fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+  class S1,S2 done
+  class S3 partial
+  class S5 next
+  class S3b,S4,S6,S7 open
+    </pre>
+    <p class="note">Begründung der Vordateierung: 13 unpushed Commits + 19.040 Zeilen Pläne + E1–E4-Evidenz existieren nur auf dieser Workstation (geplante Linux-Neuinstallation). Der SPOF wird beseitigt, BEVOR mehrstündige neue Arbeit entsteht. Die Replikation ist zugleich Generalprobe für WV01/G0-SRV-0.</p>
+  </section>
+
+  <footer>Statischer Snapshot aus <code>aurelia-tiefenanalyse-v6-2026-08-28/</code> · ersetzt keine Gate-Entscheidung · Mermaid via CDN (Internet nötig)</footer>
+</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral', flowchart: { curve: 'basis' } });
+</script>
+</body>
+</html>

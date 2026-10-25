@@ -1,0 +1,76 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.utils;
+
+public class WonderfulPlantsRemedy {
+    private String name;
+    private String series;
+    private String phase;
+    private String stage;
+
+    public static WonderfulPlantsRemedy builder() {
+        return new WonderfulPlantsRemedy();
+    }
+
+    public String getKey() {
+        return this.series + "." + this.phase + "." + this.stage + " " + this.name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public WonderfulPlantsRemedy name(String name) {
+        this.setName(name);
+        return this;
+    }
+
+    public String getSeries() {
+        return this.series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
+    }
+
+    public String getPhase() {
+        return this.phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
+    public String getStage() {
+        return this.stage;
+    }
+
+    public void setStage(String stage) {
+        this.stage = stage;
+    }
+
+    public WonderfulPlantsRemedy series(String series) {
+        this.setSeries(series);
+        return this;
+    }
+
+    public WonderfulPlantsRemedy phase(String phase) {
+        this.setPhase(phase);
+        return this;
+    }
+
+    public WonderfulPlantsRemedy stage(String stage) {
+        this.setStage(stage);
+        return this;
+    }
+
+    public WonderfulPlantsRemedy build() {
+        return this;
+    }
+}
+

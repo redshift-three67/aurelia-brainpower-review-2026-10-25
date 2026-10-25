@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+runtime/
+audit-runtime/
+audit-pytest-*/
+build/
+dist/
+*.egg-info/
+config.local.json
+runtime-python.json
+artifacts/

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURELIA · Status-Live · 2026-09-09</title>
+<style>
+:root{--bg:#f3efe6;--card:#fffdf8;--line:#e3dbc9;--ink:#1f2a24;--muted:#5b6b62;--accent:#2c4a3e;--ok:#15803d;--warn:#8a5a00;--risk:#9a3412;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5}.wrap{max-width:1100px;margin:auto;padding:24px}h1{margin:0;font-size:1.65rem}h2{font-size:1rem;color:var(--accent);margin:0 0 10px}.sub,.note,footer{color:var(--muted);font-size:.86rem}.meta,.grid{display:grid;gap:12px}.meta{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin:16px 0}.grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}.card,section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}.number{font-size:1.75rem;font-weight:700;font-variant-numeric:tabular-nums}.label{font-size:.8rem;color:var(--muted)}section{margin:14px 0}ul{margin:0;padding-left:20px}li+li{margin-top:7px}.chip{display:inline-block;border-radius:99px;padding:2px 8px;font-size:.76rem;font-weight:700}.warn{background:#f7eed2;color:var(--warn)}.ok{background:#e4f2e8;color:var(--ok)}.risk{background:#fae3d8;color:var(--risk)}code{font-family:ui-monospace,Consolas,monospace;font-size:.9em}.links a{display:block;color:var(--accent);font-weight:700;text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:12px;background:#eae9e0}.links a:hover{text-decoration:underline}footer{margin-top:18px}@media(max-width:600px){.wrap{padding:16px}}
+</style>
+</head>
+<body><main class="wrap">
+<header>
+<h1>AURELIA — Status-Live</h1>
+<p class="sub">Stand 2026-09-09, 09:17 CEST · operative Quelle: <code>docs/project-control/K1-CURRENT.json</code> · statischer Status ersetzt keine Gate-Entscheidung</p>
+</header>
+<div class="meta">
+<div class="card"><div class="number">T11</div><div class="label">K1 · Umsetzung läuft</div></div>
+<div class="card"><div class="number">36</div><div class="label">erwartete uncommittierte K1-Pfade</div></div>
+<div class="card"><div class="number">346</div><div class="label">Tests: 344 PASS · 2 Capability-Skips</div></div>
+<div class="card"><div class="number">0 / 13</div><div class="label">G0-SRV-Gates bestanden</div></div>
+</div>
+<section>
+<h2>Aktueller Abnahmestand</h2>
+<p><span class="chip warn">⏸ E6 unbestimmt</span> Der attestierte lokale E6-Runner startete Vite und Chromium. Der Ausführungs-Host beendete die einzige autorisierte Matrix nach drei Minuten mit Exit-Code 143, bevor sie fertig war und ein Verdict-JSON schreiben konnte.</p>
+<ul>
+<li>11 Teil-Screenshots liegen unter <code>screenshots/e6/</code>: <code>/</code>, <code>/roadmap</code>, <code>/offen</code>, <code>/entscheidungen</code>, <code>/hardware</code> je Desktop/Mobil sowie <code>/live</code> nur Desktop.</li>
+<li>Es fehlen <code>/live</code> Mobil sowie <code>/sicherheit</code> Desktop/Mobil. Ohne alle 14 Beobachtungen und Verdict gibt es keinen E6-PASS.</li>
+<li>Die anschließende Portprüfung zeigte keinen lauschenden Prozess auf 4176; kein fremder Prozess wurde beendet.</li>
+</ul>
+</section>
+<section>
+<h2>Verifizierte lokale Grundlage</h2>
+<div class="grid">
+<div class="card"><span class="chip ok">✓ geprüft</span><p class="note">Fokussierte Matrix-/Verdict-Tests grün; Matrixintegrität lehnt fehlende, doppelte und unerwartete Paare ab.</p></div>
+<div class="card"><span class="chip ok">✓ geprüft</span><p class="note"><code>npm test</code>, Typecheck und Lint waren vor dem Runtimeversuch grün; kein Build, Preview, Push, Migration oder Serverzugriff.</p></div>
+<div class="card"><span class="chip risk">⚠ offen</span><p class="note">E4-Linux-Nachweis, reales E7-Plattformasset-Gate und E6-Vollmatrix sind weiterhin getrennte offene Nachweise.</p></div>
+</div>
+</section>
+<section>
+<h2>Nächste notwendige Entscheidungen</h2>
+<ol>
+<li>Keinen automatischen E6-Retry ausführen. Die deterministischen Namen schützen die vorhandene Teil-Evidenz vor Überschreiben.</li>
+<li>Für einen neuen Versuch erst Laufzeitgrenze und den Umgang mit den 11 vorhandenen Artefakten ausdrücklich festlegen.</li>
+<li>Danach E6 vollständig oder den konkreten Runtime-Blocker nachweisen; erst anschließend E4/E7 und die Gesamtabnahme entscheiden.</li>
+<li>Commit, Push und G0-SRV bleiben unabhängige Freigaben. G0-SRV-0 wartet weiter auf echten Backup-/Restore-Nachweis.</li>
+</ol>
+</section>
+<section class="links"><h2>Diagramme</h2><div class="grid">
+<a href="aurelia-status-live-phasen.html">Phasen &amp; K1-Fortsetzung</a>
+<a href="aurelia-status-live-gates.html">G0-SRV-Gates &amp; E6-Abnahmepfad</a>
+<a href="aurelia-status-live-task3.html">Historischer Task-3-Reviewpfad</a>
+</div></section>
+<footer>Branch <code>codex/aurelia-konsolidierung</code> · HEAD <code>1185a68</code> · 3 Commits vor Remote · lokale Entwicklung, keine Serverwirkung</footer>
+</main></body></html>

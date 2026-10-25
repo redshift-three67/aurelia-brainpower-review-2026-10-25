@@ -1,0 +1,398 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.Session;
+import de.isuret.polos.AetherOnePi.domain.StickPad;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+
+public class AnalyseScreen
+implements IDrawableElement,
+MouseClickObserver {
+    private AetherOneUI p;
+    private StickPad stickPad = new StickPad();
+    private boolean browserSupported = false;
+    private boolean mouseClickOccurred = false;
+    private Long lastMouseClick = null;
+    private int page = 1;
+    public static final int MAX_ENTRIES = 21;
+    public static final int MAX_ENTRIES_INTERNAL = 105;
+
+    public AnalyseScreen(AetherOneUI p) {
+        this.p = p;
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            this.browserSupported = true;
+        }
+    }
+
+    @Override
+    public void draw() {
+        Session session;
+        if (this.p.getStickPadMode().booleanValue() || this.p.getStickPadGeneralVitalityMode().booleanValue()) {
+            this.analyzeStickPad();
+        }
+        this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 15.0f);
+        if (this.p.getSelectedDatabase() != null) {
+            this.p.fill(198.0f, 220.0f, 255.0f);
+            this.p.text("SELECTED DATABASE: " + this.p.getSelectedDatabase(), 35.0f, 88.0f);
+            if (this.p.getGeneralVitality() > 0) {
+                if (this.p.getGvCounter() == 0) {
+                    this.p.fill(0.0f, 255.0f, 0.0f);
+                    this.p.text(">> CHECK GENERAL VITALITY <<", 35.0f, 510.0f);
+                } else {
+                    Object trials = "";
+                    if (this.p.getAnalysisResult().getNumberOfTrials() != null) {
+                        trials = " (runs = " + this.p.getAnalysisResult().getNumberOfTrials() + ")";
+                    }
+                    this.p.text("GENERAL VITALITY: " + this.p.getGeneralVitality() + (String)trials, 35.0f, 510.0f);
+                }
+            } else if (this.p.getAnalysisResult() != null) {
+                this.p.fill(0.0f, 255.0f, 0.0f);
+                this.p.text(">> CHECK GENERAL VITALITY <<", 35.0f, 510.0f);
+            }
+        }
+        if (this.p.getCaseObject() != null && this.p.getCaseObject().getSessionList() != null && this.p.getCaseObject().getSessionList().size() > 0 && this.p.getAnalysisPointer() != null && (session = this.p.getCaseObject().getSessionList().get(this.p.getAnalysisPointer())) != null && session.getCreated() != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat();
+            this.p.fill(255);
+            this.p.text(formatter.format(session.getCreated().getTime()), 400.0f, 110.0f);
+        }
+        if (this.p.getAnalysisResult() != null) {
+            int y = 110;
+            int count = 0;
+            this.p.stroke(180);
+            this.p.fill(255);
+            this.p.text("NO", 35.0f, (float)y);
+            this.p.text("EV", 80.0f, (float)y);
+            this.p.text("RATE / SIGNATURE", 125.0f, (float)y);
+            this.p.text("POTENCY", 600.0f, (float)y);
+            this.p.text("LVL", 724.0f, (float)y);
+            this.p.text("HIT", 764.0f, (float)y);
+            this.p.text("GV", 804.0f, (float)y);
+            this.p.text("GV RE", 844.0f, (float)y);
+            this.p.text("REC", 890.0f, (float)y);
+            this.p.text("ACTIONS", 925.0f, (float)y);
+            this.p.line(35.0f, y + 2, 1200.0f, y + 2);
+            y += 18;
+            Integer highestGV = null;
+            Integer highestY = null;
+            this.drawAnalysisBroadband();
+            HashMap<String, Integer> words = new HashMap<String, Integer>();
+            for (RateObject rate : this.p.getAnalysisResult().getRateObjects()) {
+                String name = rate.getNameOrRate().trim();
+                if (name.contains(" ")) {
+                    String[] parts = name.split(" ");
+                    for (String part : parts) {
+                        if ((part = part.replaceAll("-", "").replaceAll(">", "").trim()).length() < 3) continue;
+                        if (words.get(part) != null) {
+                            words.put(part, (Integer)words.get(part) + 1);
+                            continue;
+                        }
+                        words.put(part, 1);
+                    }
+                    continue;
+                }
+                if (words.get(name) != null) {
+                    words.put(name, (Integer)words.get(name) + 1);
+                    continue;
+                }
+                words.put(name, 1);
+            }
+            int startIndex = (this.page - 1) * 21;
+            int endIndex = Math.min(startIndex + 21, this.p.getAnalysisResult().getRateObjects().size());
+            List<RateObject> pageList = this.p.getAnalysisResult().getRateObjects().subList(startIndex, endIndex);
+            for (RateObject rate : pageList) {
+                this.p.fill(255);
+                if (rate.getPotency() != null) {
+                    this.p.text(rate.getPotency(), 600.0f, (float)(y - 2));
+                }
+                this.p.text(rate.getLevel(), 724.0f, (float)(y - 2));
+                this.p.fill(0.0f, 255.0f, 0.0f);
+                this.p.rect(930.0f, y - 15, 100.0f, 15.0f);
+                this.p.fill(0);
+                this.p.stroke(255);
+                this.p.text("BROADCAST", 935.0f, (float)(y - 2));
+                if (this.browserSupported && rate.getUrl() != null) {
+                    this.p.fill(3.0f, 177.0f, 252.0f);
+                    this.p.rect(1035.0f, y - 15, 40.0f, 15.0f);
+                    this.p.fill(0);
+                    this.p.stroke(255);
+                    this.p.text("URL", 1040.0f, (float)(y - 2));
+                }
+                if (this.browserSupported) {
+                    this.p.fill(3.0f, 170.0f, 252.0f);
+                    this.p.rect(1080.0f, y - 15, 65.0f, 15.0f);
+                    this.p.fill(0);
+                    this.p.stroke(255);
+                    this.p.text("GOOGLE", 1085.0f, (float)(y - 2));
+                }
+                if (this.p.getSelectedDatabase().toLowerCase().contains("clarke")) {
+                    this.p.fill(120.0f, 170.0f, 252.0f);
+                    this.p.rect(1150.0f, y - 15, 60.0f, 15.0f);
+                    this.p.fill(0);
+                    this.p.stroke(255);
+                    this.p.text("CLARKE", 1155.0f, (float)(y - 2));
+                }
+                if (this.p.mouseY >= y - 18 && this.p.mouseY < y && this.p.mouseX < 1200) {
+                    this.p.noStroke();
+                    this.p.fill(10.0f, 255.0f, 10.0f, 40.0f);
+                    this.p.rect(33.0f, y - 16, 1190.0f, 18.0f);
+                    if (this.mouseClickOccurred) {
+                        this.mouseClickOccurred = false;
+                        this.lastMouseClick = Calendar.getInstance().getTimeInMillis();
+                        this.performClickEvent(rate);
+                    }
+                }
+                this.p.fill(255);
+                this.p.stroke(160);
+                if (rate.getGv() == this.p.getGeneralVitality()) {
+                    this.p.fill(130.0f, 219.0f, 255.0f);
+                } else if (rate.getGv() > this.p.getGeneralVitality() && this.p.getGeneralVitality() >= 1000) {
+                    this.p.fill(39.0f, 255.0f, 0.0f);
+                } else if (rate.getGv() > this.p.getGeneralVitality() && rate.getGv() > 1000) {
+                    this.p.fill(29.0f, 255.0f, 0.0f);
+                } else if (rate.getGv() > this.p.getGeneralVitality() + 100) {
+                    this.p.fill(26.0f, 237.0f, 0.0f);
+                } else if (rate.getGv() > this.p.getGeneralVitality()) {
+                    this.p.fill(23.0f, 211.0f, 0.0f);
+                } else if (rate.getGv() > 0) {
+                    this.p.fill(200);
+                }
+                this.p.text(count + (this.page - 1) * 21, 35.0f, (float)y);
+                this.p.text(rate.getEnergeticValue(), 80.0f, (float)y);
+                this.p.text(rate.getNameOrRate(), 125.0f, (float)y);
+                this.p.text(rate.getGv(), 804.0f, (float)y);
+                String name = rate.getNameOrRate();
+                if (name.contains(" ")) {
+                    String[] parts;
+                    for (String part : parts = name.split(" ")) {
+                        if ((part = part.replaceAll("-", "").replaceAll(">", "").trim()).length() < 3 || words.get(part) == null || (Integer)words.get(part) <= 1) continue;
+                        this.p.noStroke();
+                        this.p.fill(200.0f, 0.0f, 0.0f, 50.0f);
+                        this.p.rect(105.0f, y - 15, 700.0f, 15.0f);
+                        break;
+                    }
+                } else if (words.get(name) != null && (Integer)words.get(name) > 1) {
+                    this.p.noStroke();
+                    this.p.fill(200.0f, 0.0f, 0.0f, 50.0f);
+                    this.p.rect(105.0f, y - 15, 65.0f, 15.0f);
+                }
+                this.p.stroke(160);
+                if (highestGV == null || highestGV < rate.getGv()) {
+                    highestGV = rate.getGv();
+                    highestY = y;
+                }
+                if (rate.getRecurringGeneralVitality() > 1) {
+                    this.p.text(rate.getRecurringGeneralVitality(), 854.0f, (float)y);
+                }
+                if (rate.getRecurring() > 0) {
+                    this.p.text(rate.getRecurring(), 900.0f, (float)y);
+                }
+                this.p.line(35.0f, y + 2, 1200.0f, y + 2);
+                y += 18;
+                if (++count < 21) continue;
+                break;
+            }
+            this.p.line(70.0f, 100.0f, 70.0f, y - 15);
+            this.p.line(105.0f, 100.0f, 105.0f, y - 15);
+            this.p.line(590.0f, 100.0f, 590.0f, y - 15);
+            this.p.line(720.0f, 100.0f, 720.0f, y - 15);
+            this.p.line(760.0f, 100.0f, 760.0f, y - 15);
+            this.p.line(800.0f, 100.0f, 800.0f, y - 15);
+            this.p.line(840.0f, 100.0f, 840.0f, y - 15);
+            this.p.line(885.0f, 100.0f, 885.0f, y - 15);
+            this.p.line(920.0f, 100.0f, 920.0f, y - 15);
+            this.p.stroke(255.0f, 0.0f, 0.0f);
+            this.p.fill(255);
+            if (highestGV != null && highestY != null) {
+                this.p.text(highestGV, 764.0f, (float)highestY.intValue());
+            }
+            if (this.p.getAnalysisResult().getRateObjects().size() > 21) {
+                this.p.noStroke();
+                for (int i = 0; i < this.p.getAnalysisResult().getRateObjects().size() / 21; ++i) {
+                    if (this.p.mouseX > 930 + i * 22 && this.p.mouseX < 930 + i * 22 + 22 && this.p.mouseY > 75 && this.p.mouseY < 95) {
+                        this.p.stroke(0.0f, 255.0f, 0.0f);
+                        if (this.p.mousePressed) {
+                            this.page = i + 1;
+                            System.out.println(i);
+                        }
+                    } else {
+                        this.p.stroke(255);
+                    }
+                    if (this.page == i + 1) {
+                        this.p.fill(0.0f, 200.0f, 0.0f);
+                    } else {
+                        this.p.fill(50.0f, 0.0f, 200.0f);
+                    }
+                    this.p.rect(930 + i * 22, 75.0f, 20.0f, 20.0f);
+                    this.p.fill(255);
+                    this.p.text(String.valueOf(i + 1), (float)(937 + i * 22), 90.0f);
+                }
+            }
+        }
+        if (this.mouseClickOccurred) {
+            this.p.fill(255);
+            this.p.text("CLICK", 10.0f, 20.0f);
+            if (this.lastMouseClick + 500L > Calendar.getInstance().getTimeInMillis()) {
+                this.mouseClickOccurred = false;
+            }
+        }
+        if (this.p.getTrainingSignature() != null) {
+            this.p.fill(255);
+            this.p.text("TRAINING MODE ...", 450.0f, 510.0f);
+        }
+        if (this.p.getTrainingSignature() != null && !this.p.getTrainingSignatureCovered().booleanValue()) {
+            this.p.fill(255);
+            this.p.text(this.p.getTrainingSignature(), 600.0f, 510.0f);
+        }
+        if (this.p.getGvCounter() > 0 && this.p.getGvCounter() <= 21) {
+            this.p.fill(0.0f, 255.0f, 0.0f);
+            this.p.noStroke();
+            this.p.rect(0.0f, 94 + this.p.getGvCounter() * 18, 10.0f, 18.0f);
+            this.p.stroke(0.0f, 255.0f, 0.0f);
+            this.p.line(0.0f, 94 + this.p.getGvCounter() * 18, 900.0f, 94 + this.p.getGvCounter() * 18);
+            this.p.line(0.0f, 112 + this.p.getGvCounter() * 18, 900.0f, 112 + this.p.getGvCounter() * 18);
+        }
+    }
+
+    private void drawAnalysisBroadband() {
+        float bandWidth = 850.0f;
+        float maxGV = this.getMaxGV();
+        if (maxGV == 0.0f) {
+            return;
+        }
+        float relation = 0.0f;
+        relation = 850.0f / maxGV;
+        this.p.fill(0.0f, 255.0f, 0.0f, 70.0f);
+        this.p.noStroke();
+        this.p.rect(300.0f, 500.0f, 850.0f, 40.0f);
+        this.p.pushMatrix();
+        this.p.scale(relation, 1.0f);
+        this.p.fill(0.0f, 255.0f, 255.0f);
+        this.p.rect(300 + this.p.getGeneralVitality(), 500.0f, 4.0f, 40.0f);
+        this.p.fill(255.0f, 0.0f, 0.0f);
+        this.p.rect(300.0f + maxGV, 500.0f, 4.0f, 40.0f);
+        for (RateObject rate : this.p.getAnalysisResult().getRateObjects()) {
+            if (rate.getGv() == 0) continue;
+            this.p.fill(255);
+            this.p.rect(300 + rate.getGv(), 500.0f, 1.0f, 40.0f);
+        }
+        this.p.popMatrix();
+    }
+
+    private int getMaxGV() {
+        int count = 0;
+        int maxGV = 0;
+        for (RateObject rate : this.p.getAnalysisResult().getRateObjects()) {
+            if (rate.getGv() > maxGV) {
+                maxGV = rate.getGv();
+            }
+            if (++count < 21) continue;
+            break;
+        }
+        if (this.p.getGeneralVitality() > maxGV) {
+            maxGV = this.p.getGeneralVitality();
+        }
+        return maxGV;
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    public void performClickEvent(RateObject rate) {
+        ((Textfield)this.p.getGuiElements().getCp5().get("SIGNATURE")).setText(rate.getNameOrRate());
+        if (rate.getGv() > 0) {
+            ((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).setText(String.valueOf(rate.getGv()));
+        } else {
+            ((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).setText("60");
+        }
+        if (this.p.mouseButton == 39 || this.p.mouseX >= 935 && this.p.mouseX < 1030) {
+            this.p.getAetherOneEventHandler().broadcastNow();
+        }
+        if (this.browserSupported && rate.getUrl() != null) {
+            if (this.p.mouseButton == 39 || this.p.mouseX >= 1040 && this.p.mouseX < 1080) {
+                this.openUrl(rate.getUrl());
+            }
+        }
+        if (this.browserSupported) {
+            if (this.p.mouseButton == 39 || this.p.mouseX >= 1080 && this.p.mouseX < 1145) {
+                this.openUrl("https://www.google.com/search?q=" + rate.getNameOrRate().replaceAll(" ", "+"));
+            }
+        }
+        if (this.p.mouseButton == 39 || this.p.mouseX >= 1150 && this.p.mouseX < 1210) {
+            this.openFile(this.p.getAnalyseService().analyzeClarke(rate.getNameOrRate(), this.p.getAnalysisResult()));
+        }
+    }
+
+    public void openFile(File file) {
+        try {
+            Desktop.getDesktop().browse(file.toURI());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openUrl(String url) {
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void analyzeStickPad() {
+        if (!this.stickPad.getGeneralVitalityChecking().booleanValue()) {
+            this.stickPad.setGeneralVitalityChecking(this.p.getStickPadGeneralVitalityMode());
+        }
+        if (this.stickPad.getGeneralVitalityChecking().booleanValue()) {
+            this.p.fill(156.0f, 255.0f, 99.0f);
+        } else {
+            this.p.fill(255.0f, 127.0f, 127.0f);
+        }
+        this.p.text("STICK PAD ON " + this.p.mouseX + "," + this.p.mouseY + " (" + this.stickPad.getPositions().size() + ")", 850.0f, 88.0f);
+        this.stickPad.addStickPadPosition(this.p.mouseX, this.p.mouseY);
+        if (this.stickPad.getPositions().size() >= 500 && !this.stickPad.getGeneralVitalityChecking().booleanValue()) {
+            this.p.setAnalysisResult(this.stickPad.analyze(this.p.getSelectedDatabase()));
+            this.stickPad.setGeneralVitalityChecking(true);
+            this.p.setGvCounter(0);
+        } else if (this.stickPad.getPositions().size() >= 10 && this.stickPad.getGeneralVitalityChecking().booleanValue()) {
+            this.stickPad.checkGeneralVitality(this.p);
+        }
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "ANALYZE";
+    }
+
+    @Override
+    public void mouseClicked() {
+        if (this.lastMouseClick == null) {
+            this.lastMouseClick = Calendar.getInstance().getTimeInMillis();
+            this.mouseClickOccurred = true;
+            return;
+        }
+        this.mouseClickOccurred = this.lastMouseClick + 500L < Calendar.getInstance().getTimeInMillis();
+        this.lastMouseClick = Calendar.getInstance().getTimeInMillis();
+    }
+}
+

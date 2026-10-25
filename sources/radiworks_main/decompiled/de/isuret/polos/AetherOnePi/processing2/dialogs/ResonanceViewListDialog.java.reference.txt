@@ -1,0 +1,82 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.dialogs;
+
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.ResonanceObject;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import processing.core.PApplet;
+import processing.core.PFont;
+
+public class ResonanceViewListDialog
+extends PApplet {
+    public static final int WIDTH = 640;
+    public static final int HEIGHT = 720;
+    private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+    private List<ResonanceObject> resonanceList;
+    private final int FIRST_COLUMN = 10;
+    private final int SECOND_COLUMN = 150;
+
+    public static void main(String[] args) {
+        ArrayList<ResonanceObject> resonanceList = new ArrayList<ResonanceObject>();
+        ResonanceObject r1 = new ResonanceObject();
+        RateObject rate1 = new RateObject();
+        rate1.setNameOrRate("SULPHUR C110");
+        r1.setRateObject(rate1);
+        resonanceList.add(r1);
+        ResonanceObject r2 = new ResonanceObject();
+        RateObject rate2 = new RateObject();
+        rate2.setNameOrRate("ACONITUM C20");
+        r2.setRateObject(rate2);
+        resonanceList.add(r2);
+        ResonanceViewListDialog.showList(resonanceList);
+    }
+
+    public static void showList(List<ResonanceObject> resonanceList) {
+        ResonanceViewListDialog dialog = new ResonanceViewListDialog(resonanceList);
+        String[] args2 = new String[]{""};
+        PApplet.runSketch(args2, dialog);
+    }
+
+    ResonanceViewListDialog(List<ResonanceObject> resonanceList) {
+        this.resonanceList = resonanceList;
+    }
+
+    @Override
+    public void settings() {
+        this.size(640, 720);
+    }
+
+    @Override
+    public void exitActual() {
+    }
+
+    @Override
+    public void setup() {
+        this.background(200);
+        this.surface.setTitle("RESONANCE LIST");
+        PFont font = this.createFont("Verdana", 20.0f);
+        this.textFont(font);
+    }
+
+    @Override
+    public void draw() {
+        this.background(0);
+        int y = 20;
+        this.text("DATE / TIME", 10.0f, (float)y);
+        this.text("NAME OR RATE", 150.0f, (float)y);
+        this.stroke(150);
+        this.line(0.0f, y + 4, 640.0f, y + 4);
+        this.line(146.0f, 0.0f, 146.0f, 720.0f);
+        y += 2;
+        for (ResonanceObject resonanceObject : this.resonanceList) {
+            this.text(this.sdf.format(resonanceObject.getDateTime().getTime()), 10.0f, (float)(y += 22));
+            this.text(resonanceObject.getRateObject().getNameOrRate(), 150.0f, (float)y);
+            this.line(0.0f, y + 4, 640.0f, y + 4);
+        }
+    }
+}
+

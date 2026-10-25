@@ -1,0 +1,117 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+public class RateObject {
+    private Integer energeticValue;
+    private String nameOrRate;
+    private String url;
+    private Integer gv = 0;
+    private Integer recurring = 0;
+    private Integer recurringGeneralVitality = 0;
+    private Integer level = 0;
+    private String potency;
+    private Integer resonateCounter = 0;
+
+    public RateObject(RateObject r) {
+        this.level = r.level;
+        this.energeticValue = r.energeticValue;
+        this.nameOrRate = r.nameOrRate;
+        this.url = r.url;
+        this.recurring = r.recurring;
+        this.potency = r.potency;
+    }
+
+    public RateObject(Integer energeticValue, String nameOrRate, String url, Integer gv, Integer recurring, Integer recurringGeneralVitality, Integer level, String potency, Integer resonateCounter) {
+        this.energeticValue = energeticValue;
+        this.nameOrRate = nameOrRate;
+        this.url = url;
+        this.gv = gv;
+        this.recurring = recurring;
+        this.recurringGeneralVitality = recurringGeneralVitality;
+        this.level = level;
+        this.potency = potency;
+        this.resonateCounter = resonateCounter;
+    }
+
+    public RateObject() {
+    }
+
+    public Integer getEnergeticValue() {
+        return this.energeticValue;
+    }
+
+    public void setEnergeticValue(Integer energeticValue) {
+        this.energeticValue = energeticValue;
+    }
+
+    public String getNameOrRate() {
+        return this.nameOrRate;
+    }
+
+    public void setNameOrRate(String nameOrRate) {
+        this.nameOrRate = nameOrRate;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Integer getGv() {
+        return this.gv;
+    }
+
+    public void setGv(Integer gv) {
+        this.gv = gv;
+    }
+
+    public Integer getRecurring() {
+        return this.recurring;
+    }
+
+    public void setRecurring(Integer recurring) {
+        this.recurring = recurring;
+    }
+
+    public Integer getRecurringGeneralVitality() {
+        return this.recurringGeneralVitality;
+    }
+
+    public void setRecurringGeneralVitality(Integer recurringGeneralVitality) {
+        this.recurringGeneralVitality = recurringGeneralVitality;
+    }
+
+    public Integer getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public String getPotency() {
+        return this.potency;
+    }
+
+    public void setPotency(String potency) {
+        this.potency = potency;
+    }
+
+    public Integer getResonateCounter() {
+        return this.resonateCounter;
+    }
+
+    public void setResonateCounter(Integer resonateCounter) {
+        this.resonateCounter = resonateCounter;
+    }
+
+    public String toString() {
+        return "RateObject {\n  energeticValue=" + this.energeticValue + "\n  nameOrRate='" + this.nameOrRate + "'\n  url='" + this.url + "'\n  gv=" + this.gv + "\n  recurring=" + this.recurring + "\n  recurringGeneralVitality=" + this.recurringGeneralVitality + "\n  level=" + this.level + "\n  potency='" + this.potency + "'\n  resonateCounter=" + this.resonateCounter + "\n}";
+    }
+}
+

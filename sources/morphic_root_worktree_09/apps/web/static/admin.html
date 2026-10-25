@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Morphic Admin Catalog</title>
+    <link rel="stylesheet" href="/static/app.css">
+    <script src="/static/admin-catalog.js" defer></script>
+  </head>
+  <body class="admin-page">
+    <a class="skip-link" href="#admin-catalog-app">Zum Hauptinhalt springen</a>
+
+    <header class="topbar admin-topbar" role="banner">
+      <div>
+        <p class="eyebrow">Lokale Admin-Oberflaeche</p>
+        <h1>Morphic Admin Catalog</h1>
+        <p class="topbar-subtitle">Offline-Catalog: Revisionen, Drafts, Validierung, Diff, Publish, Aktivierung und Rollback.</p>
+      </div>
+      <div class="status-strip" aria-label="Adminstatus" role="status" aria-live="polite">
+        <span id="admin-auth-state" class="pill neutral">Bootstrap</span>
+        <span id="admin-session-expiry" class="pill neutral">Session fluechtig</span>
+      </div>
+    </header>
+
+    <main id="admin-catalog-app" class="admin-shell" data-state="bootstrapping">
+      <section class="admin-overview" aria-label="Catalog-Uebersicht">
+        <div class="metric">
+          <span>Scope</span>
+          <strong id="admin-scope-summary">-</strong>
+        </div>
+        <div class="metric">
+          <span>Aktive Revision</span>
+          <strong id="admin-current-revision">-</strong>
+        </div>
+        <div class="metric">
+          <span>Activation Version</span>
+          <strong id="admin-activation-version">-</strong>
+        </div>
+        <div class="metric">
+          <span>Revisionen</span>
+          <strong id="admin-revision-count">-</strong>
+        </div>
+        <div class="metric">
+          <span>Runtime Quelle</span>
+          <strong id="admin-runtime-source">-</strong>
+        </div>
+        <div class="metric">
+          <span>Runtime Revision</span>
+          <strong id="admin-runtime-revision">-</strong>
+        </div>
+        <div class="metric">
+          <span>Evidence</span>
+          <strong id="admin-runtime-redacted">-</strong>
+        </div>
+      </section>
+
+      <section class="admin-band" aria-labelledby="admin-status-title">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Read Model</p>
+            <h2 id="admin-status-title">Status und Entries</h2>
+          </div>
+          <button class="secondary-button" id="admin-refresh" type="button" disabled>Aktualisieren</button>
+        </div>
+        <div id="admin-status" class="admin-inline-status" role="status" aria-live="polite">Verbindung wird vorbereitet.</div>
+        <dl id="admin-context" class="admin-context-grid" aria-label="Catalog-Kontext"></dl>
+
+        <div class="admin-table-wrap" id="admin-entries" tabindex="0" aria-live="polite">
+          <table class="admin-table">
+            <caption>Aktive Catalog-Eintraege</caption>
+            <thead>
+              <tr>
+                <th scope="col">Typ</th>
+                <th scope="col">ID</th>
+                <th scope="col">Source</th>
+                <th scope="col">Label</th>
+                <th scope="col">Provenance</th>
+              </tr>
+            </thead>
+            <tbody id="admin-entries-body">
+              <tr>
+                <td colspan="5">Noch keine Daten geladen.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="admin-band" aria-labelledby="admin-controls-title">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Mutation Gate</p>
+            <h2 id="admin-controls-title">Draft, Validierung und Revision</h2>
+          </div>
+        </div>
+
+        <div class="admin-form-grid">
+          <label class="admin-field">
+            <span>Draft ID</span>
+            <input id="admin-draft-id" type="text" autocomplete="off" spellcheck="false" placeholder="draft-2026-07-17">
+          </label>
+          <label class="admin-field">
+            <span>Revision ID</span>
+            <input id="admin-revision-id" type="text" autocomplete="off" spellcheck="false" placeholder="revision-2026-07-17">
+          </label>
+          <label class="admin-field">
+            <span>Expected Draft Version</span>
+            <input id="admin-expected-version" type="number" min="0" step="1" value="0" inputmode="numeric">
+          </label>
+          <label class="admin-field">
+            <span>Expected Activation Version</span>
+            <input id="admin-expected-activation-version" type="number" min="0" step="1" value="0" inputmode="numeric">
+          </label>
+          <label class="admin-field">
+            <span>Expected Previous Revision</span>
+            <input id="admin-expected-previous-revision" type="text" autocomplete="off" spellcheck="false" placeholder="leer fuer erste Aktivierung">
+          </label>
+          <label class="admin-field admin-field-wide">
+            <span>Grund</span>
+            <input id="admin-reason" type="text" autocomplete="off" spellcheck="false" placeholder="Auditgrund fuer diese Aktion">
+          </label>
+          <label class="admin-field admin-field-full">
+            <span>Entries JSON</span>
+            <textarea id="admin-entry-json" rows="8" spellcheck="false" placeholder='[{"entry_type":"group","entry_id":"group-a","source_id":"manual-admin","provenance":"local-admin","data":{"label":"Group A","enabled":true}}]'></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="admin-operations" aria-label="Admin-Aktionen">
+        <section id="admin-draft-section" class="admin-operation">
+          <div>
+            <p class="eyebrow">Draft</p>
+            <h3>Erstellen oder ersetzen</h3>
+          </div>
+          <button class="primary-button" id="admin-save-draft" type="button" disabled>Draft speichern</button>
+        </section>
+
+        <section id="admin-validation-section" class="admin-operation">
+          <div>
+            <p class="eyebrow">Validierung</p>
+            <h3>Contract-Check</h3>
+          </div>
+          <button class="secondary-button" id="admin-validate-draft" type="button" disabled>Validieren</button>
+        </section>
+
+        <section id="admin-publish-section" class="admin-operation">
+          <div>
+            <p class="eyebrow">Publish</p>
+            <h3>Revision erzeugen</h3>
+          </div>
+          <button class="secondary-button" id="admin-publish-draft" type="button" disabled>Publish</button>
+        </section>
+
+        <section id="admin-activation-section" class="admin-operation admin-operation-danger">
+          <div>
+            <p class="eyebrow">Aktivierung</p>
+            <h3>Revision aktiv setzen</h3>
+          </div>
+          <button class="danger-button" id="admin-activate-revision" type="button" disabled>Aktivieren</button>
+        </section>
+
+        <section id="admin-rollback-section" class="admin-operation admin-operation-danger">
+          <div>
+            <p class="eyebrow">Rollback</p>
+            <h3>Vorherige Revision wiederherstellen</h3>
+          </div>
+          <button class="danger-button" id="admin-rollback-revision" type="button" disabled>Rollback</button>
+        </section>
+      </section>
+
+      <section class="admin-band" aria-labelledby="admin-diff-title">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Pruefansicht</p>
+            <h2 id="admin-diff-title">Diff und Ergebnis</h2>
+          </div>
+          <button class="secondary-button" id="admin-load-diff" type="button" disabled>Diff laden</button>
+        </div>
+        <pre id="admin-diff" class="admin-output" tabindex="0">Kein Diff geladen.</pre>
+        <pre id="admin-operation-result" class="admin-output" tabindex="0">Keine Aktion ausgefuehrt.</pre>
+      </section>
+
+      <section id="admin-runtime-section" class="admin-band" aria-labelledby="admin-runtime-title">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Runtime</p>
+            <h2 id="admin-runtime-title">Ausgewaehlte Catalog-Runtime</h2>
+          </div>
+          <button class="secondary-button" id="admin-load-runtime" type="button" disabled>Runtime pruefen</button>
+        </div>
+        <pre id="admin-runtime" class="admin-output" tabindex="0">Keine Runtime geladen.</pre>
+      </section>
+    </main>
+  </body>
+</html>

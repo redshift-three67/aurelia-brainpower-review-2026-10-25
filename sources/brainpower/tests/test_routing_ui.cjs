@@ -1,0 +1,14 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync('governor_workbench/static/app.js','utf8');
+const start=source.indexOf('  function updateRoutineControls(');
+assert.notEqual(start,-1,'Routine control must track setting changes without losing plan selection');
+const end=source.indexOf('\n  function renderControls(',start);
+const input={checked:true,disabled:false};
+const context={state:{settings:{reasoning_mode:'auto'}},document:{querySelectorAll:()=>[input]}};
+vm.createContext(context);vm.runInContext(source.slice(start,end),context);
+context.updateRoutineControls();assert.equal(input.disabled,false);assert.equal(input.checked,true);
+context.state.settings.reasoning_mode='high';context.updateRoutineControls();
+assert.equal(input.disabled,true);assert.equal(input.checked,false);
+context.state.settings.reasoning_mode='auto';context.updateRoutineControls();
+assert.equal(input.disabled,false);assert.equal(input.checked,false,'Changing back must not silently confirm routine');
+console.log('Routing UI: setting change disables and clears routine consent; no implicit reconfirmation.');

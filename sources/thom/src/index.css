@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ============ HEALING LIGHT THEME ============ */
+    /* Warm Off-White Background */
+    --background: 40 20% 97%;
+    --foreground: 210 25% 15%;
+
+    --card: 40 15% 99%;
+    --card-foreground: 210 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 25% 15%;
+
+    /* Primary - Healing Teal */
+    --primary: 174 62% 38%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 174 72% 48%;
+
+    /* Secondary - Warm Sage Gold */
+    --secondary: 42 70% 55%;
+    --secondary-foreground: 210 25% 12%;
+
+    /* Muted - Soft Sage */
+    --muted: 150 10% 92%;
+    --muted-foreground: 200 12% 45%;
+
+    /* Accent - Soft Lavender */
+    --accent: 260 35% 68%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 65% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 12% 86%;
+    --input: 150 10% 90%;
+    --ring: 174 62% 38%;
+
+    --radius: 0.75rem;
+
+    /* Custom Feldengine Colors - Light */
+    --field-deep: 40 20% 97%;
+    --field-surface: 40 15% 99%;
+    --field-elevated: 0 0% 100%;
+    --chreode: 42 70% 55%;
+    --chreode-glow: 42 80% 65%;
+    --attractor: 174 62% 38%;
+    --attractor-glow: 174 72% 52%;
+    --bifurkation: 260 35% 68%;
+    --katastrophe: 0 60% 55%;
+
+    /* Gradients */
+    --gradient-field: linear-gradient(135deg, hsl(40 20% 97%) 0%, hsl(150 12% 95%) 50%, hsl(40 20% 97%) 100%);
+    --gradient-chreode: linear-gradient(135deg, hsl(42 70% 55%) 0%, hsl(45 80% 65%) 100%);
+    --gradient-attractor: linear-gradient(135deg, hsl(174 62% 38%) 0%, hsl(170 55% 48%) 100%);
+    --gradient-hero: radial-gradient(ellipse at 50% 0%, hsl(174 62% 38% / 0.08) 0%, transparent 50%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 15% 98%) 100%);
+
+    /* Shadows */
+    --shadow-glow-primary: 0 0 40px hsl(174 62% 38% / 0.12);
+    --shadow-glow-secondary: 0 0 30px hsl(42 70% 55% / 0.1);
+    --shadow-card: 0 2px 12px hsl(210 25% 15% / 0.06);
+    --shadow-elevated: 0 4px 20px hsl(210 25% 15% / 0.08);
+
+    /* Sidebar */
+    --sidebar-background: 150 10% 96%;
+    --sidebar-foreground: 210 25% 20%;
+    --sidebar-primary: 174 62% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 150 10% 92%;
+    --sidebar-accent-foreground: 210 25% 20%;
+    --sidebar-border: 150 12% 86%;
+    --sidebar-ring: 174 62% 38%;
+  }
+
+  .dark {
+    /* ============ HEALING DARK THEME ============ */
+    --background: 200 20% 8%;
+    --foreground: 40 15% 92%;
+
+    --card: 200 18% 11%;
+    --card-foreground: 40 15% 92%;
+
+    --popover: 200 18% 13%;
+    --popover-foreground: 40 15% 92%;
+
+    /* Primary - Healing Teal */
+    --primary: 174 62% 45%;
+    --primary-foreground: 200 20% 8%;
+    --primary-glow: 174 80% 58%;
+
+    /* Secondary - Warm Gold */
+    --secondary: 42 75% 52%;
+    --secondary-foreground: 200 20% 8%;
+
+    /* Muted */
+    --muted: 200 15% 16%;
+    --muted-foreground: 200 12% 55%;
+
+    /* Accent */
+    --accent: 260 45% 58%;
+    --accent-foreground: 40 15% 95%;
+
+    /* Destructive */
+    --destructive: 0 70% 52%;
+    --destructive-foreground: 40 15% 95%;
+
+    --border: 200 14% 20%;
+    --input: 200 15% 16%;
+    --ring: 174 62% 45%;
+
+    /* Custom Feldengine Colors - Dark */
+    --field-deep: 200 20% 8%;
+    --field-surface: 200 18% 13%;
+    --field-elevated: 200 16% 16%;
+    --chreode: 42 75% 52%;
+    --chreode-glow: 42 85% 65%;
+    --attractor: 174 62% 45%;
+    --attractor-glow: 174 80% 65%;
+    --bifurkation: 260 45% 58%;
+    --katastrophe: 350 75% 55%;
+
+    /* Gradients */
+    --gradient-field: linear-gradient(135deg, hsl(200 20% 8%) 0%, hsl(200 16% 12%) 50%, hsl(200 20% 8%) 100%);
+    --gradient-chreode: linear-gradient(135deg, hsl(42 75% 52%) 0%, hsl(45 85% 62%) 100%);
+    --gradient-attractor: linear-gradient(135deg, hsl(174 62% 45%) 0%, hsl(170 60% 55%) 100%);
+    --gradient-hero: radial-gradient(ellipse at 50% 0%, hsl(174 62% 45% / 0.12) 0%, transparent 50%);
+    --gradient-card: linear-gradient(180deg, hsl(200 18% 13%) 0%, hsl(200 18% 11%) 100%);
+
+    /* Shadows */
+    --shadow-glow-primary: 0 0 50px hsl(174 62% 45% / 0.2);
+    --shadow-glow-secondary: 0 0 35px hsl(42 75% 52% / 0.18);
+    --shadow-card: 0 3px 18px hsl(200 20% 4% / 0.4);
+    --shadow-elevated: 0 6px 28px hsl(200 20% 4% / 0.5);
+
+    /* Sidebar */
+    --sidebar-background: 200 18% 10%;
+    --sidebar-foreground: 40 15% 88%;
+    --sidebar-primary: 174 62% 45%;
+    --sidebar-primary-foreground: 200 20% 8%;
+    --sidebar-accent: 200 15% 16%;
+    --sidebar-accent-foreground: 40 15% 88%;
+    --sidebar-border: 200 14% 20%;
+    --sidebar-ring: 174 62% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .text-gradient-primary {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(174 62% 42%) 0%, hsl(170 55% 50%) 100%);
+  }
+
+  .dark .text-gradient-primary {
+    background-image: linear-gradient(135deg, hsl(174 62% 55%) 0%, hsl(170 60% 65%) 100%);
+  }
+
+  .text-gradient-secondary {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(42 70% 52%) 0%, hsl(45 80% 62%) 100%);
+  }
+
+  .dark .text-gradient-secondary {
+    background-image: linear-gradient(135deg, hsl(42 75% 58%) 0%, hsl(45 85% 68%) 100%);
+  }
+
+  .bg-field-pattern {
+    background-image: 
+      radial-gradient(ellipse at 20% 30%, hsl(174 62% 38% / 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(42 70% 55% / 0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, hsl(260 35% 68% / 0.03) 0%, transparent 60%);
+  }
+
+  .dark .bg-field-pattern {
+    background-image: 
+      radial-gradient(ellipse at 20% 30%, hsl(174 62% 45% / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, hsl(42 75% 52% / 0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 50%, hsl(260 45% 58% / 0.04) 0%, transparent 60%);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 30px hsl(174 62% 38% / 0.15), 0 0 60px hsl(174 62% 38% / 0.08);
+  }
+
+  .dark .glow-primary {
+    box-shadow: 0 0 40px hsl(174 62% 45% / 0.25), 0 0 80px hsl(174 62% 45% / 0.12);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 25px hsl(42 70% 55% / 0.15), 0 0 50px hsl(42 70% 55% / 0.08);
+  }
+
+  .dark .glow-secondary {
+    box-shadow: 0 0 30px hsl(42 75% 52% / 0.25), 0 0 60px hsl(42 75% 52% / 0.12);
+  }
+
+  .border-glow {
+    border: 1px solid hsl(174 62% 38% / 0.2);
+    box-shadow: inset 0 0 15px hsl(174 62% 38% / 0.03);
+  }
+
+  .dark .border-glow {
+    border: 1px solid hsl(174 62% 45% / 0.25);
+    box-shadow: inset 0 0 20px hsl(174 62% 45% / 0.05);
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+@keyframes flow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes field-wave {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(10px) translateY(-5px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+@keyframes chreode-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px hsl(var(--chreode) / 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px hsl(var(--chreode) / 0.5);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes attractor-orbit {
+  0% { transform: rotate(0deg) translateX(10px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(10px) rotate(-360deg); }
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes grid-flow {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-flow {
+  animation: flow 8s linear infinite;
+}
+
+.animate-field-wave {
+  animation: field-wave 4s ease-in-out infinite;
+}
+
+.animate-chreode-pulse {
+  animation: chreode-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-attractor-orbit {
+  animation: attractor-orbit 8s linear infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-grid-flow {
+  animation: grid-flow 20s linear infinite;
+}
+
+/* Staggered animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Grid background pattern */
+.bg-grid {
+  background-image: 
+    linear-gradient(hsl(var(--border) / 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.4) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}

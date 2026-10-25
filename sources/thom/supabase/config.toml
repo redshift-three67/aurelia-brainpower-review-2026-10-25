@@ -1,0 +1,10 @@
+project_id = "yoryyvfuscyfumeseour"
+
+[functions.realtime-sync]
+verify_jwt = false
+
+[functions.hardware-metrics]
+verify_jwt = false
+
+[functions.meridian-diagnosis]
+verify_jwt = false

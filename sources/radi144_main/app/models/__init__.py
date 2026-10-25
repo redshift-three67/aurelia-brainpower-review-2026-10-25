@@ -1,0 +1,1 @@
+"""Pydantic-Modelle fuer Verwaltungsdomaenen."""

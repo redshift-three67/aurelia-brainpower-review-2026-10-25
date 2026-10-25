@@ -1,0 +1,63 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { BroadcastAudioPlayer } from './broadcast-audio-player.js';
+class Param {constructor(){this.events=[];} setValueAtTime(v,t){this.events.push(['set',v,t]);} linearRampToValueAtTime(v,t){this.events.push(['ramp',v,t]);} cancelScheduledValues(t){this.events.push(['cancel',t]);}}
+class Node {constructor(){this.gain=new Param();this.frequency=new Param();this.stops=[];} connect(){return this;} disconnect(){this.disconnected=true;} start(t){this.started=t;} stop(t){this.stops.push(t);}}
+class Context {constructor(){this.currentTime=10;this.sampleRate=48000;this.state='running';this.nodes=[];this.destination={};} createGain(){const n=new Node();this.nodes.push(n);return n;} createOscillator(){const n=new Node();this.nodes.push(n);return n;} createChannelMerger(){const n=new Node();this.nodes.push(n);return n;} async resume(){} async close(){this.closed=true;this.state='closed';}}
+function fixture(){let ctx;const timers=[];const p=new BroadcastAudioPlayer({contextFactory:()=>ctx=new Context(),setTimer:f=>(timers.push(f),timers.length),clearTimer:()=>{},onStatus:()=>{}});return {p,timers,get ctx(){return ctx;}};}
+const profile={id:'solfeggio-9',stageSeconds:2,repeat:false};
+test('muted until explicit activation; stop prevents further event tones',async()=>{const f=fixture();assert.equal(f.p.playOriginal('a',{left_freq:100,right_freq:104,volume:.5}),false);assert.equal(f.ctx,undefined);await f.p.activate();assert.equal(f.p.playOriginal('a',{left_freq:100,right_freq:104,volume:.5}),true);assert.equal(f.p.voiceCount,2);await f.p.stopAll();assert.equal(f.p.enabled,false);assert.equal(f.ctx.closed,true);assert.equal(f.p.voiceCount,0);assert.equal(f.p.playOriginal('b',{left_freq:100,right_freq:104,volume:.5}),false);});
+test('sequence follows exact audio-clock stages and does not restart on queue polling',async()=>{const f=fixture();await f.p.activate();assert.equal(f.p.startProfile('job',profile,60,0),true);let os=f.ctx.nodes.filter(n=>n.started!==undefined);assert.equal(os.length,1);assert.equal(os[0].frequency.events[0][1],174);assert.equal(f.p.startProfile('job',profile,60,0),false);f.ctx.currentTime=12;f.p.pump();os=f.ctx.nodes.filter(n=>n.started!==undefined);assert.equal(os.at(-1).frequency.events[0][1],285);f.p.stopJob('job');f.ctx.currentTime+=.03;f.p.pump();assert.equal(f.p.voiceCount,0);assert.equal(f.p.startProfile('job',profile,60,0),false);await f.p.stopAll();});
+test('elapsed server time selects sequence position; completed one-pass stays silent',async()=>{const f=fixture();await f.p.activate();f.p.startProfile('job',profile,60,5);assert.equal(f.ctx.nodes.find(n=>n.started!==undefined).frequency.events[0][1],396);assert.equal(f.p.startProfile('done',profile,60,20),false);await f.p.stopAll();});
+test('voice budget, actual sample-rate limit and invalid frequencies prevent unsafe playback',async()=>{const f=fixture();await f.p.activate();for(let i=0;i<4;i++)assert.equal(f.p.playOriginal('j'+i,{left_freq:100,right_freq:104,volume:1}),true);assert.equal(f.p.voiceCount,8);assert.equal(f.p.playOriginal('overflow',{left_freq:100,right_freq:104,volume:1}),false);assert.throws(()=>f.p.playOriginal('bad',{left_freq:-1,right_freq:Infinity,volume:.5}));f.p.stopJob('j0');f.ctx.currentTime+=.03;f.p.pump();assert.equal(f.p.voiceCount,6);f.ctx.sampleRate=800;assert.throws(()=>f.p.startProfile('too-high',{id:'fixed-432',stageSeconds:2,repeat:false},60,0));await f.p.stopAll();});
+test('late scheduler and device suspension stop without stacking catch-up tones',async()=>{const f=fixture();await f.p.activate();f.p.startProfile('job',profile,60,0);f.ctx.currentTime=16;f.p.pump();f.ctx.currentTime+=.03;f.p.pump();assert.equal(f.p.voiceCount,0);f.ctx.state='suspended';f.p.pump();assert.equal(f.p.enabled,false);await f.p.stopAll();});
+test('cancelled pending activation cannot re-enable playback',async()=>{let release;const ctx=new Context();ctx.state='suspended';ctx.resume=()=>new Promise(r=>release=r);const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,setTimer:()=>1,clearTimer:()=>{}});const activation=p.activate();await p.stopAll();ctx.state='running';release();await activation;assert.equal(p.enabled,false);});
+
+class FakeWorker {constructor(){this.messages=[];}postMessage(x){this.messages.push(x);}terminate(){this.terminated=true;}}
+test('pink worker uses an independent seed; limits lookahead and terminates on stop',async()=>{
+ const ctx=new Context();ctx.createBuffer=(channels,length,rate)=>({duration:length/rate,copyToChannel(){}});ctx.createBufferSource=()=>{const n=new Node();ctx.nodes.push(n);return n;};
+ let worker;const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,workerFactory:()=>worker=new FakeWorker(),setTimer:()=>1,clearTimer:()=>{}});
+ await p.activate();assert.equal(p.startPink('job',{stageSeconds:60,repeat:false},60,0,'job:receipt'),true);assert.equal(worker.messages[0].seed,'job:receipt');worker.onmessage({data:{type:'ready'}});assert.equal(worker.messages[1].frames,32768);assert.equal(worker.messages.length,2);
+ worker.onmessage({data:{type:'chunk',sequence:0,samples:new Float32Array(32768)}});assert.equal(worker.messages.length,3);worker.onmessage({data:{type:'chunk',sequence:1,samples:new Float32Array(32768)}});assert.equal(worker.messages.length,3);
+ assert.equal(p.voiceCount,1);await p.stopAll();assert.equal(worker.terminated,true);assert.equal(p.voiceCount,0);
+});
+test('malformed worker replies fail closed without scheduling audio',async()=>{
+ const f=fixture();let worker;f.p.workerFactory=()=>worker=new FakeWorker();await f.p.activate();f.p.startPink('bad',{stageSeconds:60,repeat:false},60,0,'seed');worker.onmessage({data:{type:'ready'}});worker.onmessage({data:{type:'chunk',sequence:1,samples:new Float32Array(32768)}});assert.equal(f.p.voiceCount,0);assert.equal(worker.terminated,true);await f.p.stopAll();
+});
+
+test('central stop applies fade before closing context; close failure blocks new context',async()=>{const f=fixture();await f.p.activate();const master=f.ctx.nodes[0];await f.p.stopAll();assert(master.gain.events.some(x=>x[0]==='ramp'&&x[1]===0));const ctx=new Context();ctx.close=async()=>{throw Error('close failed');};let created=0;const p=new BroadcastAudioPlayer({contextFactory:()=>{created++;return ctx;},setTimer:()=>1,clearTimer:()=>{}});await p.activate();await assert.rejects(()=>p.stopAll());await assert.rejects(()=>p.activate());assert.equal(created,1);});
+
+test('late pink activation respects exhausted one-pass duration; attack begins at first actual source',async()=>{const ctx=new Context();ctx.createBuffer=(c,n,r)=>({copyToChannel(){}});ctx.createBufferSource=()=>new Node();let worker;const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,workerFactory:()=>worker=new FakeWorker(),setTimer:()=>1,clearTimer:()=>{}});await p.activate();assert.equal(p.startPink('expired',{stageSeconds:60,repeat:false},300,90,'seed'),false);assert.equal(worker,undefined);p.startPink('active',{stageSeconds:60,repeat:false},300,10,'seed');worker.onmessage({data:{type:'ready'}});ctx.currentTime=10.05;worker.onmessage({data:{type:'chunk',sequence:0,samples:new Float32Array(32768)}});const gain=ctx.nodes[1];assert(gain.gain.events.some(x=>x[0]==='set'&&x[1]===0&&x[2]===10.1));assert(gain.gain.events.some(x=>x[0]==='ramp'&&x[1]===2&&x[2]===10.12));await p.stopAll();});
+test('pulse position includes worker initialization and actual scheduled start',async()=>{const ctx=new Context();ctx.createBuffer=(c,n,r)=>({copyToChannel(){}});ctx.createBufferSource=()=>new Node();let worker;const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,workerFactory:()=>worker=new FakeWorker(),setTimer:()=>1,clearTimer:()=>{}});await p.activate();const profile={audioProfile:'pink-phi-v1',stageSeconds:1,repeat:true,modulationDepthPercent:50};p.startPink('pulse',profile,30,.5,'seed');assert.equal(worker.messages[0].pulseProfile.audioProfile,profile.audioProfile);ctx.currentTime=11.2;worker.onmessage({data:{type:'ready'}});assert.equal(worker.messages[1].startFrame,86400);worker.onmessage({data:{type:'chunk',sequence:0,samples:new Float32Array(32768)}});assert.equal(worker.messages[2].startFrame,86400+32768);await p.stopAll();});
+test('pulse one-pass uses entire coupled cycle; late ready after end schedules nothing',async()=>{const ctx=new Context();let worker;const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,workerFactory:()=>worker=new FakeWorker(),setTimer:()=>1,clearTimer:()=>{}});await p.activate();const profile={audioProfile:'pink-fibonacci-v1',stageSeconds:1,repeat:false,modulationDepthPercent:50};assert.equal(p.startPink('later',profile,60,10,'seed'),true);ctx.currentTime=40;worker.onmessage({data:{type:'ready'}});assert.equal(worker.messages.length,1);assert.equal(worker.terminated,true);assert.equal(p.voiceCount,0);assert.equal(p.startPink('exhausted',profile,60,33,'seed'),false);assert.throws(()=>p.startPink('too-long',profile,86401,0,'seed'));await p.stopAll();});
+
+test('diagnostic tone is explicit, case-independent, bounded and cannot stack',async()=>{
+ const f=fixture();assert.equal(typeof f.p.playTestTone,'function','diagnostic playback must be available');
+ assert.equal(f.p.playTestTone(),false);assert.equal(f.ctx,undefined);
+ await f.p.activate();assert.equal(f.p.playTestTone(),true);assert.equal(f.p.playTestTone(),false);
+ const source=f.ctx.nodes.find(n=>n.started!==undefined);assert.equal(source.frequency.events[0][1],432);assert.equal(source.stops[0]-source.started,2);assert.equal(f.p.voiceCount,1);assert.equal(f.p.jobs.size,0);assert.equal(f.p.seen.size,0);assert.equal(f.p.level,.1);
+ f.ctx.currentTime=12.1;f.p.pump();assert.equal(f.p.voiceCount,0);assert.equal(f.p.playTestTone(),true);await f.p.stopAll();assert.equal(f.p.voiceCount,0);assert.equal(f.p.playTestTone(),false);
+});
+test('diagnostic tone respects shared voice limit and zero level without creating jobs',async()=>{
+ const f=fixture();assert.equal(typeof f.p.playTestTone,'function');await f.p.activate();
+ for(let i=0;i<4;i++)f.p.playOriginal('full'+i,{left_freq:100,right_freq:104,volume:.5});
+ assert.equal(f.p.playTestTone(),false);assert.equal(f.p.voiceCount,8);await f.p.stopAll();await f.p.activate();f.p.setLevel(0);assert.equal(f.p.playTestTone(),false);assert.equal(f.p.voiceCount,0);assert.equal(f.p.jobs.size,0);await f.p.stopAll();
+});
+
+test('pink playback uses its own constant gain within the eight-voice mix budget',async()=>{
+ const ctx=new Context();ctx.createBuffer=(c,n,r)=>({copyToChannel(){}});ctx.createBufferSource=()=>new Node();const workers=[];
+ const p=new BroadcastAudioPlayer({contextFactory:()=>ctx,workerFactory:()=>{const w=new FakeWorker();workers.push(w);return w;},setTimer:()=>1,clearTimer:()=>{}});await p.activate();p.setLevel(.2);
+ p.startPink('n1',{stageSeconds:60,repeat:true},60,0,'one');p.startPink('n2',{stageSeconds:60,repeat:true},60,0,'two');assert.equal(p.startPink('n3',{stageSeconds:60,repeat:true},60,0,'three'),false);
+ for(const w of workers){w.onmessage({data:{type:'ready'}});w.onmessage({data:{type:'chunk',sequence:0,samples:new Float32Array(32768).fill(1)}});}
+ const noiseAmps=[...p.voices].filter(v=>v.worker).map(v=>v.gain.gain.events.find(e=>e[0]==='ramp'&&e[1]>0)[1]);assert.deepEqual(noiseAmps,[2,2]);
+ for(let i=0;i<3;i++)assert.equal(p.playOriginal('t'+i,{left_freq:432,right_freq:528,volume:1}),true);
+ assert.equal(p.voiceCount,8);assert.equal(p.playTestTone(),false);assert.equal(p.startPink('extra',{stageSeconds:60,repeat:true},60,0,'extra'),false);
+ const sum=[...p.voices].reduce((n,v)=>n+v.gain.gain.events.find(e=>e[0]==='ramp'&&e[1]>0)[1],0);assert(Math.abs(sum*.2-.95)<1e-12);await p.stopAll();
+});
+
+test('pending and softly stopped pink voices retain capacity until actual release',async()=>{
+ const f=fixture();const workers=[];f.p.workerFactory=()=>{const w=new FakeWorker();workers.push(w);return w;};await f.p.activate();
+ assert(f.p.startPink('first',{stageSeconds:60,repeat:false},60,0,'first'));assert(f.p.startPink('second',{stageSeconds:60,repeat:false},60,0,'second'));assert.equal(f.p.startPink('third',{stageSeconds:60,repeat:false},60,0,'third'),false);assert.equal(workers.length,2);
+ f.p.stopJob('first');assert.equal(workers[0].terminated,true);assert.equal(f.p.voiceCount,2);assert.equal(f.p.startPink('fourth',{stageSeconds:60,repeat:false},60,0,'fourth'),false);
+ f.ctx.currentTime+=.03;f.p.pump();assert.equal(f.p.voiceCount,1);assert(f.p.startPink('fifth',{stageSeconds:60,repeat:false},60,0,'fifth'));assert.equal(f.p.voiceCount,2);await f.p.stopAll();assert.equal(f.p.voiceCount,0);
+});

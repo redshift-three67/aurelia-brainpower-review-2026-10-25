@@ -1,0 +1,966 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.events;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import controlP5.ControlEvent;
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.BroadCastData;
+import de.isuret.polos.AetherOnePi.domain.Case;
+import de.isuret.polos.AetherOnePi.domain.Rate;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.ResonanceObject;
+import de.isuret.polos.AetherOnePi.domain.Session;
+import de.isuret.polos.AetherOnePi.domain.Settings;
+import de.isuret.polos.AetherOnePi.imagelayers.ImageLayersAnalysis;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.dialogs.BroadcastUnit;
+import de.isuret.polos.AetherOnePi.processing2.dialogs.SelectDatabaseDialog;
+import de.isuret.polos.AetherOnePi.processing2.dialogs.SessionDialog;
+import de.isuret.polos.AetherOnePi.processing2.events.KeyPressedObserver;
+import de.isuret.polos.AetherOnePi.processing2.processes.GroundingProcess;
+import de.isuret.polos.AetherOnePi.server.WebSocketManager;
+import de.isuret.polos.AetherOnePi.service.AnalysisService;
+import de.isuret.polos.AetherOnePi.service.DataService;
+import de.isuret.polos.AetherOnePi.utils.AetherOnePiProcessingConfiguration;
+import de.isuret.polos.AetherOnePi.utils.StatisticsGenerator;
+import de.isuret.polos.AetherOnePi.utils.cards.CardMaker;
+import de.isuret.polos.AetherOnePi.utils.cards.RadionicLine;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import processing.core.PImage;
+
+public class AetherOneEventHandler
+implements KeyPressedObserver {
+    private Log log = LogFactory.getLog(AetherOneEventHandler.class);
+    private Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    private AetherOneUI p;
+    private final DataService dataService = new DataService();
+    private AnalysisService analyseService;
+    private final List<RateObject> recurringRateList = new ArrayList<RateObject>();
+
+    public AetherOneEventHandler(AetherOneUI p) {
+        this.p = p;
+        this.analyseService = p.getAnalyseService();
+        this.analyseService.setHotbitsClient(p.getHotbitsClient());
+    }
+
+    public void controlEvent(ControlEvent theEvent) {
+        if (theEvent.isTab()) {
+            String name = theEvent.getTab().getName();
+            this.p.getGuiElements().setCurrentTab(name);
+            return;
+        }
+        String name = theEvent.getName();
+        this.handleEvent(name);
+    }
+
+    public void handleEvent(String name) {
+        JFileChooser chooser;
+        Transferable clipData;
+        SelectDatabaseDialog selectDatabaseDialog;
+        if ("EXIT".equals(name)) {
+            this.p.exit();
+            return;
+        }
+        if ("DOCUMENTATION".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://radionics.home.blog/aetheonepi/");
+            return;
+        }
+        if ("GITHUB".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://github.com/isuretpolos/AetherOnePi");
+            return;
+        }
+        if ("WEBSITE".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://radionics.home.blog");
+            return;
+        }
+        if ("PATREON".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://patreon.com/c/aetherone");
+            return;
+        }
+        if ("ABOUT".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://www.patreon.com/collection/1542070?view=expanded");
+            return;
+        }
+        if ("COMMUNITY".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://vk.com/aetherone");
+            return;
+        }
+        if ("REDDIT".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://www.reddit.com/r/digitalradionics/");
+            return;
+        }
+        if ("YOUTUBE".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://www.youtube.com/channel/UCFVTNpzycFUoF4h0CbRS92Q");
+            return;
+        }
+        if ("TWITTER".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://twitter.com/IsuretP");
+            return;
+        }
+        if ("BOOKS".equals(name)) {
+            this.openWebsiteInDefaultBrowser("https://isuretpolos.wordpress.com/literature");
+            return;
+        }
+        if ("BROWSER".equals(name)) {
+            this.openWebsiteInDefaultBrowser("http://localhost:" + this.p.getAetherOneServer().getPort());
+            return;
+        }
+        if ("LOAD".equals(name)) {
+            this.clearForNewCase();
+            JFileChooser chooser2 = new JFileChooser();
+            chooser2.setCurrentDirectory(new File("cases"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Case Files", "json");
+            chooser2.setFileFilter(filter);
+            int returnVal = chooser2.showOpenDialog(null);
+            if (returnVal == 0) {
+                File file = chooser2.getSelectedFile();
+                this.log.info("You chose to open this file: " + file.getName());
+                this.loadCaseFile(file);
+            }
+            return;
+        }
+        if ("SAVE".equals(name) && this.p.getCaseObject() != null) {
+            try {
+                Case c = this.p.getCaseObject();
+                Session session = new Session();
+                session.setCreated(Calendar.getInstance());
+                c.getSessionList().add(session);
+                c.setName(((Textfield)this.p.getGuiElements().getCp5().get("NAME")).getText());
+                c.setDescription(((Textfield)this.p.getGuiElements().getCp5().get("DESCRIPTION")).getText());
+                this.dataService.saveCase(c);
+                this.p.setTitle("AetherOnePi" + this.p.getTitleAffix() + " - " + c.getName());
+                this.p.setCaseObject(c);
+            }
+            catch (IOException e) {
+                this.log.error("Error saving case to file", e);
+            }
+            return;
+        }
+        if ("EDIT CASE".equals(name) && this.p.getCaseObject() != null) {
+            SessionDialog e = new SessionDialog(this.p);
+        }
+        if ("ESSENTIAL QUESTIONS".equals(name)) {
+            this.p.setEssentielQuestion(this.askEssentialQuestions());
+        }
+        if ("NEW".equals(name)) {
+            this.clearForNewCase();
+            return;
+        }
+        if ("SELECT DATA".equals(name)) {
+            selectDatabaseDialog = new SelectDatabaseDialog(null);
+            if (!StringUtils.isEmpty(selectDatabaseDialog.getSelectedDatabase())) {
+                this.p.setSelectedDatabase(selectDatabaseDialog.getSelectedDatabase());
+            }
+            return;
+        }
+        if ("DATA FOR CARD".equals(name)) {
+            selectDatabaseDialog = new SelectDatabaseDialog(null);
+            if (!StringUtils.isEmpty(selectDatabaseDialog.getSelectedDatabase())) {
+                this.p.setSelectedDatabase(selectDatabaseDialog.getSelectedDatabase());
+            }
+            return;
+        }
+        if ("ANALYZE".equals(name)) {
+            this.analyzeCurrentDatabase();
+            return;
+        }
+        if ("HOMEOPATHY".equals(name)) {
+            this.analyzeDatabase("HOMEOPATHY");
+            return;
+        }
+        if ("BIOLOGICAL".equals(name)) {
+            this.analyzeDatabase("BIOLOGICAL");
+            return;
+        }
+        if ("SYMBOLISM".equals(name)) {
+            this.analyzeDatabase("SYMBOLISM");
+            return;
+        }
+        if ("ESSENCES".equals(name)) {
+            this.analyzeDatabase("ESSENCES");
+            return;
+        }
+        if ("CHEMICAL".equals(name)) {
+            this.analyzeDatabase("CHEMICAL");
+            return;
+        }
+        if ("ENERGY".equals(name)) {
+            this.analyzeDatabase("ENERGY");
+            return;
+        }
+        if ("BROADCAST MIX".equals(name)) {
+            this.broadcastMix();
+            return;
+        }
+        if ("AUTO MODE ON".equals(name)) {
+            this.p.setAutoMode(true);
+            this.p.getGuiElements().getAutomodeGvAverage().clear();
+            return;
+        }
+        if ("AUTO MODE OFF".equals(name)) {
+            this.p.setAutoMode(false);
+            return;
+        }
+        if ("CLEAR".equals(name)) {
+            this.clearAetherOnePiUV();
+            return;
+        }
+        if ("GROUNDING".equals(name)) {
+            this.grounding();
+            return;
+        }
+        if ("PASTE IMAGE".equals(name)) {
+            clipData = this.clipboard.getContents(this.clipboard);
+            if (clipData != null && clipData.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+                try {
+                    PImage image = new PImage((Image)clipData.getTransferData(clipData.getTransferDataFlavors()[0]));
+                    this.p.getClipBoardImages().add(image.copy());
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }
+        if ("LOAD IMAGE".equals(name)) {
+            chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File("data_images"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Images", "jpg", "jpeg", "png", "tiff", "bmp");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(null);
+            if (returnVal == 0) {
+                File imageFile = chooser.getSelectedFile();
+                this.log.info("You chose to open this image: " + imageFile.getAbsolutePath());
+                this.p.getClipBoardImages().add(this.p.loadImage(imageFile.getAbsolutePath()));
+            }
+            return;
+        }
+        if ("CLEAR IMAGE".equals(name)) {
+            this.p.getClipBoardImages().clear();
+            return;
+        }
+        if ("BROADCAST IMAGE".equals(name)) {
+            BroadcastUnit.startBroadcastUnit(60, "energy", this.p.getClipBoardImages(), this.p.getMultiplier());
+            return;
+        }
+        if ("SHOW WEBCAMS".equals(name)) {
+            this.p.initWebcamsList();
+            return;
+        }
+        if ("SET WEBCAM".equals(name)) {
+            try {
+                String webCamNumber = ((Textfield)this.p.getGuiElements().getCp5().get("WEBCAM[n]")).getText();
+                this.p.setWebCamNumber(Integer.parseInt(webCamNumber));
+            }
+            catch (Exception e) {
+                this.log.error("Error setting the webcam number");
+            }
+            return;
+        }
+        if ("GET HOTBITS".equals(name)) {
+            this.p.startWebCamHotbitAcquire();
+            return;
+        }
+        if ("STOP HOTBITS".equals(name)) {
+            this.p.setHotbitsFromWebCamAcquiring(false);
+            return;
+        }
+        if ("SHOW IMAGE".equals(name)) {
+            if (this.p.getWebcam() != null) {
+                this.p.getWebcam().close();
+                this.p.setWebcam(null);
+            } else {
+                this.p.showWebCamImage();
+            }
+            return;
+        }
+        if ("PASTE AREA".equals(name)) {
+            clipData = this.clipboard.getContents(this.clipboard);
+            if (clipData != null && clipData.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+                try {
+                    PImage image = new PImage((Image)clipData.getTransferData(clipData.getTransferDataFlavors()[0]));
+                    this.p.setClipBoardImage(image.copy());
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }
+        if ("CLEAR AREA".equals(name)) {
+            this.p.setClipBoardImage(null);
+            return;
+        }
+        if ("ANALYZE CARD".equals(name)) {
+            this.analyzeCurrentDatabase();
+            return;
+        }
+        if ("GENERATE CARD".equals(name)) {
+            this.generateCard();
+            return;
+        }
+        if ("LOAD IMAGE LAYERS".equals(name)) {
+            chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File("data_images"));
+            chooser.setFileSelectionMode(1);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Case Files", "json");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(null);
+            if (returnVal == 0) {
+                File directory = chooser.getSelectedFile();
+                this.log.info("You chose to open this image layer directory: " + directory.getAbsolutePath());
+                this.p.setImageLayersAnalysis(new ImageLayersAnalysis(this.p, directory));
+            }
+            return;
+        }
+        if ("ANALYZE IMAGE".equals(name)) {
+            this.p.getImageLayersAnalysis().analyze();
+        }
+        if ("STICKPAD".equals(name) && this.p.getSelectedDatabase() != null) {
+            if (!this.p.getStickPadMode().booleanValue()) {
+                this.p.setStickPadMode(true);
+            }
+            return;
+        }
+        if ("GV".equals(name) && this.p.getSelectedDatabase() != null) {
+            if (!this.p.getStickPadGeneralVitalityMode().booleanValue()) {
+                this.p.setStickPadGeneralVitalityMode(true);
+            }
+            return;
+        }
+        if ("STATISTICS".equals(name)) {
+            this.generateStatisticsAndShow();
+            return;
+        }
+        if ("BROADCAST NOW".equals(name)) {
+            this.broadcastNow();
+            return;
+        }
+        if ("BROADCAST LIST".equals(name)) {
+            this.broadcastList();
+            return;
+        }
+        if ("STOP CURRENT".equals(name)) {
+            this.p.getGuiElements().stopCurrentBroadcast();
+            return;
+        }
+        if ("STOP ALL".equals(name)) {
+            this.p.getGuiElements().stopAllBroadcasts();
+            return;
+        }
+        if ("SHOW RESONANCE LIST".equals(name)) {
+            this.p.showResonanceList();
+            return;
+        }
+        if ("TRAINING[START]".equals(name)) {
+            this.p.setTrainingSignatureCovered(true);
+            this.trainingSelectSignatureFromCurrentDatabase();
+            return;
+        }
+        if ("TRAINING[UNCOVER]".equals(name)) {
+            this.p.setTrainingSignatureCovered(false);
+            System.out.println(this.p.getTrainingSignature());
+            return;
+        }
+        if ("CLIPBOARD".equals(name)) {
+            AnalysisResult result = this.p.getAnalysisResult();
+            AnalysisResult copy = new AnalysisResult();
+            copy.setRateObjects(new ArrayList<RateObject>(result.getRateObjects()));
+            copy.getRateObjects().stream().forEach(rateObject -> rateObject.setUrl(""));
+            copy.setGeneralVitality(this.p.getGeneralVitality());
+            while (copy.getRateObjects().size() > 21) {
+                copy.getRateObjects().remove(copy.getRateObjects().size() - 1);
+            }
+            Object jsonResult = "";
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+                jsonResult = objectMapper.writeValueAsString(copy);
+            }
+            catch (JsonProcessingException e) {
+                this.log.error("Error converting AnalysisResult to JSON", e);
+            }
+            jsonResult = "Give me an interpretation of this radionics result provided here as a json object (from AetherOnePi digital radionics, the rate catalog was '" + this.p.getSelectedDatabase() + "').\nAvoid detox chattering typical for radionics community.\nGive me insight into the single rates, maybe you find a common pattern between the rates, a family or group of rates, a miasm or mineral or plant group.\n\n\n" + (String)jsonResult;
+            this.clipboard.setContents(new StringSelection((String)jsonResult), null);
+        }
+    }
+
+    private void clearAetherOnePiUV() {
+        this.p.setClearUv(70);
+    }
+
+    private void broadcastMix() {
+        ArrayList<RateObject> rateObjectList = new ArrayList<RateObject>();
+        Integer gv = this.p.getGeneralVitality();
+        for (RateObject rate : this.p.getAnalysisResult().getRateObjects()) {
+            if (rate.getGv() <= gv) continue;
+            rateObjectList.add(rate);
+        }
+        Collections.sort(rateObjectList, new Comparator<RateObject>(this){
+
+            @Override
+            public int compare(RateObject o1, RateObject o2) {
+                if (o2.getGv() == o1.getGv()) {
+                    return o2.getEnergeticValue().compareTo(o1.getEnergeticValue());
+                }
+                return o2.getGv().compareTo(o1.getGv());
+            }
+        });
+        for (RateObject rateObject : rateObjectList) {
+            this.p.getGuiElements().addBroadcastElement(rateObject.getNameOrRate() + " " + rateObject.getEnergeticValue() + " " + rateObject.getPotency(), rateObject.getGv() - gv, this.p.getMultiplier());
+        }
+    }
+
+    private void generateCard() {
+        AnalysisResult analysisResult = this.p.getAnalysisResult();
+        if (analysisResult == null) {
+            return;
+        }
+        if (analysisResult.getRateObjects().size() == 0) {
+            return;
+        }
+        int max = 10;
+        if (analysisResult.getRateObjects().size() < 10) {
+            max = analysisResult.getRateObjects().size();
+        }
+        ArrayList<RadionicLine> lines = new ArrayList<RadionicLine>();
+        Collections.sort(analysisResult.getRateObjects(), new Comparator<RateObject>(this){
+
+            @Override
+            public int compare(RateObject o1, RateObject o2) {
+                if (o1.getGv() > 0 && o2.getGv() > 0) {
+                    return o2.getGv().compareTo(o1.getGv());
+                }
+                return o2.getEnergeticValue().compareTo(o1.getEnergeticValue());
+            }
+        });
+        for (int i = 0; i < max; ++i) {
+            RateObject rate = analysisResult.getRateObjects().get(i);
+            double degree = rate.getEnergeticValue().intValue();
+            if (rate.getGv() > 0) {
+                degree *= (double)rate.getGv().intValue();
+            }
+            RadionicLine line = new RadionicLine(rate.getGv(), degree, rate.getNameOrRate(), new Color(this.p.getHotbitsHandler().getInteger(255), this.p.getHotbitsHandler().getInteger(255), this.p.getHotbitsHandler().getInteger(255)));
+            lines.add(line);
+        }
+        CardMaker cardMaker = new CardMaker();
+        cardMaker.make(lines);
+        try {
+            if (!new File("cards").exists()) {
+                new File("cards").mkdir();
+            }
+            cardMaker.save(new File("cards/card_" + Calendar.getInstance().getTimeInMillis() + ".png"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String askEssentialQuestions() {
+        StringBuilder str = new StringBuilder("== ESSENTIAL QUESTIONS ==\n");
+        str.append("Appropriateness? (0 to 100)\n");
+        str.append(this.p.checkPercentage()).append("%\n\n");
+        str.append("Do I have permission to work with this person?\n");
+        Integer gv = this.p.checkGeneralVitalityValue();
+        if (gv > 500) {
+            str.append("- YES! (" + gv + ")\n\n");
+            str.append("Is it in the person's best and highest good that I work with them?\n");
+            gv = this.p.checkGeneralVitalityValue();
+            if (gv > 500) {
+                str.append("- YES! (" + gv + ")\n\n");
+            } else {
+                str.append("- NO! ... Will I ever have permission to work with this person? (" + gv + ")\n\n");
+                this.askQuestionWhen(str);
+            }
+            str.append("Is it in my best and highest good?\n");
+            gv = this.p.checkGeneralVitalityValue();
+            if (gv > 500) {
+                str.append("- YES! (" + gv + ")\n\n");
+            } else {
+                str.append("- NO! ... Will I ever have permission to work with this person? (" + gv + ")\n\n");
+                this.askQuestionWhen(str);
+            }
+        } else {
+            str.append("- NO! ... Will I ever have permission to work with this person? (" + gv + ")\n");
+            this.askQuestionWhen(str);
+        }
+        return str.toString();
+    }
+
+    private void askQuestionWhen(StringBuilder str) {
+        Integer gv = this.p.checkGeneralVitalityValue();
+        if (gv > 500) {
+            HashMap<String, Integer> whenMap = new HashMap<String, Integer>();
+            str.append("-- YES ... In what amount of time?(" + gv + ")\n");
+            whenMap.put("In one week", 0);
+            whenMap.put("In one month", 0);
+            whenMap.put("In two months", 0);
+            whenMap.put("In 3 months", 0);
+            whenMap.put("In 6 months", 0);
+            whenMap.put("In 1 year", 0);
+            whenMap.put("In 2 year", 0);
+            String answer = "";
+            int max = 0;
+            for (String when : whenMap.keySet()) {
+                whenMap.put(when, this.p.checkGeneralVitalityValue());
+            }
+            for (String when : whenMap.keySet()) {
+                if ((Integer)whenMap.get(when) <= max) continue;
+                max = (Integer)whenMap.get(when);
+                answer = when;
+            }
+            str.append("--- " + answer + "\n\n");
+        } else {
+            str.append("-- NO!!! (" + gv + ")\n\n");
+        }
+    }
+
+    public void loadCaseFile(File file) {
+        if ("dashboardInformations.json".equals(file.getName())) {
+            return;
+        }
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            this.clearForNewCase();
+            Case c = this.dataService.loadCase(file);
+            Session session = new Session();
+            session.setCreated(Calendar.getInstance());
+            c.getSessionList().add(session);
+            this.p.setTitle("AetherOnePi" + this.p.getTitleAffix() + " - " + c.getName());
+            this.p.setCaseObject(c);
+            ((Textfield)this.p.getGuiElements().getCp5().get("NAME")).setText(c.getName());
+            ((Textfield)this.p.getGuiElements().getCp5().get("DESCRIPTION")).setText(c.getDescription());
+        }
+        catch (IOException e) {
+            this.log.error("Error loading case file", e);
+        }
+    }
+
+    private void broadcastList() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("data"));
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Rate List Files", "txt");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == 0) {
+            try {
+                List<String> rateEntries = FileUtils.readLines(chooser.getSelectedFile(), "UTF-8");
+                for (String line : rateEntries) {
+                    if (line.contains("(") && line.contains(")")) {
+                        String signature = line.substring(0, line.indexOf("(")).trim();
+                        String duration = line.substring(line.indexOf("(") + 1).replace(")", "").trim().toUpperCase();
+                        this.log.info(signature + " - " + duration);
+                        int seconds = 0;
+                        if (duration.contains("S")) {
+                            seconds = Integer.parseInt(duration.replace("S", ""));
+                        }
+                        if (duration.contains("M")) {
+                            seconds = Integer.parseInt(duration.replace("M", "")) * 60;
+                        }
+                        if (duration.contains("H")) {
+                            seconds = Integer.parseInt(duration.replace("H", "")) * 3600;
+                        }
+                        this.p.getGuiElements().addBroadcastElement(signature, seconds, this.p.getMultiplier());
+                        continue;
+                    }
+                    this.log.info(line);
+                    this.p.getGuiElements().addBroadcastElement(line, 20, this.p.getMultiplier());
+                }
+            }
+            catch (IOException e) {
+                this.log.error("Error loading rate list file", e);
+            }
+        }
+    }
+
+    private void grounding() {
+        GroundingProcess groundingProcess = new GroundingProcess();
+        String signature = groundingProcess.getGroundingSignature();
+        Integer gvOfOperator = this.p.checkGeneralVitalityValue();
+        this.p.getGuiElements().addBroadcastElement(signature, 10, true, gvOfOperator, this.p.getMultiplier());
+        BroadCastData broadCastData = new BroadCastData();
+        broadCastData.setSignature(signature);
+        this.saveBroadcast(broadCastData);
+    }
+
+    private void generateStatisticsAndShow() {
+        StatisticsGenerator.start(this.p.getCaseObject());
+    }
+
+    public synchronized void broadcastNow() {
+        Settings settings = AetherOnePiProcessingConfiguration.loadSettings("Settings");
+        String sessionName = "";
+        if (this.p.getCaseObject().getName() != null) {
+            sessionName = this.p.getCaseObject().getName();
+        }
+        String signature = sessionName + " " + ((Textfield)this.p.getGuiElements().getCp5().get("SIGNATURE")).getText();
+        Integer seconds = 60;
+        try {
+            seconds = Integer.parseInt(((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).getText());
+            if (settings.getBoolean("broadcast.delta.time", false).booleanValue() && this.p.getGeneralVitality() < seconds) {
+                seconds = seconds - this.p.getGeneralVitality();
+            }
+        }
+        catch (Exception e) {
+            ((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).setText("60");
+        }
+        this.broadcast(signature, seconds);
+        BroadCastData broadCastData = new BroadCastData();
+        broadCastData.setSignature(signature);
+        this.saveBroadcast(broadCastData);
+    }
+
+    public void broadcast(String signature, Integer seconds) {
+        Settings settings = AetherOnePiProcessingConfiguration.loadSettings("Settings");
+        boolean broadCastEmbedded = settings.getBoolean("broadcast.embedded", true);
+        if (broadCastEmbedded) {
+            this.p.getGuiElements().addBroadcastElement(signature, seconds, this.p.getMultiplier());
+        } else {
+            BroadcastUnit.startBroadcastUnit(seconds, signature, this.p.getClipBoardImages(), this.p.getMultiplier());
+        }
+    }
+
+    public void clearForNewCase() {
+        this.saveResonanceProtocol();
+        this.p.setClipBoardImage(null);
+        this.p.getClipBoardImages().clear();
+        this.p.setEssentielQuestion(null);
+        this.p.setImageLayersAnalysis(null);
+        this.p.setTrainingSignature(null);
+        this.p.setTrainingSignatureCovered(true);
+        this.p.setAnalysisPointer(null);
+        this.p.setCaseObject(new Case());
+        this.p.getResonatedList().clear();
+        this.p.getResonanceList().clear();
+        this.p.setTitle("AetherOnePi" + this.p.getTitleAffix() + " - New Case ... enter name and description");
+        ((Textfield)this.p.getGuiElements().getCp5().get("NAME")).setText("");
+        ((Textfield)this.p.getGuiElements().getCp5().get("DESCRIPTION")).setText("");
+        ((Textfield)this.p.getGuiElements().getCp5().get("SIGNATURE")).setText("");
+        ((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).setText("60");
+        this.recurringRateList.clear();
+        this.p.setAnalysisResult(null);
+        this.p.setGeneralVitality(0);
+        this.p.setGvCounter(0);
+        this.p.setStickPadMode(false);
+        this.p.setStickPadGeneralVitalityMode(false);
+    }
+
+    /*
+     * WARNING - void declaration
+     */
+    public void saveResonanceProtocol() {
+        if (this.p.getResonatedList().size() > 0) {
+            System.out.println("Saving resonance protocol");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            File resonateProtocolDirectory = new File("resonateProtocols");
+            if (!resonateProtocolDirectory.exists()) {
+                resonateProtocolDirectory.mkdirs();
+            }
+            StringBuilder str = new StringBuilder("== RESONANCE PROTOCOL ==\nRESONANCE COUNTER;NAME OR RATE\n");
+            for (RateObject rateObject : this.p.getResonatedList()) {
+                str.append(rateObject.getResonateCounter()).append(";").append(rateObject.getNameOrRate()).append("\n");
+            }
+            str.append("===================\nDATE / TIME;NAME OR RATE\n");
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            for (ResonanceObject resonanceObject : this.p.getResonanceList()) {
+                str.append(sdf2.format(resonanceObject.getDateTime().getTime())).append(";").append(resonanceObject.getRateObject().getNameOrRate()).append("\n");
+            }
+            String string = "nocase";
+            if (this.p.getCaseObject() != null && this.p.getCaseObject().getName() != null) {
+                String string2 = this.p.getCaseObject().getName().toLowerCase().replaceAll(" ", "");
+            }
+            try {
+                void var5_9;
+                FileUtils.writeStringToFile(new File("resonateProtocols/" + sdf.format(Calendar.getInstance().getTime()) + "_resonance_" + (String)var5_9 + ".txt"), str.toString(), "UTF-8");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void analyzeCurrentDatabase() {
+        this.analyzeDatabase(this.p.getSelectedDatabase());
+        this.p.setAnalysisPointer(null);
+    }
+
+    private void analyzeDatabase(String databaseName) {
+        try {
+            this.p.setGvCounter(0);
+            this.p.setGeneralVitality(0);
+            this.dataService.refreshDatabaseList();
+            List<Rate> rates = this.dataService.findAllBySourceName(databaseName);
+            AnalysisResult result = this.analyseService.analyseRateList(rates);
+            ArrayList<RateObject> rateObjects = new ArrayList<RateObject>();
+            for (RateObject rate : result.getRateObjects()) {
+                rate.setNameOrRate(this.cleanRateName(rate.getNameOrRate()));
+                rate = this.checkForRecurrence(rate);
+                rateObjects.add(rate);
+            }
+            result.setRateObjects(rateObjects);
+            this.p.setAnalysisResult(result);
+            this.p.setSelectedDatabase(databaseName);
+            WebSocketManager.updateAnalysis();
+            this.saveCase();
+        }
+        catch (IOException e) {
+            this.log.error("Error analyzing ", e);
+        }
+    }
+
+    private void trainingSelectSignatureFromCurrentDatabase() {
+        try {
+            this.dataService.refreshDatabaseList();
+            List<Rate> rates = this.dataService.findAllBySourceName(this.p.getSelectedDatabase());
+            this.p.setTrainingSignature(this.analyseService.selectTrainingRate(rates));
+        }
+        catch (Exception e) {
+            this.log.error("Error selecting a signature for training mode ", e);
+        }
+    }
+
+    private void saveCase() {
+        if (this.p.getCaseObject().getSessionList().size() > 0) {
+            this.p.getCaseObject().getSessionList().get(this.p.getCaseObject().getSessionList().size() - 1).setAnalysisResult(this.p.getAnalysisResult());
+            this.p.saveCase();
+        }
+    }
+
+    private void saveBroadcast(BroadCastData broadCastData) {
+        if (this.p.getCaseObject().getSessionList().size() > 0) {
+            this.p.getCaseObject().getSessionList().get(this.p.getCaseObject().getSessionList().size() - 1).setBroadCasted(broadCastData);
+            this.p.saveCase();
+        }
+    }
+
+    private void saveGeneralVitality() {
+        if (this.p.getAnalysisResult() == null) {
+            System.err.println("ERROR, null analysis object");
+            return;
+        }
+        if (this.p.getCaseObject().getSessionList().size() > 0) {
+            Session lastSession = this.p.getCaseObject().getSessionList().get(this.p.getCaseObject().getSessionList().size() - 1);
+            lastSession.setAnalysisResult(this.p.getAnalysisResult());
+            this.p.saveCase();
+        }
+    }
+
+    private RateObject checkForRecurrence(RateObject rateObject) {
+        for (int i = 0; i < this.recurringRateList.size(); ++i) {
+            RateObject rate = this.recurringRateList.get(i);
+            if (!rate.getNameOrRate().equals(rateObject.getNameOrRate())) continue;
+            rate.setRecurring(rate.getRecurring() + 1);
+            this.recurringRateList.set(i, rate);
+            return rate;
+        }
+        this.recurringRateList.add(rateObject);
+        return rateObject;
+    }
+
+    private String cleanRateName(String nameOrRate) {
+        if (nameOrRate == null) {
+            return "---";
+        }
+        if (nameOrRate.length() > 100) {
+            return nameOrRate.substring(0, 100);
+        }
+        return nameOrRate;
+    }
+
+    public void openWebsiteInDefaultBrowser(String url) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(new URI(url));
+            }
+            catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void keyPressed(char key) {
+        if (this.p.getGuiElements().getCurrentTab().equals("ANALYZE")) {
+            if (key == '\n') {
+                this.checkGeneralVitality();
+                return;
+            }
+            if (this.p.keyCode == 17) {
+                this.analyzeCurrentDatabase();
+                return;
+            }
+            this.navigateThroughHistoricalAnalysis();
+        }
+        if (this.p.keyEvent.getKeyCode() == 17 && this.p.getGuiElements().getCurrentTab().equals("BROADCAST")) {
+            String text = this.getTextFromClipboard();
+            if (text == null) {
+                return;
+            }
+            ((Textfield)this.p.getGuiElements().getCp5().get("SIGNATURE")).setText(text);
+            ((Textfield)this.p.getGuiElements().getCp5().get("SECONDS")).setText("60");
+        }
+    }
+
+    public void navigateThroughHistoricalAnalysis() {
+        if ((this.p.keyCode == 37 || this.p.keyCode == 39) && this.p.getCaseObject() != null && this.p.getCaseObject().getSessionList() != null && this.p.getCaseObject().getSessionList().size() > 0) {
+            if (this.p.getAnalysisPointer() == null) {
+                this.p.setAnalysisPointer(this.p.getCaseObject().getSessionList().size() - 1);
+            }
+            if (this.p.keyCode == 37 && this.p.getAnalysisPointer() > 0) {
+                this.p.setAnalysisPointer(this.p.getAnalysisPointer() - 1);
+            } else if (this.p.keyCode == 39 && this.p.getAnalysisPointer() < this.p.getCaseObject().getSessionList().size() - 1) {
+                this.p.setAnalysisPointer(this.p.getAnalysisPointer() + 1);
+            }
+            AnalysisResult analysisResult = this.p.getCaseObject().getSessionList().get(this.p.getAnalysisPointer()).getAnalysisResult();
+            if (analysisResult != null) {
+                this.p.setAnalysisResult(analysisResult);
+            }
+        }
+    }
+
+    private String getTextFromClipboard() {
+        String text = (String)this.getFromClipboard(DataFlavor.stringFlavor);
+        if (text == null) {
+            return "";
+        }
+        return text;
+    }
+
+    private Object getFromClipboard(DataFlavor flavor) {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable contents = clipboard.getContents(null);
+            if (contents != null && contents.isDataFlavorSupported(flavor)) {
+                return contents.getTransferData(flavor);
+            }
+        }
+        catch (UnsupportedFlavorException e) {
+            this.log.trace(e);
+        }
+        catch (IOException e) {
+            this.log.trace(e);
+        }
+        return null;
+    }
+
+    private void checkGeneralVitality() {
+        if (this.p.getAnalysisResult() == null) {
+            return;
+        }
+        if (this.p.getGvCounter() == null) {
+            this.p.setGvCounter(0);
+        }
+        if (this.p.getAnalysisResult() != null && this.p.getAnalysisPointer() != null) {
+            this.addNewSession();
+            this.p.setAnalysisPointer(null);
+            this.p.setGvCounter(0);
+            return;
+        }
+        if (this.p.getGvCounter() > 21 || this.p.getGvCounter() > this.p.getAnalysisResult().getRateObjects().size()) {
+            this.cleanAnalysisForNewGvCheck();
+            this.addNewSession();
+            return;
+        }
+        Integer gv = this.p.checkGeneralVitalityValue();
+        if (this.p.getGvCounter() == 0) {
+            this.p.setGeneralVitality(gv);
+        } else {
+            this.setRateGeneralVitality(gv);
+        }
+        this.p.setGvCounter(this.p.getGvCounter() + 1);
+        this.saveGeneralVitality();
+    }
+
+    private void addNewSession() {
+        try {
+            if (this.p.getCaseObject().getSessionList().size() == 0) {
+                System.out.println("No case or session object in memory");
+                return;
+            }
+            Session lastSession = this.p.getCaseObject().getSessionList().get(this.p.getCaseObject().getSessionList().size() - 1);
+            Session newSession = new Session(lastSession);
+            this.p.getCaseObject().getSessionList().add(newSession);
+            this.p.setAnalysisResult(new AnalysisResult(this.p.getAnalysisResult()));
+            newSession.setAnalysisResult(this.p.getAnalysisResult());
+            this.p.saveCase();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cleanAnalysisForNewGvCheck() {
+        this.p.setGvCounter(0);
+        for (int iRate = 0; iRate < this.p.getAnalysisResult().getRateObjects().size(); ++iRate) {
+            RateObject rateObject = this.p.getAnalysisResult().getRateObjects().get(iRate);
+            rateObject.setGv(0);
+            rateObject.setRecurringGeneralVitality(0);
+        }
+    }
+
+    public void setRateGeneralVitality(Integer gv) {
+        RateObject r;
+        int iRate;
+        if (this.p.getGvCounter() > this.p.getAnalysisResult().getRateObjects().size()) {
+            return;
+        }
+        RateObject rateObject = this.p.getAnalysisResult().getRateObjects().get(this.p.getGvCounter() - 1);
+        rateObject.setGv(gv);
+        HashMap<Integer, Integer> gvOccurrences = new HashMap<Integer, Integer>();
+        for (iRate = 0; iRate < this.p.getAnalysisResult().getRateObjects().size(); ++iRate) {
+            r = this.p.getAnalysisResult().getRateObjects().get(iRate);
+            if (r.getGv() == 0) continue;
+            if (gvOccurrences.get(r.getGv()) == null) {
+                gvOccurrences.put(r.getGv(), 1);
+                continue;
+            }
+            Integer count = (Integer)gvOccurrences.get(r.getGv());
+            gvOccurrences.put(r.getGv(), count + 1);
+        }
+        for (iRate = 0; iRate < this.p.getAnalysisResult().getRateObjects().size(); ++iRate) {
+            r = this.p.getAnalysisResult().getRateObjects().get(iRate);
+            if (r.getGv() == 0) {
+                r.setRecurringGeneralVitality(0);
+                continue;
+            }
+            if (gvOccurrences.get(r.getGv()) != null) {
+                r.setRecurringGeneralVitality((Integer)gvOccurrences.get(r.getGv()));
+                continue;
+            }
+            r.setRecurringGeneralVitality(0);
+        }
+    }
+}
+

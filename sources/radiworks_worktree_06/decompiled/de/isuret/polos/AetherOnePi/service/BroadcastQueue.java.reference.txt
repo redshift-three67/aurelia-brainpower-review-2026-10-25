@@ -1,0 +1,61 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.service;
+
+import de.isuret.polos.AetherOnePi.domain.BroadCastData;
+import de.isuret.polos.AetherOnePi.service.BroadCastService;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class BroadcastQueue {
+    private Log logger = LogFactory.getLog(BroadcastQueue.class);
+    private List<BroadCastData> broadCastDataList = new ArrayList<BroadCastData>();
+    private BroadCastService broadCastService;
+
+    @PostConstruct
+    public void init() {
+        this.queueProcessing();
+    }
+
+    public BroadCastData addBroadcastDataToQueue(BroadCastData data) {
+        this.logger.info("addBroadcastDataToQueue " + data.getSignature());
+        this.broadCastDataList.add(data);
+        return data;
+    }
+
+    public void queueProcessing() {
+        this.logger.info("Initializing queue processing");
+        new Thread(){
+
+            @Override
+            public void run() {
+                while (true) {
+                    if (!BroadcastQueue.this.broadCastService.getBroadcasting().booleanValue() && BroadcastQueue.this.broadCastDataList.size() > 0) {
+                        BroadcastQueue.this.broadcastFromQueue();
+                    }
+                    try {
+                        Thread.sleep(500L);
+                        continue;
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    break;
+                }
+            }
+        }.start();
+    }
+
+    private void broadcastFromQueue() {
+        this.logger.info("broadcasting from queue ...");
+        if (this.broadCastDataList.size() > 0) {
+            this.broadCastService.broadcast(this.broadCastDataList.remove(0));
+        }
+    }
+}
+

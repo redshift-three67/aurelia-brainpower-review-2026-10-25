@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELIA · Gatefolge &amp; K1-Kette (Mermaid)</title>
+<style>
+  :root{
+    --bg:#f3efe6; --card:#fffdf8; --border:#e3dbc9; --ink:#1f2a24; --ink2:#5b6b62;
+    --sage:#2c4a3e; --sage-soft:#eae9e0; --good:#15803d; --warn:#ca8a04;
+    --mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:1.35rem}
+  .sub{color:var(--ink2);font-size:.84rem;margin-top:4px}
+  .back{display:inline-block;margin-top:10px;font-size:.8rem;color:var(--sage);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;background:var(--card)}
+  section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:16px}
+  h2{font-size:1rem;margin-bottom:10px;color:var(--sage)}
+  h2 small{color:var(--ink2);font-weight:400;font-size:.74rem;margin-left:8px}
+  .note{font-size:.78rem;color:var(--ink2);margin-top:10px}
+  .mermaid{background:#fffdf8;border-radius:8px;padding:10px;display:flex;justify-content:center}
+  .mermaid svg{max-width:100%;height:auto}
+  footer{color:var(--ink2);font-size:.74rem;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AURELIA — Gatefolge &amp; K1-Kette</h1>
+  <p class="sub">Mermaid-Unterseite zum Status-Live · Stand 2026-08-28, Abend</p>
+  <a class="back" href="aurelia-status-live.html">← zurück zum Status-Live</a>
+
+  <section>
+    <h2>G0-SRV-Gatefolge <small>0/13 bestanden · alles hängt an G0-SRV-0 · server_changes_started: false</small></h2>
+    <pre class="mermaid">
+flowchart TD
+  G0["G0-SRV-0 · Backup/Restore-Nachweis<br/>⏳ wartet auf Betreibernachweis"]
+  G1["G0-SRV-1 · IPMI / KVM / Virtual Media<br/>◐ Funktionstest offen"]
+  G2["G0-SRV-2 · Hardware / Firmware / UEFI<br/>◐ ≈ 40 % · ECC unbewiesen"]
+  G3["G0-SRV-3 · RAID1 / LUKS2 / LVM"]
+  G4["G0-SRV-4 · Boot / Encryption / Recovery"]
+  G5["G0-SRV-5 · Identitäten / SSH / VPN / Firewall"]
+  G6["G0-SRV-6 · Minimales GNOME / Codex-Trennung"]
+  G7["G0-SRV-7 · NVIDIA-Baseline (ohne CUDA)"]
+  G8["G0-SRV-8 · Security / Logging / Updates"]
+  G9["G0-SRV-9 · PostgreSQL-16-Basis"]
+  G10["G0-SRV-10 · Offsite-Backup / RPO-RTO"]
+  G11["G0-SRV-11 · Selektiver Projekt-Restore"]
+  G12["G0-SRV-12 · Gesamtbaseline / Soak-Tests"]
+  DONE["Phase-1-Abschluss möglich · AUDIT-02 · Phasen ≥ 2"]
+  G0 --> G1 --> G2 --> G3 --> G4 --> G5 --> G6 --> G7 --> G8 --> G9 --> G10 --> G11 --> G12 --> DONE
+  classDef wait fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+  classDef partial fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+  classDef locked fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+  classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+  class G0 wait
+  class G1,G2 partial
+  class G3,G4,G5,G6,G7,G8,G9,G10,G11,G12 locked
+  class DONE done
+    </pre>
+    <p class="note">Neu seit E2: Branch-Protection ist auf dem privaten Repo planbedingt nicht verfügbar (HTTP 403) — der Ersatz für N10–N12 ist der eigene Push-Graph-Scanner als verpflichtender Pre-Push-Hook plus FF-only-Disziplin.</p>
+  </section>
+
+  <section>
+    <h2>K1-Kanonkette <small>T1–T2 abgenommen · T3 im Review-Bogen · T4–14 blockiert</small></h2>
+    <pre class="mermaid">
+flowchart LR
+  T1["T1 · Steuerung +<br/>Tip-Sanitisierung ✓"]
+  T2["T2 · GATE-GOV-0 ✓"]
+  T3["T3 · Push-Graph-Scanner<br/>Spec-PASS ✓ · Quality offen"]
+  OV["Overlap-TDD-Lauf<br/>(Design/Plan amendiert,<br/>Freigabe nötig)"]
+  T4["T4 · K1-Matrix +<br/>Kanonvalidator"]
+  T5["T5 · Aktive Dokumente<br/>auf K1"]
+  T6["T6 · Portal + Schale<br/>auf K1"]
+  T7["T7 · Test-Runner<br/>plattformübergreifend"]
+  T8["T8 · Auth-/Migration-/PWA-/<br/>Windows-Testverträge"]
+  T9["T9 · Vite-CLI plattform-<br/>übergreifend"]
+  T10["T10 · Auth-Invarianten-<br/>prüfung selbsthostend"]
+  T11["T11 · Browser-Smoke<br/>sicher + portabel"]
+  T12["T12 · Plattform-Assets<br/>(external_blocker)"]
+  T13["T13 · Lintbereinigung"]
+  T14["T14 · Integration, Browser-<br/>abnahme, K1-VERIFICATION"]
+  T1 --> T2 --> T3 --> OV --> T4 --> T5 --> T6 --> T7 --> T8 --> T9 --> T10 --> T11 --> T12 --> T13 --> T14
+  classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+  classDef review fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+  classDef next fill:#e3ebe7,stroke:#2c4a3e,color:#1f2a24,stroke-width:2.5px
+  classDef locked fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+  class T1,T2 done
+  class T3 review
+  class OV next
+  class T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14 locked
+    </pre>
+    <p class="note">T3-Bogen heute: Spec-Review FAIL → Korrekturschleife (3 Findings geschlossen) → Re-Review PASS (E3). Quality-Review: 3 Findings bestätigt, 1 widerlegt (E4) → Konsolidierungsstopp → Option B → Overlap-Design/-Plan amendiert. Erst beide PASS entblocken T4–T14.</p>
+  </section>
+
+  <footer>Statischer Snapshot aus <code>aurelia-tiefenanalyse-v6-2026-08-28/</code> · Statusautorität: <code>GATE-STATUS.md</code> · Mermaid via CDN (Internet nötig)</footer>
+</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral', flowchart: { curve: 'basis' } });
+</script>
+</body>
+</html>

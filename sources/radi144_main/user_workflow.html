@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12x12 Resonance Matrix – Analyse-Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="user_workflow.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="hbadge">NATURHEILPRAXIS &middot; RESONANZMATRIX-ANALYSE</div>
+  <h1>Heilsame Resonanzmatrix</h1>
+  <p>Schritt f&uuml;r Schritt zu Ihrer personalisierten Frequenz-Harmonisierung</p>
+  <div class="api-status" id="apiStatus"><span class="pulse"></span> Verbindung wird gepr&uuml;ft&hellip;</div>
+</div>
+
+<!-- NAV -->
+<nav class="snav" id="stepperNav"><div class="snav-inner" id="navInner"></div></nav>
+
+<!-- MAIN -->
+<main class="main">
+<div class="op"><span class="op-l">Fortschritt</span><div class="op-b"><div class="op-f" id="opFill"></div></div><span class="op-p" id="opPct">1/10</span></div>
+<div class="btn-group flow-nav-top">
+  <button class="btn" id="btnPrev" onclick="navigate(-1)" disabled>&#8592; Zur&uuml;ck</button>
+  <button class="btn btn-primary" id="btnNext" onclick="navigate(1)">Weiter &#8594;</button>
+</div>
+
+<!-- TEMPLATE MODAL -->
+<div id="tplModal" class="tpl-modal" style="display:none">
+<div class="tpl-modal-inner">
+<div class="ct"><span>&#128203;</span> Gespeicherte Konfigurationen</div>
+<div id="tplList" style="max-height:320px;overflow-y:auto"></div>
+<div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap">
+<input type="text" id="tplName" class="fi" placeholder="Name f&uuml;r aktuelle Konfiguration..." style="flex:1;min-width:180px">
+<button class="btn btn-primary" onclick="saveTemplate()">Speichern</button>
+<button class="btn" onclick="closeTplModal()">Schlie&szlig;en</button>
+</div>
+</div>
+</div>
+
+<!-- ===== STEP 1: WILLKOMMEN ===== -->
+<section class="sp active" data-step="0">
+<div class="sh"><div class="si si-cyan">&#128075;</div><div><h2>Willkommen</h2><span class="ss">Start der personalisierten Resonanzmatrix-Analyse</span></div></div>
+<div class="card">
+<div class="ct"><span>&#127919;</span> Was passiert in diesem Workflow?</div>
+<div class="info-grid">
+<div class="info-item"><div class="ii-icon" style="color:var(--cyan)">&#9312;</div><div><strong>Ihre Daten eingeben</strong><p>Name, Geburtsdatum, Geburtsort &amp; optionale Details</p></div></div>
+<div class="info-item"><div class="ii-icon" style="color:var(--purple)">&#9313;</div><div><strong>Fokus w&auml;hlen</strong><p>Ihre Intention / Ihren Analysefokus beschreiben</p></div></div>
+<div class="info-item"><div class="ii-icon" style="color:var(--amber)">&#9314;</div><div><strong>Konfigurieren</strong><p>Matrix-Gr&ouml;&szlig;e, Berechnungsmodus &amp; Optionen w&auml;hlen</p></div></div>
+<div class="info-item"><div class="ii-icon" style="color:var(--green)">&#9315;</div><div><strong>Analyse &amp; Ergebnis</strong><p>KI-gest&uuml;tzte Resonanzberechnung &amp; Visualisierung</p></div></div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128268;</span> System-Anforderung</div>
+<p class="dim small">Dieses Tool verbindet sich mit dem lokalen <code>FastAPI Server</code> auf demselben Host &uuml;ber <code>/api/v1</code>. Bitte stellen Sie sicher, dass der Server l&auml;uft (<code>python main.py</code>).</p>
+<div id="sysInfo" style="margin-top:14px"></div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128203;</span> Templates &amp; Konfigurationen</div>
+<p class="dim small" style="margin-bottom:12px">Laden Sie eine gespeicherte Konfiguration oder starten Sie neu.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn" onclick="openTplModal()">&#128203; Templates verwalten</button>
+<span class="dim small" id="tplCount" style="align-self:center"></span>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+<select id="startTemplateSelect" class="fi" style="min-width:260px;flex:1">
+  <option value="">Template optional ausw&auml;hlen...</option>
+</select>
+<button class="btn" id="btnLoadStartTemplate" onclick="loadSelectedStartTemplate()" disabled>&#10148; Template laden</button>
+</div>
+</div>
+</section>
+
+<!-- ===== STEP 2: KLIENTEN-DATEN ===== -->
+<section class="sp" data-step="1">
+<div class="sh"><div class="si si-purple">&#128100;</div><div><h2>Klienten-Daten</h2><span class="ss">Pers&ouml;nliche Daten f&uuml;r die Frequenz-Signatur</span></div></div>
+<div class="card">
+<div class="ct"><span>&#127760;</span> Vektor-Typ</div>
+<div class="radio-group rg-h">
+  <label class="rl rl-h"><input type="radio" name="vectorMode" value="client" checked><span class="rb">&#128100; Klient</span><small>Standard-Signatur</small></label>
+  <label class="rl rl-h"><input type="radio" name="vectorMode" value="group"><span class="rb">&#128101; Gruppe</span><small>Centroid aus Mitgliedern</small></label>
+  <label class="rl rl-h"><input type="radio" name="vectorMode" value="geo"><span class="rb">&#128205; Geo</span><small>Lat/Lon &amp; Radius</small></label>
+  <label class="rl rl-h"><input type="radio" name="vectorMode" value="image"><span class="rb">&#128247; Bild</span><small>Foto-basierte Signatur</small></label>
+</div>
+<p class="dim small" style="margin-top:10px">Sie k&ouml;nnen optional zus&auml;tzlich eine Wissens-Datenbank einbinden (DB-Ranking/Scan).</p>
+</div>
+
+<div id="clientVectorFields">
+<div class="card">
+<div class="ct"><span>&#128221;</span> Pflichtfelder</div>
+<div class="form-grid">
+<div class="fg">
+  <label class="fl">Vorname <span class="freq">*</span></label>
+  <input type="text" id="firstName" class="fi" placeholder="z.B. Maria" required>
+</div>
+<div class="fg">
+  <label class="fl">Nachname <span class="freq">*</span></label>
+  <input type="text" id="lastName" class="fi" placeholder="z.B. Schneider">
+</div>
+<div class="fg">
+  <label class="fl">Geburtsdatum <span class="freq">*</span></label>
+  <input type="date" id="birthDate" class="fi" required>
+</div>
+<div class="fg">
+  <label class="fl">Geburtsort <span class="freq">*</span></label>
+  <input type="text" id="birthPlace" class="fi" placeholder="z.B. Wien">
+</div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128203;</span> Optionale Felder</div>
+<div class="form-grid">
+<div class="fg">
+  <label class="fl">Geburtszeit</label>
+  <input type="time" id="birthTime" class="fi">
+</div>
+<div class="fg">
+  <label class="fl">E-Mail</label>
+  <input type="email" id="email" class="fi" placeholder="optional">
+</div>
+<div class="fg">
+  <label class="fl">Hauptsymptom / Anliegen</label>
+  <input type="text" id="mainSymptom" class="fi" placeholder="z.B. R&uuml;ckenschmerzen">
+</div>
+<div class="fg">
+  <label class="fl">Geburtsplanet</label>
+  <input type="text" id="birthPlanet" class="fi" placeholder="z.B. Erde (optional)">
+</div>
+<div class="fg" style="grid-column:1 / -1">
+  <label class="toggle-row" style="margin-top:6px">
+    <span>Planetare Resonanz in Signatur einbeziehen</span>
+    <input type="checkbox" id="planetaryToggle" class="tgl"><span class="tgl-s"></span>
+  </label>
+</div>
+<div class="fg">
+  <label class="fl">Notizen</label>
+  <textarea id="notes" class="fi fi-ta" placeholder="Weitere Informationen..."></textarea>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card" id="groupVectorCard" style="display:none">
+<div class="ct"><span>&#128101;</span> Gruppen-Mitglieder</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+  <input type="file" id="groupJsonFile" class="fi" accept=".json,application/json" style="max-width:320px">
+  <button class="btn" onclick="importGroupJsonFile()">&#128194; JSON importieren</button>
+</div>
+<textarea id="groupMembers" class="fi fi-ta fi-lg" placeholder="Ein Mitglied pro Zeile:&#10;Nachname;Vorname;DDMMYYYY;Ort&#10;Muster;Anna;15031989;Wien"></textarea>
+<p class="dim small" style="margin-top:8px">Unterst&uuml;tzt auch ISO-Datum (YYYY-MM-DD). Ort ist optional.</p>
+</div>
+
+<div class="card" id="geoVectorCard" style="display:none">
+<div class="ct"><span>&#128205;</span> Geo-Resonanz</div>
+<div class="form-grid">
+<div class="fg"><label class="fl">Geo-Label</label><input type="text" id="geoLabel" class="fi" placeholder="z.B. Praxis M&uuml;nchen"></div>
+<div class="fg"><label class="fl">Latitude</label><input type="number" id="geoLat" class="fi" placeholder="48.137154" step="0.000001"></div>
+<div class="fg"><label class="fl">Longitude</label><input type="number" id="geoLon" class="fi" placeholder="11.576124" step="0.000001"></div>
+<div class="fg"><label class="fl">Radius (m)</label><input type="number" id="geoRadius" class="fi" placeholder="0" min="0" step="1"></div>
+</div>
+</div>
+
+<div class="card" id="imageVectorCard" style="display:none">
+<div class="ct"><span>&#128247;</span> Bild-Resonanz</div>
+<div class="fg"><label class="fl">Bild hochladen</label><input type="file" id="imageFile" class="fi" accept="image/*"></div>
+<div class="fg" style="margin-top:10px"><label class="fl">Alternativ: Server-Pfad</label><input type="text" id="imagePath" class="fi" placeholder="z.B. db_import/bilder/probe.jpg"></div>
+<div class="dim small" id="imageFileInfo" style="margin-top:8px">Kein Bild ausgew&auml;hlt.</div>
+<div class="dim small" style="margin-top:6px">Upload-Limit f&uuml;r Base64-Transport: 4 MB (gr&ouml;&szlig;ere Bilder bitte als Server-Pfad angeben).</div>
+</div>
+
+<div class="card" id="dbVectorCard">
+<div class="ct"><span>&#128218;</span> Wissens-Datenbank (optional)</div>
+<div class="form-grid">
+<div class="fg">
+  <label class="fl">Datenbank-Datei</label>
+  <select id="dbPathSelect" class="fi">
+    <option value="">Keine Datenbank verwenden</option>
+  </select>
+</div>
+<div class="fg">
+  <label class="fl">Top-N beim Scan</label>
+  <select id="dbTopN" class="fi">
+    <option value="1">Top-1</option>
+    <option value="5">Top-5</option>
+    <option value="9">Top-9</option>
+    <option value="21" selected>Top-21</option>
+  </select>
+</div>
+<div class="fg">
+  <label class="fl">Pr&auml;fix f&uuml;r Scan-&Uuml;bernahme</label>
+  <input type="text" id="dbPrefix" class="fi" placeholder="z.B. Heilung:">
+</div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+  <button class="btn" id="btnDbList" onclick="loadDbList()">&#128260; DB-Liste aktualisieren</button>
+  <button class="btn" id="btnDbRank" onclick="rankDbCandidates()">&#127942; Top-DB Ranking</button>
+  <button class="btn" id="btnDbScan" onclick="scanDbToFocus()">&#128269; DB-&gt;Fokus Scan</button>
+  <button class="btn" id="btnDbCancel" onclick="cancelDbOperation()" style="display:none">&#10060; DB-Vorgang abbrechen</button>
+</div>
+<div id="dbStatus" class="dim small" style="margin-top:10px">Noch keine DB-Abfrage ausgef&uuml;hrt.</div>
+</div>
+
+<div id="clientValErr" class="val-err"></div>
+</section>
+
+<!-- ===== STEP 3: FOKUS ===== -->
+<section class="sp" data-step="2">
+<div class="sh"><div class="si si-amber">&#127919;</div><div><h2>Fokus &amp; Intention</h2><span class="ss">Was soll die Analyse unterst&uuml;tzen?</span></div></div>
+<div class="card">
+<div class="ct"><span>&#128161;</span> Fokus-Text eingeben</div>
+<textarea id="focusText" class="fi fi-ta fi-lg" placeholder="Beschreiben Sie Ihren Fokus, z.B.: Harmonische Regulation Lunge; Stressabbau; Chakra-Ausgleich&#10;&#10;Mehrere Fokusse mit Semikolon (;) trennen &ndash; max. 42 (FIFO)"></textarea>
+<div id="focusCount" class="dim small" style="margin-top:4px"></div>
+<div class="presets-label">Schnellauswahl:</div>
+<div class="preset-grid" id="focusPresets"></div>
+<div id="focusHistorySection" style="display:none;margin-top:16px">
+<div class="presets-label">Letzte Fokusse:</div>
+<div class="preset-grid" id="focusHistory"></div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128218;</span> Hinweis zum Fokus</div>
+<p class="dim small">Der Fokus-Text wird in einen 256-dimensionalen Vektor transformiert und beeinflusst die gesamte Matrix-Berechnung. Je pr&auml;ziser Ihre Intention, desto gezielter die Resonanz.</p>
+</div>
+<div id="focusValErr" class="val-err"></div>
+</section>
+
+<!-- ===== STEP 4: KONFIGURATION ===== -->
+<section class="sp" data-step="3">
+<div class="sh"><div class="si si-green">&#9881;</div><div><h2>Analyse-Konfiguration</h2><span class="ss">Matrix-Gr&ouml;&szlig;e, Modus, Symmetrie &amp; Palette</span></div></div>
+<div class="cg2">
+<div class="card">
+<div class="ct"><span>&#128202;</span> Matrix &amp; Modus</div>
+<div class="fg"><label class="fl">Matrix-Gr&ouml;&szlig;e</label>
+<div class="radio-group">
+  <label class="rl"><input type="radio" name="matrixSize" value="12" checked><span class="rb">12&times;12</span><small>Standard &middot; 144 Zellen</small></label>
+  <label class="rl"><input type="radio" name="matrixSize" value="24"><span class="rb">24&times;24</span><small>Erweitert &middot; 576 Zellen</small></label>
+  <label class="rl"><input type="radio" name="matrixSize" value="36"><span class="rb">36&times;36</span><small>Maximum &middot; 1296 Zellen</small></label>
+</div></div>
+<div class="fg"><label class="fl">Berechnungsmodus</label>
+<div class="radio-group rg-h">
+  <label class="rl rl-h"><input type="radio" name="calcMode" value="quantum" checked><span class="rb">&#9883; Quantum</span><small>Stochastisch</small></label>
+  <label class="rl rl-h"><input type="radio" name="calcMode" value="precision"><span class="rb">&#127919; Precision</span><small>Deterministisch</small></label>
+</div></div>
+<div class="fg"><label class="fl">Fokus-Gewichtung</label>
+<select id="focusWeight" class="fi">
+  <option value="Deaktiviert">Deaktiviert (0.0)</option>
+  <option value="Sanft">Sanft (0.4)</option>
+  <option value="Normal" selected>Normal (1.0)</option>
+  <option value="Stark">Stark (1.5)</option>
+</select></div>
+</div>
+<div class="card">
+<div class="ct"><span>&#127912;</span> Darstellung</div>
+<div class="fg"><label class="fl">Symmetrie</label>
+<div class="radio-group">
+  <label class="rl"><input type="radio" name="symmetry" value="none" checked><span class="rb">Keine</span><small>Freie Matrix</small></label>
+  <label class="rl"><input type="radio" name="symmetry" value="horizontal"><span class="rb">Horizontal</span><small>Spiegel L&#8596;R</small></label>
+  <label class="rl"><input type="radio" name="symmetry" value="quadrant"><span class="rb">Quadrant</span><small>Mandala 4-fach</small></label>
+</div></div>
+<div class="fg"><label class="fl">Farbpalette</label>
+<select id="palette" class="fi">
+  <option value="">Standard (Engine-Auswahl)</option>
+  <option value="client_focus_coherent">Client-Fokus Koh&auml;rent</option>
+  <option value="focus_only_coherent">Nur Fokus Koh&auml;rent</option>
+  <option value="nature_healing">Natur &amp; Heilung</option>
+  <option value="focus_emf_coherent">Fokus+EMF Koh&auml;rent</option>
+  <option value="chakra_spectrum">Chakra-Spektrum (0-9)</option>
+  <option value="twilight_balance">Twilight Balance (warm/k&uuml;hl)</option>
+  <option value="unified_coherent">Unified Golden-Ratio</option>
+  <option value="generate_coherent">Classic Koh&auml;rent</option>
+</select></div>
+</div>
+</div>
+<div class="cg2">
+<div class="card">
+<div class="ct"><span>&#128225;</span> EMF-Kompensation</div>
+<label class="toggle-row">
+  <span>Umfeld-EMF-Kompensation aktivieren</span>
+  <input type="checkbox" id="emfToggle" class="tgl"><span class="tgl-s"></span>
+</label>
+<p class="dim small" style="margin-top:10px">Misst elektromagnetische St&ouml;rungen und kompensiert deren Einfluss auf die Berechnung.</p>
+</div>
+<div class="card">
+<div class="ct"><span>&#128147;</span> HRV-Simulation</div>
+<label class="toggle-row">
+  <span>HRV-Simulation aktivieren</span>
+  <input type="checkbox" id="hrvToggle" class="tgl"><span class="tgl-s"></span>
+</label>
+<p class="dim small" style="margin-top:10px">Simuliert Herzratenvariabilit&auml;t f&uuml;r biologisch koh&auml;rentere Ergebnisse.</p>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128142;</span> Resonanz-Verst&auml;rker (Amplifier)</div>
+<div class="fg"><label class="fl">Amplifier w&auml;hlen</label>
+<select id="amplifier" class="fi">
+  <option value="">Keiner</option>
+  <option value="rosenquarz">&#128156; Rosenquarz (Liebe/Herz) &mdash; 350 Hz</option>
+  <option value="amethyst">&#128156; Amethyst (Intuition/Klarheit) &mdash; 480 Hz</option>
+  <option value="bergkristall">&#128300; Bergkristall (Universell) &mdash; 528 Hz</option>
+  <option value="schwarzer_turmalin">&#128737; Schwarzer Turmalin (EMF-Schutz) &mdash; 174 Hz</option>
+  <option value="schungit" selected>&#128737; Schungit (EMF-Absorption) &mdash; 196 Hz</option>
+  <option value="orgonit_pyramide_schungit">&#128312; Orgonit-Pyramide Schungit (Raum) &mdash; 7.83 Hz</option>
+  <option value="orgonit_pyramide_bergkristall">&#128312; Orgonit-Pyramide Bergkristall &mdash; 7.83 Hz</option>
+  <option value="lapislazuli">&#128302; Lapislazuli (Weisheit) &mdash; 448 Hz</option>
+  <option value="selenit">&#10024; Selenit (Reinigung) &mdash; 560 Hz</option>
+</select>
+</div>
+</div>
+</section>
+
+<!-- ===== STEP 5: EMF STATUS ===== -->
+<section class="sp" data-step="4">
+<div class="sh"><div class="si si-red">&#128225;</div><div><h2>EMF-Umfeld-Analyse</h2><span class="ss">Echtzeit-Messung des elektromagnetischen Umfelds</span></div></div>
+<div class="card" id="emfCard">
+<div class="ct"><span>&#128752;</span> Aktuelle Umfeldmessung</div>
+<div id="emfContent"><p class="dim">EMF-Messung wird geladen&hellip;</p></div>
+</div>
+<div class="card" id="emfCounterCard" style="display:none">
+<div class="ct"><span>&#127925;</span> Empfohlene Counter-Frequencies</div>
+<div id="emfCounterContent"></div>
+</div>
+</section>
+
+<!-- ===== STEP 6: ZUSAMMENFASSUNG & START ===== -->
+<section class="sp" data-step="5">
+<div class="sh"><div class="si si-cyan">&#128640;</div><div><h2>Zusammenfassung &amp; Start</h2><span class="ss">Pr&uuml;fen Sie Ihre Eingaben und starten Sie die Analyse</span></div></div>
+<div class="card">
+<div class="ct"><span>&#128203;</span> Ihre Eingaben</div>
+<div id="summaryContent"></div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128190;</span> Template (optional) speichern</div>
+<p class="dim small" style="margin-bottom:10px">Aktuelle Konfiguration bereits hier unter einem definierten Namen sichern.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <input type="text" id="summaryTplName" class="fi" placeholder="z. B. Standard-Session" style="flex:1;min-width:220px">
+  <button class="btn" onclick="saveTemplateFromSummary()">Template speichern</button>
+</div>
+</div>
+<div class="card" id="analysisCard" style="display:none">
+<div class="ct"><span>&#9889;</span> Analyse l&auml;uft&hellip;</div>
+<div class="analysis-progress">
+  <div class="ap-spinner"></div>
+  <div id="analysisStatus">Sende Anfrage an Engine&hellip;</div>
+  <div class="ap-bar"><div class="ap-fill" id="apFill"></div></div>
+</div>
+</div>
+<div id="analysisError" class="val-err" style="display:none"></div>
+<div style="text-align:center;margin-top:20px">
+  <button class="btn btn-lg btn-glow" id="btnStart" onclick="startAnalysis()">&#9889; Analyse starten</button>
+</div>
+</section>
+
+<!-- ===== STEP 7: ERGEBNIS MATRIX ===== -->
+<section class="sp" data-step="6">
+<div class="sh"><div class="si si-green">&#128202;</div><div><h2>Ergebnis: Resonanzmatrix</h2><span class="ss">Ihre personalisierte Matrix mit Farbkoh&auml;renz</span></div></div>
+<div class="card">
+<div class="ct"><span>&#127752;</span> Matrix-Visualisierung</div>
+<div class="result-score-row" id="scoreRow"></div>
+<div id="matrixContainer" class="matrix-container"></div>
+<div id="matrixLegend" class="matrix-legend"></div>
+</div>
+</section>
+
+<!-- ===== STEP 8: ERGEBNIS DETAILS ===== -->
+<section class="sp" data-step="7">
+<div class="sh"><div class="si si-purple">&#128300;</div><div><h2>Ergebnis: Analyse-Details</h2><span class="ss">Detaillierte Informationen zur Berechnung</span></div></div>
+<div class="cg2">
+<div class="card">
+<div class="ct"><span>&#128202;</span> Kerndaten</div>
+<div id="detailCore"></div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128268;</span> Technische Details</div>
+<div id="detailTech"></div>
+</div>
+</div>
+<div class="card" id="emfResultCard" style="display:none">
+<div class="ct"><span>&#128225;</span> EMF-Kompensation Ergebnis</div>
+<div id="detailEmf"></div>
+</div>
+<div class="card">
+<div class="ct"><span>&#128290;</span> Roh-Daten (JSON)</div>
+<pre class="code-out" id="rawJson"></pre>
+</div>
+</section>
+
+<!-- ===== STEP 9: HARMONISIERUNG ===== -->
+<section class="sp" data-step="8">
+<div class="sh"><div class="si si-pink">&#127925;</div><div><h2>Impuls/Pausen-Harmonisierung</h2><span class="ss">Visuelle &amp; akustische Resonanz-&Uuml;bertragung (wie generate_matrix.ps1)</span></div></div>
+<div class="card" id="harmConfigCard">
+<div class="ct"><span>&#9881;</span> Harmonisierungs-Konfiguration</div>
+<div class="cg2">
+<div>
+<div class="fg"><label class="fl">Impuls (Sekunden)</label>
+<input type="number" id="harmPulse" class="fi" value="14" min="1" max="120"></div>
+<div class="fg" style="margin-top:12px"><label class="fl">Pause (Sekunden)</label>
+<input type="number" id="harmPause" class="fi" value="14" min="1" max="120"></div>
+<div class="fg" style="margin-top:12px"><label class="fl">Dauer (Faktor &times; 21 Min)</label>
+<input type="number" id="harmDuration" class="fi" value="1" min="1" max="21" step="1">
+<p class="dim small" style="margin-top:4px">1 = 21 Min &middot; 7 = 147 Min &middot; 21 = 441 Min</p></div>
+</div>
+<div>
+<div class="fg"><label class="fl">Solfeggio Basis-Modulation</label>
+<div class="radio-group">
+  <label class="rl"><input type="radio" name="harmSolf" value="528"><span class="rb">528.00 Hz</span><small>DNA/Transformation</small></label>
+  <label class="rl"><input type="radio" name="harmSolf" value="429.62"><span class="rb">429.62 Hz</span><small>Bio-Resonanz</small></label>
+  <label class="rl"><input type="radio" name="harmSolf" value="432" checked><span class="rb">432.00 Hz</span><small>Nat&uuml;rliche Stimmung (Standard)</small></label>
+  <label class="rl"><input type="radio" name="harmSolf" value="498.9"><span class="rb">498.90 Hz</span><small>Kammerton H (optional)</small></label>
+</div></div>
+<div class="fg" style="margin-top:12px">
+<label class="fl">Pausenbilder f&uuml;r „PAUSE — Stille &amp; Integration“ (optional, max. 3 Layer)</label>
+<div class="pause-layer-inputs">
+  <input type="file" id="pauseImageLayer1" class="fi" accept="image/*">
+  <input type="file" id="pauseImageLayer2" class="fi" accept="image/*">
+  <input type="file" id="pauseImageLayer3" class="fi" accept="image/*">
+</div>
+<p class="dim small" style="margin-top:6px">Die gew&auml;hlten Bilder werden nur lokal im Browser w&auml;hrend der Pausenphase als adaptive Layer eingeblendet; sie werden nicht an die API gesendet.</p>
+</div>
+<div class="fg" style="margin-top:12px">
+<label class="toggle-row"><span>Audio-Ausgabe aktivieren</span>
+<input type="checkbox" id="harmAudio" class="tgl" checked><span class="tgl-s"></span></label>
+</div>
+</div>
+</div>
+<div class="fg" style="margin-top:12px">
+<label class="fl">Template-Name (optional vor Harmonisierung)</label>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <input type="text" id="harmTplName" class="fi" placeholder="z. B. Morgenroutine">
+  <button class="btn" onclick="saveTemplateFromHarmonize()">Template speichern</button>
+</div>
+<p class="dim small" style="margin-top:6px">Wie in <code>generate_matrix.ps1</code>: optional benennen/speichern vor Start.</p>
+</div>
+<div style="text-align:center;margin-top:20px">
+  <button class="btn btn-lg btn-glow" id="btnHarmStart" onclick="startHarmonizer()">&#127925; Harmonisierung starten</button>
+</div>
+</div>
+<div class="card" id="harmRunCard" style="display:none">
+<div class="ct"><span>&#127925;</span> <span id="harmPhaseLabel">IMPULS</span></div>
+<div class="harm-status">
+  <div class="harm-timer" id="harmTimer">00:00</div>
+  <div class="harm-remaining" id="harmRemaining">Restzeit: --:--</div>
+  <div class="harm-cycle" id="harmCycle">Zyklus 1 / --</div>
+</div>
+<div id="harmMatrixContainer" class="matrix-container"></div>
+<div class="harm-info" id="harmInfo"></div>
+<div style="text-align:center;margin-top:16px">
+  <button class="btn" id="btnHarmStop" onclick="stopHarmonizer()">&#9724; Harmonisierung stoppen</button>
+</div>
+</div>
+</section>
+
+<!-- ===== STEP 10: EXPORT ===== -->
+<section class="sp" data-step="9">
+<div class="sh"><div class="si si-amber">&#128230;</div><div><h2>Export &amp; Abschluss</h2><span class="ss">Ergebnis speichern und neue Analyse starten</span></div></div>
+<div class="cg3">
+<div class="card card-action" onclick="exportJSON()">
+<div class="ca-icon">&#128196;</div>
+<strong>JSON herunterladen</strong>
+<p class="dim small">Komplettes Ergebnis als JSON-Datei speichern</p>
+</div>
+<div class="card card-action" onclick="exportCSV()">
+<div class="ca-icon">&#128202;</div>
+<strong>Matrix als CSV</strong>
+<p class="dim small">Matrix-Daten als CSV-Tabelle exportieren</p>
+</div>
+<div class="card card-action" onclick="copyToClipboard()">
+<div class="ca-icon">&#128203;</div>
+<strong>In Zwischenablage</strong>
+<p class="dim small">JSON-Ergebnis in die Zwischenablage kopieren</p>
+</div>
+</div>
+<div class="cg2" style="margin-top:16px">
+<div class="card card-action" onclick="exportPDF()">
+<div class="ca-icon">&#128196;</div>
+<strong>PDF-Bericht</strong>
+<p class="dim small">Echter PDF-Export inkl. Matrix, Vektor &amp; Konfiguration</p>
+</div>
+<div class="card card-action" onclick="exportExcel()">
+<div class="ca-icon">&#128202;</div>
+<strong>Excel-Export</strong>
+<p class="dim small">Matrix-Daten als XLSX-Tabelle speichern</p>
+</div>
+</div>
+<div class="card" style="margin-top:16px">
+<div class="ct"><span>&#128190;</span> Template f&uuml;r n&auml;chste Session speichern</div>
+<p class="dim small" style="margin-bottom:10px">Konfiguration unter einem definierten Namen speichern und beim Start optional laden.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+  <input type="text" id="exportTplName" class="fi" placeholder="z. B. Abend-Protokoll" style="flex:1;min-width:220px">
+  <button class="btn btn-primary" onclick="saveTemplateFromExport()">Als Template speichern</button>
+</div>
+</div>
+<div class="card" style="margin-top:20px">
+<div class="ct"><span>&#128260;</span> Weitere Aktionen</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<button class="btn btn-primary" onclick="resetWorkflow()">&#128260; Neue Analyse starten</button>
+<button class="btn" onclick="goToStep(6)">&#128202; Matrix erneut ansehen</button>
+<button class="btn" onclick="goToStep(8)">&#127925; Harmonisierung starten</button>
+</div>
+</div>
+</section>
+
+<div class="card vector-snapshot" id="vectorSnapshotCard" style="display:none">
+<div class="ct"><span>&#129517;</span> Aktiver Vektor-Snapshot (alle Schritte)</div>
+<div id="vectorSnapshotContent"></div>
+</div>
+
+</main>
+
+<script src="user_workflow.js"></script>
+</body>
+</html>

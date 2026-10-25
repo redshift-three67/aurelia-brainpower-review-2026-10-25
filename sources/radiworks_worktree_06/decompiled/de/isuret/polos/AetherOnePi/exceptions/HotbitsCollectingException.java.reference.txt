@@ -1,0 +1,16 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.exceptions;
+
+public class HotbitsCollectingException
+extends Exception {
+    public HotbitsCollectingException(String message) {
+        super(message);
+    }
+
+    public HotbitsCollectingException(String message, Throwable e) {
+        super(message, e);
+    }
+}
+

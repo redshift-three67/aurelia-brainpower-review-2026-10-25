@@ -1,0 +1,597 @@
+{
+  "schema": "aurelia-review-requirement-index-v1",
+  "scope": "documented requirements and explicit operator constraints; not complete code/test acceptance matrix",
+  "sources": [
+    {
+      "id": "source-001",
+      "component": "brainpower",
+      "relative": "docs/GOVERNORS_DEVELOPER_STATUS_2026-10-08.md",
+      "sha256": "a625ee83f7ba17ce39590bca484272ed55805e082636614b78f7dd9010253846",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/GOVERNORS_DEVELOPER_STATUS_2026-10-08.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-002",
+      "component": "brainpower",
+      "relative": "docs/RESTARBEITEN_0_5.md",
+      "sha256": "1e766c3b2c21b5ae45c428823b6bf6a72c5e5e97a0321c3facba4a7c69c2939b",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/RESTARBEITEN_0_5.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-003",
+      "component": "brainpower",
+      "relative": "docs/LLM_OPERATING_CONTRACT.json",
+      "sha256": "8f3c40664d8a6162e19a4ef320e375b0b57965f722ed166a5bc2e65c0e1727c2",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/LLM_OPERATING_CONTRACT.json"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-004",
+      "component": "brainpower",
+      "relative": "docs/CODEX_CHAT_VARIANTE_B.md",
+      "sha256": "b79676407b1cec20c1a1ffc3317eda8a75f71ab30ec5203a8daf9caee6b4cc33",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/CODEX_CHAT_VARIANTE_B.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-005",
+      "component": "brainpower",
+      "relative": "docs/superpowers/plans/2026-10-10-aurelia-module-lokale-referenz-und-datenstruktur.md",
+      "sha256": "4c128075a7de007fc40be6001857b87b336b055aca3f00e1fb14b54ee6090cb1",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/superpowers/plans/2026-10-10-aurelia-module-lokale-referenz-und-datenstruktur.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-006",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_INTEGRATION_ENTSCHEIDUNGSVORLAGE_2026-09-19.md",
+      "sha256": "a8bce295257b6cf3a5b11bb44310395a08a5469f4f63030c261700600e1537dd",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_INTEGRATION_ENTSCHEIDUNGSVORLAGE_2026-09-19.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-007",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_WORKFLOW_ABDECKUNG_2026-10-10.md",
+      "sha256": "6c8d4f5a6f6de4384ee60dbc30d55d127099cd668c06f6af515ae4c28a70f391",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_WORKFLOW_ABDECKUNG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-008",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_MANDANTEN_KAPAZITAET_2026-10-16.md",
+      "sha256": "10b4eb95ec14e29d01c163c1bc8f3226496994fd564d7e2980e63c96dbf70e8a",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_MANDANTEN_KAPAZITAET_2026-10-16.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-009",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "sha256": "66ff66733e423751203b07d10f741f3504688de0e1bf93a1b9c9e6ba8c337dea",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_CP2A_STAND_2026-10-25.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-010",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_EINSTIEGE_2026-10-10.md",
+      "sha256": "a0928656615ce85417aedb4dc638076956e22865b7a744724d5a9cb664532128",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_EINSTIEGE_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-011",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_CHARAKTERISIERUNG_2026-10-10.md",
+      "sha256": "3d8154a5154794af68a6ce77e3b97176332fb26d4bb4aadd2e47762c16032dca",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_CHARAKTERISIERUNG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-012",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_PARAMETER_2026-10-14.md",
+      "sha256": "99cfa6276ad08cb50bfc677379a791b4c887706bd33986d026b03849d34ea384",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_PARAMETER_2026-10-14.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-013",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_API_PARAMETER_2026-10-14.md",
+      "sha256": "51a4e51ac69bdc66b267053e387b3c1d3e0be2f566791af297b2c6270236ee26",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_API_PARAMETER_2026-10-14.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-014",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_CPU_KERN_2026-10-14.md",
+      "sha256": "c80824d32a8c5d19c13bea8e135891014c110410e89e13eea56e8586f7dc6188",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_CPU_KERN_2026-10-14.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-015",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADI144_GRENZEN_2026-10-10.md",
+      "sha256": "625a95853cd1557dfca272ce7233a29ff3a9710933f62e644b359b36ee866d65",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADI144_GRENZEN_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-016",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_MORPHIC_QUELLVERTRAG_2026-10-10.md",
+      "sha256": "fe0a18d2a6ed34572949cf6d8e7df3b55cc219ca1671d2d1b4e9285b1489f158",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_MORPHIC_QUELLVERTRAG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-017",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_MORPHIC_KATALOGPROBEN_2026-10-10.md",
+      "sha256": "7e5dfbc5455fa2cd4998ee72c4af82450a8453bc008e60b7c0e8e6450629aa8c",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_MORPHIC_KATALOGPROBEN_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-018",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_MORPHIC_CHARAKTERISIERUNG_2026-10-10.md",
+      "sha256": "5518224dc67b615a31e134e297e30e1ae5c0a6683256e0aa5b7d63976250134d",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_MORPHIC_CHARAKTERISIERUNG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-019",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_MORPHIC_RECORD_VALIDIERUNG_2026-10-14.md",
+      "sha256": "4ceb9dfaa8971c53f64a9fcce82bd6c111058829571769faaed98d08341a8db5",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_MORPHIC_RECORD_VALIDIERUNG_2026-10-14.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-020",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADIFARBEN_WORKFLOWS_2026-10-10.md",
+      "sha256": "608677eb57ac6e9a44f7411a913c4818d907d35640360258ebb59c52f5383306",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADIFARBEN_WORKFLOWS_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-021",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADIFARBEN_REFERENZVORBEREITUNG_2026-10-10.md",
+      "sha256": "8eb926419e72a092dbd01e00abcdc1717c2ccb97a63817253ecffae3e5dc55cd",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADIFARBEN_REFERENZVORBEREITUNG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-022",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADIFARBEN_RMF_VERSION_DELTA_2026-10-11.md",
+      "sha256": "a12f85f850d0b7cdca2bba93e0b7cf1bfd0df682dd33c90e7fad1a22e1aba23a",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADIFARBEN_RMF_VERSION_DELTA_2026-10-11.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-023",
+      "component": "brainpower",
+      "relative": "docs/verification/AURELIA_P3_RADIFARBEN_SYNTHETISCHE_ACCESSPROBE_2026-10-11.md",
+      "sha256": "c0ad09949111cc3c30d6295d480edbe533b89aec20461ae7ce8a833d9ef6bb0d",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/verification/AURELIA_P3_RADIFARBEN_SYNTHETISCHE_ACCESSPROBE_2026-10-11.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-024",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_COPEN_BOHM_THOM_BESTAND_2026-10-09.md",
+      "sha256": "5e1c1a275a402e18dc8fb6fedeb3213b1d784f024f8a312c8cc31162f6807df3",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_COPEN_BOHM_THOM_BESTAND_2026-10-09.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-025",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_REFERENZPRUEFUNG_COPEN_BOHM_THOM_2026-10-09.md",
+      "sha256": "7e95eaaf5c7314327235f81b3e852263ea2f629ea27470f2ce1af1487b9037fb",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_REFERENZPRUEFUNG_COPEN_BOHM_THOM_2026-10-09.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-026",
+      "component": "brainpower",
+      "relative": "docs/AURELIA_WORKFLOW_ABDECKUNG_2026-10-10.md",
+      "sha256": "6c8d4f5a6f6de4384ee60dbc30d55d127099cd668c06f6af515ae4c28a70f391",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/AURELIA_WORKFLOW_ABDECKUNG_2026-10-10.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-027",
+      "component": "brainpower",
+      "relative": "docs/SERVER_ABNAHME_AKTUELL_2026-09-23.md",
+      "sha256": "177a1735f780a8efd6b09fff417d35f5eafba86cc4dca986f279c08925a8d4a9",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/SERVER_ABNAHME_AKTUELL_2026-09-23.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-028",
+      "component": "module_templates",
+      "relative": "README.md",
+      "sha256": "acdfef3d14635029797aeb9bcc037c7fb4e449db3a78a5795b9e4b63bceb823e",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/module_templates/README.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-029",
+      "component": "module_templates",
+      "relative": "MODULE_REGISTRY.md",
+      "sha256": "17d6f2389cf373534a7ea1eac19e6c6d6fe135db1ba2d1b8ec36e0c2d2259918",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/module_templates/MODULE_REGISTRY.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-030",
+      "component": "module_templates",
+      "relative": "standards/MODUL_STANDARD.md",
+      "sha256": "7c653ffe27bc2d5e0fb69596df123fb96fb0693a8791fcbb30b0d99ff4fd7c91",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/module_templates/standards/MODUL_STANDARD.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-031",
+      "component": "module_templates",
+      "relative": "standards/API_CONTRACT.md",
+      "sha256": "faf9d1c3fe4138559213fa9105cb028211c74a3527a6b5365a45a421b33f2533",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/module_templates/standards/API_CONTRACT.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-032",
+      "component": "module_templates",
+      "relative": "standards/REIFEGRADE.md",
+      "sha256": "0dfa7f2a994f9274d783042258388545b2e01a2d0287751a64ead33dedd0557e",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/module_templates/standards/REIFEGRADE.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    },
+    {
+      "id": "source-033",
+      "component": "brainpower",
+      "relative": "docs/MODULUEBERGANG_UND_BETREIBERPRUEFUNG.md",
+      "sha256": "dfd39cb56bd8e1e2c9db9a7339383bab5423730bc9471230cdca135c2649f4b1",
+      "documentary_binding_only": true,
+      "review_paths": [
+        "sources/brainpower/docs/MODULUEBERGANG_UND_BETREIBERPRUEFUNG.md"
+      ],
+      "export_binding": "matching_export_bytes"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "ALG-01",
+      "requirement": "Unver\u00e4nderte stabile Algorithmen und Heuristiken erhalten; neue ersetzende Verfahren gesondert entscheiden",
+      "documented_state": "operator_constraint",
+      "evidence_document": "docs/CODEX_CHAT_VARIANTE_B.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "GOV-01",
+      "requirement": "Lokalen Governor, explizite Gates und Quellenfrische von Aurelia-Laufzeitrechten unterscheiden",
+      "documented_state": "implemented_with_limits",
+      "evidence_document": "docs/GOVERNORS_DEVELOPER_STATUS_2026-10-08.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "P4-01",
+      "requirement": "Sieben-Modul-Vergleichsmatrix mit getrennten Workflows/Writern/Rechten/Fehlerpfaden konsolidieren",
+      "documented_state": "partially_documented_acceptance_open",
+      "evidence_document": "docs/superpowers/plans/2026-10-10-aurelia-module-lokale-referenz-und-datenstruktur.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "P5-01",
+      "requirement": "Zentrale Datenbankstruktur erst anhand konsolidierter Quellen und Anforderungen entscheiden",
+      "documented_state": "operator_decision_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "P6-01",
+      "requirement": "Gemeinsame Daten-/Job-/Rechtevertr\u00e4ge, Module_Templates und Aurelia-Vorbereitung abstimmen",
+      "documented_state": "normative_contract_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "P7-01",
+      "requirement": "Module schrittweise als gebundene Adapter integrieren und gegen bestehende Referenzen pr\u00fcfen",
+      "documented_state": "integration_acceptance_open",
+      "evidence_document": "docs/MODULUEBERGANG_UND_BETREIBERPRUEFUNG.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "TEN-01",
+      "requirement": "Praxis/Mandant, Benutzer, Therapeut, Klient/Fall und Abonnementinhaber trennen",
+      "documented_state": "platform_requirement",
+      "evidence_document": "docs/AURELIA_MANDANTEN_KAPAZITAET_2026-10-16.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "TEN-02",
+      "requirement": "Objektrechte und Modul-/Kombinationsabonnement einschlie\u00dflich Jobrevision/Quota binden",
+      "documented_state": "platform_requirement",
+      "evidence_document": "docs/AURELIA_MANDANTEN_KAPAZITAET_2026-10-16.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "LOAD-01",
+      "requirement": "Begrenzte Modulproben auf VPS; 25-Nutzer-/Burst-/Misch-/Gesamtlast erst auf verifiziertem Hauptserver",
+      "documented_state": "capacity_not_accepted",
+      "evidence_document": "docs/AURELIA_MANDANTEN_KAPAZITAET_2026-10-16.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-01",
+      "requirement": "Vollst\u00e4ndige Ratenlisten und optionale Ergebnisse \u00fcber105 ohne Destabilisierung bereitstellen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-02",
+      "requirement": "Vollst\u00e4ndige Katalog-/Ergebnissuche und stabile numerische/Text-Sortierung pr\u00fcfen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-03",
+      "requirement": "Buttonzust\u00e4nde, Start-/Stopp-/Leerfunktionen und Aktivierungsbedingungen verst\u00e4ndlich vereinheitlichen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-04",
+      "requirement": "Resonated-Rates-Liste vertikal sichtbar und lesbar gestalten",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/superpowers/plans/2026-10-10-aurelia-module-lokale-referenz-und-datenstruktur.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-05",
+      "requirement": "Stochastik beider Verfahren, Zufallsquellen-/Katalogverf\u00fcgbarkeit und Fehleranzeigen stabil pr\u00fcfen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-06",
+      "requirement": "CopyGuard-Basis erkl\u00e4ren und begrenzten administrativen Entwicklungstestmodus getrennt pr\u00fcfen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-07",
+      "requirement": "Manuelle feste Rate-f\u00fcr-Rate-Liste mit Impuls/Pause/Wiederholung getrennt vom Analyseloop behandeln",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-08",
+      "requirement": "Analyse-/Broadcast-Runden mit Anwenderstopp oder fester Dauer kontrolliert fortsetzen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-09",
+      "requirement": "TXT-/XLSX-Import mit Vorschau, CopyGuard und versionierter Katalogfreigabe einbeziehen",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RW-10",
+      "requirement": "Medien-, Langlauf-, Abbruch-/Recovery- und Restore-Abnahmen durchf\u00fchren",
+      "documented_state": "overall_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "RF-01",
+      "requirement": "H\u00f6chstes zentrales RMF als aktuellen Stand erhalten; sp\u00e4tere Versionen bis Integration gesondert abgleichen",
+      "documented_state": "operator_constraint_and_acceptance_open",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    },
+    {
+      "id": "SEC-01",
+      "requirement": "Vor zus\u00e4tzlichen kostenpflichtigen Security-Scans Umfang, Kontingent und Kosten kl\u00e4ren",
+      "documented_state": "operator_cost_gate",
+      "evidence_document": "docs/verification/AURELIA_CP2A_STAND_2026-10-25.md",
+      "code_bindings": [],
+      "test_bindings": [],
+      "fresh_functional_revalidation": false,
+      "open_evidence": "Exact current code/test/acceptance links must be resolved in substantive review; empty lists mean not established, not absent"
+    }
+  ],
+  "module_identities": [
+    "radiworks",
+    "radi144",
+    "morphic",
+    "radifarben",
+    "copen",
+    "bohm",
+    "thom"
+  ],
+  "thom_separate_identity_explicit": true,
+  "central_database_decision_accepted": false,
+  "module_template_integration_accepted": false,
+  "full_traceability_proven": false,
+  "source_reference_count": 33,
+  "distinct_source_documents": 32,
+  "duplicate_references_retained_for_component_context": 1
+}

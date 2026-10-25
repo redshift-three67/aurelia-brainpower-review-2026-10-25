@@ -1,0 +1,42 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+
+public class Label
+implements IDrawableElement {
+    private AetherOneUI p;
+    private String tabName;
+    private String text;
+    private Float x;
+    private Float y;
+
+    public Label(AetherOneUI p, String tabName, String text, Float x, Float y) {
+        this.p = p;
+        this.tabName = tabName;
+        this.text = text;
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void draw() {
+        this.p.noStroke();
+        this.p.fill(255);
+        this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 14.0f);
+        this.p.text(this.text, this.x.floatValue(), this.y.floatValue());
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return this.tabName;
+    }
+}
+

@@ -1,0 +1,35 @@
+# Core Dependencies
+numpy>=1.26
+pydantic>=2.0
+requests>=2.31
+
+# CLI Framework
+typer[all]>=0.9
+
+# Web Server & WebSocket
+fastapi>=0.110
+uvicorn[standard]>=0.29
+websockets>=12.0
+
+# Hardware Communication
+pyserial>=3.5
+psutil>=5.9
+
+# Scientific Computing
+scipy>=1.11
+matplotlib>=3.8
+
+# PDF Export
+reportlab>=4.0
+
+# Quantum Computing (optional - used by core/quantum_synergy/grover_search.py)
+# Falls nicht installiert, wird ein klassischer Fallback verwendet.
+# qiskit>=1.0
+
+# CUDA Acceleration (optional - requires NVIDIA GPU + CUDA 12.x)
+# Uncomment on production server with RTX 4000:
+# cupy-cuda12x>=12.0
+
+# Testing
+pytest>=7.4
+pytest-asyncio>=0.21

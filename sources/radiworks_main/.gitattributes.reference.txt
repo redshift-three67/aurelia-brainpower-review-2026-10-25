@@ -1,0 +1,3 @@
+# Preserve source bytes for the byte-based kernel artifact hash and release evidence.
+radiworks_port/engine/** -text
+radiworks_port/webapp/** -text

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main" if="">
+  <copy file="META-INF/MANIFEST.MF" tofile="C:\Users\Hubert111\CascadeProjects\java\AetherOnePi-2.2.0\META-INF\maven\org.eclipse.jgit\org.eclipse.jgit\target/META-INF/MANIFEST.MF" overwrite="true"/>
+  <replace file="C:\Users\Hubert111\CascadeProjects\java\AetherOnePi-2.2.0\META-INF\maven\org.eclipse.jgit\org.eclipse.jgit\target/META-INF/MANIFEST.MF">
+    <replacefilter value=".202510161040" token=".qualifier"/>
+  </replace>
+</target>
+</project>

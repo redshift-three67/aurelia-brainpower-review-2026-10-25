@@ -1,0 +1,33 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.hotbits;
+
+import de.isuret.polos.AetherOnePi.hotbits.HotbitsAccessorMocked;
+import de.isuret.polos.AetherOnePi.hotbits.HotbitsFactory;
+import de.isuret.polos.AetherOnePi.hotbits.IHotbitsFactory;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.apache.commons.io.FileUtils;
+
+public class HotbitsFactoryMocked
+implements IHotbitsFactory {
+    @Override
+    public File createHotbitPackage(int packageSize, String targetFolder) throws IOException {
+        String fileName = HotbitsFactory.getActualFileName();
+        File file = new File(targetFolder + "/" + fileName);
+        ArrayList<Byte> data = new ArrayList<Byte>();
+        while (data.size() < packageSize) {
+            data.addAll(Arrays.asList(HotbitsAccessorMocked.getBytes(packageSize - data.size())));
+        }
+        byte[] bytes = new byte[packageSize];
+        for (int x = 0; x < packageSize; ++x) {
+            bytes[x] = (Byte)data.get(x);
+        }
+        FileUtils.writeByteArrayToFile(file, bytes);
+        return file;
+    }
+}
+

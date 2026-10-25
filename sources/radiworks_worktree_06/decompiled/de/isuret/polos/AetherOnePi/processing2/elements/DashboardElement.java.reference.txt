@@ -1,0 +1,68 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+
+public class DashboardElement
+implements IDrawableElement {
+    private AetherOneUI p;
+    private String[] lines;
+
+    public DashboardElement(AetherOneUI p) {
+        this.p = p;
+    }
+
+    @Override
+    public void draw() {
+        int y = 100;
+        this.p.fill(255);
+        this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 16.0f);
+        if (this.lines != null) {
+            for (int i = 0; i < this.lines.length; ++i) {
+                this.p.text(this.lines[i], 50.0f, (float)y);
+                y += 20;
+            }
+        }
+        if (this.p.watchlistRequiresAttention) {
+            this.p.stroke(255);
+            y = 100;
+            this.p.text("WATCHLIST REQUIRES ATTENTION", 600.0f, (float)y);
+            this.p.line(600.0f, y + 2, 1200.0f, y + 2);
+            for (RateObject rate : this.p.watchlistAnalysis.getRateObjects()) {
+                if (rate.getGv() >= 500) continue;
+                if (this.p.mouseX > 658 && this.p.mouseX < 1000 && this.p.mouseY > (y += 20) - 17 && this.p.mouseY < y) {
+                    this.p.stroke(255.0f, 0.0f, 0.0f);
+                    if (this.p.mousePressed) {
+                        this.p.getAetherOneEventHandler().clearForNewCase();
+                        ((Textfield)this.p.getGuiElements().getCp5().get("NAME")).setText(rate.getNameOrRate());
+                        this.p.getGuiElements().selectCurrentTab("SESSION");
+                        this.p.getGuiElements().cp5.controlWindow.activateTab("SESSION");
+                    }
+                } else {
+                    this.p.stroke(255);
+                }
+                this.p.noFill();
+                this.p.rect(658.0f, y - 17, 542.0f, 18.0f);
+                this.p.fill(255);
+                this.p.stroke(255);
+                this.p.text(rate.getNameOrRate(), 660.0f, (float)y);
+                this.p.text(rate.getGv(), 600.0f, (float)y);
+            }
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "default";
+    }
+}
+

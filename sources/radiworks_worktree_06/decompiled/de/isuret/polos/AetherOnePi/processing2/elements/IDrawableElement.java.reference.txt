@@ -1,0 +1,13 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+public interface IDrawableElement {
+    public void draw();
+
+    public void setDrawOrderByType(int var1);
+
+    public String getAssignedTabName();
+}
+

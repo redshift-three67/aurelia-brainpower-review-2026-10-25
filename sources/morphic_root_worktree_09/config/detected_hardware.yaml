@@ -1,0 +1,89 @@
+# Detected Hardware Configuration
+# Auto-generated: 2025-12-15
+# Source: Windows System Inventory
+
+system:
+  hostname: "DESKTOP-NLIT09C"
+  os: "Windows"
+  profile: "dev_windows"
+
+cpu:
+  model: "AMD Ryzen 9 8945HS w/ Radeon 780M Graphics"
+  cores: 8
+  threads: 16
+  base_clock_mhz: 4001
+  turbo_clock_mhz: 5200  # Spec-based
+
+gpu:
+  model: "AMD Radeon 780M Graphics"
+  type: "iGPU"
+  memory_mb: 512
+  shared_memory: true
+  driver_version: "32.0.12033.1030"
+  opencl_support: true
+  cuda_support: false
+
+ram:
+  total_gb: 16
+  usable_gb: 15.3
+  modules:
+    - manufacturer: "Micron Technology"
+      capacity_gb: 4
+      speed_mhz: 7500
+    - manufacturer: "Micron Technology"
+      capacity_gb: 4
+      speed_mhz: 7500
+    - manufacturer: "Micron Technology"
+      capacity_gb: 4
+      speed_mhz: 7500
+    - manufacturer: "Micron Technology"
+      capacity_gb: 4
+      speed_mhz: 7500
+  type: "LPDDR5"
+  total_speed_mhz: 7500
+
+storage:
+  drives:
+    - letter: "C"
+      total_gb: 254.73
+      free_gb: 16.88
+      type: "NVMe SSD"
+    - letter: "D"
+      total_gb: 226.70
+      free_gb: 36.43
+      type: "SSD"
+    - letter: "E"
+      total_gb: 256.00
+      free_gb: 2.97
+      type: "Storage"
+
+usb_devices:
+  - name: "AMD USB 3.10 eXtensible-Hostcontroller"
+    type: "USB Host Controller"
+  - name: "USB-Verbundgerät"
+    vendor_id: "046D"
+    product_id: "C328"
+    type: "Composite Device"
+  - name: "Generischer USB-Hub"
+    vendor_id: "05E3"
+    product_id: "0610"
+  - name: "Electronic USB Hub 3.0"
+    type: "USB Hub"
+
+network:
+  interfaces: []  # Not specified in inventory
+
+hardware_profile_match:
+  detected_profile: "DEV_PROFILE"
+  reasons:
+    - "Windows OS"
+    - "16GB RAM (14-18 GB range)"
+    - "AMD Radeon iGPU (780M)"
+  recommended_settings:
+    max_llm_params_b: 3.8
+    llm_model: "Phi-3 Mini 3.8B"
+    llm_quantization: "Q4_K_M"
+    max_workers: 8
+    use_gpu_acceleration: false
+    quantum_synergy_max_items: 200
+    quantum_synergy_max_combinations: 10000

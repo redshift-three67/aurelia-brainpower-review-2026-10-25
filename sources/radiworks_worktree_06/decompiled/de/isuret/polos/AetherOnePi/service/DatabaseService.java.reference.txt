@@ -1,0 +1,148 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.service;
+
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.Case;
+import de.isuret.polos.AetherOnePi.domain.CaseList;
+import java.io.File;
+import javax.annotation.PostConstruct;
+import org.apache.commons.lang3.StringUtils;
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.NitriteCollection;
+import org.dizitart.no2.WriteResult;
+import org.dizitart.no2.objects.Cursor;
+import org.dizitart.no2.objects.ObjectRepository;
+import org.dizitart.no2.objects.filters.ObjectFilters;
+
+public class DatabaseService {
+    private String databaseName;
+    private String username;
+    private String password;
+    private String filepath;
+    private ObjectRepository<Case> caseRepository;
+    private ObjectRepository<AnalysisResult> analysisRepository;
+
+    @PostConstruct
+    public void init() {
+        this.init(false);
+    }
+
+    public void init(boolean dropFirst) {
+        this.initFilePathFolder(this.filepath);
+        Nitrite db = Nitrite.builder().compressed().filePath(this.filepath).openOrCreate(this.username, this.password);
+        NitriteCollection collection = db.getCollection(this.databaseName);
+        if (dropFirst) {
+            this.getRepositories(db);
+            this.dropAllDatabase();
+        }
+        this.getRepositories(db);
+    }
+
+    private void initFilePathFolder(String filepath) {
+        String folderPath = this.getFolderPath(filepath);
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+    }
+
+    public String getFolderPath(String filepath) {
+        if (!StringUtils.isEmpty(filepath) && filepath.contains(".db")) {
+            return filepath.substring(0, filepath.lastIndexOf("/"));
+        }
+        return filepath;
+    }
+
+    public void getRepositories(Nitrite db) {
+        this.analysisRepository = db.getRepository(AnalysisResult.class);
+        this.caseRepository = db.getRepository(Case.class);
+    }
+
+    public void dropAllDatabase() {
+        this.analysisRepository.drop();
+        this.caseRepository.drop();
+    }
+
+    public int createCase(Case caseObject) {
+        WriteResult result = this.caseRepository.insert(caseObject, (Case[])new Case[0]);
+        return result.getAffectedCount();
+    }
+
+    public int updateCase(Case caseObject) {
+        WriteResult result = this.caseRepository.update(ObjectFilters.eq("name", caseObject.getName()), caseObject);
+        return result.getAffectedCount();
+    }
+
+    public CaseList getAllCases() {
+        CaseList caseList = new CaseList();
+        for (Case caseObject : this.caseRepository.find()) {
+            caseList.getCaseList().add(caseObject);
+        }
+        return caseList;
+    }
+
+    public Case getCaseByName(String name) {
+        Case caseExample = new Case();
+        caseExample.setName(name);
+        Cursor<Case> cursor = this.caseRepository.find(ObjectFilters.eq("name", name));
+        if (cursor.size() == 1) {
+            return (Case)cursor.iterator().next();
+        }
+        return null;
+    }
+
+    public void deleteCase(String name) {
+        this.caseRepository.remove(ObjectFilters.eq("name", name));
+    }
+
+    public String getDatabaseName() {
+        return this.databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFilepath() {
+        return this.filepath;
+    }
+
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
+
+    public ObjectRepository<Case> getCaseRepository() {
+        return this.caseRepository;
+    }
+
+    public void setCaseRepository(ObjectRepository<Case> caseRepository) {
+        this.caseRepository = caseRepository;
+    }
+
+    public ObjectRepository<AnalysisResult> getAnalysisRepository() {
+        return this.analysisRepository;
+    }
+
+    public void setAnalysisRepository(ObjectRepository<AnalysisResult> analysisRepository) {
+        this.analysisRepository = analysisRepository;
+    }
+}
+

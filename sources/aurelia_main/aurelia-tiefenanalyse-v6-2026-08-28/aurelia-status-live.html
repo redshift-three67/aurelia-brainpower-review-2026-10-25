@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELIA Status-Live · 2026-08-28</title>
+<style>
+  :root{
+    --bg:#f3efe6; --card:#fffdf8; --border:#e3dbc9; --ink:#1f2a24; --ink2:#5b6b62;
+    --sage:#2c4a3e; --sage-soft:#eae9e0; --track:#e5dfd0;
+    --good:#15803d; --warn:#ca8a04; --serious:#b23c0c; --crit:#6b1024;
+    --mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  header h1{font-size:1.55rem;letter-spacing:.01em}
+  header .sub{color:var(--ink2);font-size:.86rem;margin-top:4px}
+  .basis{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .basis span{font-family:var(--mono);font-size:.72rem;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 9px;color:var(--ink2)}
+  .basis b{color:var(--ink);font-weight:600}
+  /* KPI tiles */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:20px 0}
+  .kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .kpi .n{font-size:1.75rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:.76rem;color:var(--ink2);margin-top:2px}
+  .kpi.alert .n{color:var(--crit)}
+  /* sections */
+  section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  section h2{font-size:1.02rem;margin-bottom:12px;color:var(--sage)}
+  section h2 small{color:var(--ink2);font-weight:400;font-size:.76rem;margin-left:8px}
+  table{width:100%;border-collapse:collapse;font-size:.84rem}
+  th{text-align:left;color:var(--ink2);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;padding:6px 10px;border-bottom:1px solid var(--border)}
+  td{padding:7px 10px;border-bottom:1px solid #efe9db;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#faf6ec}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.8rem}
+  /* status chips: Farbe nie allein — immer Icon + Label */
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:.74rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+  .chip i{font-style:normal}
+  .c-good{background:#e4f2e8;color:var(--good)} .c-warn{background:#f7eed2;color:#7a5306}
+  .c-serious{background:#fae3d8;color:var(--serious)} .c-crit{background:#f0dfe2;color:var(--crit)}
+  .c-lock{background:#eceae3;color:var(--ink2)} .c-off{background:#eceae3;color:var(--ink2)}
+  .c-run{background:#e3ebe7;color:var(--sage)}
+  /* meters: ein Farbton (Sage), Track hell, Zahl immer sichtbar */
+  .meter{position:relative;height:9px;background:var(--track);border-radius:5px;min-width:110px;overflow:hidden}
+  .meter i{position:absolute;inset:0 auto 0 0;background:var(--sage);border-radius:5px}
+  .cellmeter{display:flex;align-items:center;gap:9px}
+  .cellmeter b{font-variant-numeric:tabular-nums;font-weight:600;min-width:44px;text-align:right}
+  .pill-note{font-size:.78rem;color:var(--ink2);margin-top:10px}
+  /* risks */
+  .risks{list-style:none}
+  .risks li{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #efe9db;font-size:.85rem;align-items:baseline}
+  .risks li:last-child{border-bottom:none}
+  .risks .id{font-family:var(--mono);font-size:.72rem;color:var(--ink2);min-width:52px}
+  /* priority chain */
+  .chain{list-style:none;counter-reset:step}
+  .chain li{counter-increment:step;display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #efe9db;font-size:.87rem;align-items:baseline}
+  .chain li:last-child{border-bottom:none}
+  .chain li::before{content:counter(step);flex:0 0 26px;height:26px;border-radius:50%;background:var(--sage);color:#fff;font-weight:700;font-size:.8rem;display:flex;align-items:center;justify-content:center;align-self:center}
+  .chain li.done::before{background:var(--good)}
+  .chain li.partial::before{background:var(--warn)}
+  .chain .unlock{margin-left:auto;font-size:.72rem;color:var(--ink2);white-space:nowrap}
+  /* timeline */
+  .tl{list-style:none;font-size:.85rem}
+  .tl li{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #efe9db}
+  .tl li:last-child{border-bottom:none}
+  .tl .t{font-family:var(--mono);font-size:.72rem;color:var(--ink2);min-width:118px;padding-top:2px}
+  /* diagram links */
+  .diagrams{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .diagrams a{display:block;background:var(--sage-soft);border:1px solid var(--border);border-radius:8px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+  .diagrams a:hover{border-color:var(--sage)}
+  .diagrams .dt{font-weight:700;font-size:.9rem;color:var(--sage)}
+  .diagrams .dd{font-size:.78rem;color:var(--ink2);margin-top:4px}
+  footer{color:var(--ink2);font-size:.76rem;margin-top:8px;padding:0 4px}
+  footer code{font-family:var(--mono);font-size:.72rem}
+  @media print{body{background:#fff;padding:0}.kpi,section{break-inside:avoid}}
+  @media (max-width:640px){td,th{padding:6px 6px}.cellmeter b{min-width:38px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>AURELIA — Status-Live</h1>
+    <p class="sub">Tiefenanalyse V6 + Session-Fortschritt · Stand 2026-08-28, später Abend (E1–E5) · statischer Snapshot, strikt lesend erhoben</p>
+    <div class="basis">
+      <span>Haupt-Checkout <b>codex/aurelia-vorbereitung @ 8706186</b></span>
+      <span>Konsolidierung <b>e6f3089 · GEPUSHT ✓ (0414146..e6f3089, FF)</b></span>
+      <span>Remote <b>5 Branches · 0 CI · privat</b> · gh <b>redshift-three67 ✓</b></span>
+      <span>Evidenz <b>E1–E5 + Repro</b></span>
+      <span>Infrastruktur <b>Dev hier · Server nur RDP/WinSCP</b></span>
+      <span>Datenklasse <b>synthetic</b></span>
+      <span>Destruktion <b>gesperrt</b></span>
+    </div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n">≈ 33 %</div><div class="l">Gesamtfortschritt (Spanne 30–35 %, gewichtet ≈ 35 %)</div></div>
+    <div class="kpi alert"><div class="n">0 / 13</div><div class="l">G0-SRV-Gates bestanden — G0-SRV-0 wartet auf Backup-/Restore-Nachweis</div></div>
+    <div class="kpi"><div class="n">3 / 14</div><div class="l">K1-Tasks abgenommen — Task 3 abgeschlossen (beiderseits PASS, gepusht e6f3089)</div></div>
+    <div class="kpi"><div class="n">0</div><div class="l">unveröffentlichte Commits — 18 Commits via zwei autorisierten FF-Pushes (E5, E6)</div></div>
+    <div class="kpi"><div class="n">15</div><div class="l">Publikations-Records unverändert (Gate blocked &amp; funktionsfähig, keine neuen Befunde)</div></div>
+    <div class="kpi"><div class="n">4+1</div><div class="l">Review-Findings heute: 3 bestätigt, 1 widerlegt (E4, dynamisch)</div></div>
+  </div>
+
+  <section>
+    <h2>Session-Verlauf 28.08. <small>Öffnung → Stufen 1–3 der Prioritätenkette</small></h2>
+    <ul class="tl">
+      <li><span class="t">10:44–10:55</span><span><b>V6-Tiefenanalyse</b> abgeschlossen (9 Dokumente) — V5 bestätigt, 3 Korrekturen, CI/gh-Befund neu</span></li>
+      <li><span class="t">≈ 13:35</span><span><b>E1 · Stufe 1:</b> Qualitätskette erstmals live — <b>L3.4 präzisiert</b>: <code>npm test</code> grün mit <b>0 von 9</b> Skript-Suiten (vacuous); direkt <code>node --test</code>: 199/214, alle 15 Fails Windows-Artefakte; Task-3-Kern 65/65; <code>tsc</code> sauber</span></li>
+      <li><span class="t">Nachmittag</span><span><b>E2 · Stufe 2:</b> <code>gh</code> als <b>redshift-three67</b> re-authentifiziert (Device-Flow, nach Konto-Klärung — <code>radiquant</code> hat keinen Repo-Zugriff); Fernzustand: 0 PRs/0 Tags/0 Releases/0 Workflows; <b>Branch-Protection planbedingt 403</b> (Neufund → N10–N12 auf Pre-Push-Hook umschreiben)</span></li>
+      <li><span class="t">Nachmittag</span><span><b>E3 · Stufe 3a:</b> fokussiertes Spec-Review (unabhängige Instanz) — <b>FAIL</b> mit 3 Findings; Korrekturschleife (Betreiberfreigabe) geschlossen; scoped Re-Review: <b>PASS</b>. Zähne-Beweis per Mutation im Temp-Klon</span></li>
+      <li><span class="t">Abend</span><span><b>E4 · Stufe 3b:</b> Quality-/Security-Review (frische Instanz) — <b>nicht bestanden</b>: NEW-01 (P1, Terminatoren), NEW-02 (P2, <code>--flag=</code>), NEW-03 (P2, quadratisch: 512 KiB ≈ 29 s) dynamisch bestätigt; <b>NEW-04 durch primäre Reproduktion widerlegt</b>. Konsolidierungsstopp → Betreiberentscheidung</span></li>
+      <li><span class="t">Abend</span><span><b>Option B vollzogen:</b> Overlap-Design + -Plan amendiert (Terminator-Grammatik, <code>:</code>-Werte, CLI-Flag-Tests, Performance-Abnahme; neuer Design-Digest <code>c8a54422…</code>) — TDD-Lauf wartet auf namentliche Freigabe</span></li>
+      <li><span class="t">Später Abend</span><span><b>E5 · Stufe 5 (verkürzt):</b> Infrastruktur-Klärung (Server nur RDP/WinSCP; lokale Sicherungen vollständig inkl. <code>.git</code>) → Kapselaufgaben entfallen · Migrations-Task 1 (<code>2f86d6b</code>) + Plan-Amendierung (<code>0414146</code>) · Task 8 komplett PASS (Graphvergleich exakt Plavorhersage: 15/15, added=0) · <b>Task 9: der eine autorisierte FF-Push — 029bdce..0414146, CAS-Hook, Rücklesung ✓. SPOF für committeten Zustand beseitigt.</b></span></li>
+      <li><span class="t">Nacht</span><span><b>E6 · Overlap-TDD-Lauf:</b> Scanner-Rewrite implementiert (Head-first-Enumeration, bounded Value-Parser, wertfreie AST-Adjudikation) · GRAMMAR-CONFLICT gefunden → Option Y (Betreiber) · Spec-Review FAIL→PASS (2× P2 Testabdeckung) · Quality-Review FAIL→PASS (1× P1 JWT-Quadratik <b>19,6 s → 32 ms</b>, 2× P2; Re-Open: Test-Fake ohne <code>parseDiagnostics</code> — behoben) · <b>53/53 grün · beiderseits PASS</b> · QOV-02 gefixt (Cache-Schlüssel blob+pfad) · Gate-Block (added=1, Plan-Fixture in Zwischenhistorie) → <b>Option 1: Kette neu aufgebaut (Baum identisch verifiziert) → Push 2: 0414146..e6f3089, added=0 ✓</b> · <b>K1 Task 3 abgeschlossen</b></span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Phasenfortschritt <small>Modell: 0,30 Planung + 0,50 Umsetzung + 0,20 Abnahme · Diagramm: <a href="aurelia-status-live-phasen.html">Phasen &amp; Kette (Mermaid)</a></small></h2>
+    <table>
+      <thead><tr><th>Phase</th><th>Fortschritt</th><th class="num">%</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>0 · Konzept</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="100 Prozent"><i style="width:100%"></i></div><b>100</b></div></td><td class="num">100</td><td><span class="chip c-good"><i>✓</i>abgenommen 23./24.08.</span></td></tr>
+        <tr><td>G0-SRV · Server Ground Zero</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="20 Prozent"><i style="width:20%"></i></div><b>20</b></div></td><td class="num">≈ 20</td><td><span class="chip c-warn"><i>⏸</i>wartet auf G0-SRV-0</span></td></tr>
+        <tr><td>1 · Gehäuse</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="65 Prozent"><i style="width:65%"></i></div><b>65</b></div></td><td class="num">≈ 65</td><td><span class="chip c-run"><i>◐</i>pausiert bis G0-SRV</span></td></tr>
+        <tr><td>2 · Praxisorganisation</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="22 Prozent"><i style="width:22%"></i></div><b>22</b></div></td><td class="num">≈ 22</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>3 · Kernel-ABI + Raten</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="21 Prozent"><i style="width:21%"></i></div><b>21</b></div></td><td class="num">≈ 21</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>4 · Analyse strikt</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="21 Prozent"><i style="width:21%"></i></div><b>21</b></div></td><td class="num">≈ 21</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>5 · Harmonisierung</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="21 Prozent"><i style="width:21%"></i></div><b>21</b></div></td><td class="num">≈ 21</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>6 · Archiv / Trend / Report</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="18 Prozent"><i style="width:18%"></i></div><b>18</b></div></td><td class="num">≈ 18</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>7 · GPU-Härtung</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="20 Prozent"><i style="width:20%"></i></div><b>20</b></div></td><td class="num">≈ 20</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>8 · Quantum opt-in</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="18 Prozent"><i style="width:18%"></i></div><b>18</b></div></td><td class="num">≈ 18</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+        <tr><td>9 · WebRTC + Medien</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="gestrichen"><i style="width:0%"></i></div><b>—</b></div></td><td class="num">N/A</td><td><span class="chip c-lock"><i>✕</i>gestrichen (D10, O08)</span></td></tr>
+        <tr><td>10 · Betrieb</td><td><div class="cellmeter"><div class="meter" role="img" aria-label="18 Prozent"><i style="width:18%"></i></div><b>18</b></div></td><td class="num">≈ 18</td><td><span class="chip c-off"><i>○</i>nur Konzept</span></td></tr>
+      </tbody>
+    </table>
+    <p class="pill-note">Kein Prozentpunkt der Phasen ≥ 2 ist durch Umsetzung gedeckt — gewollt und verfassungskonform. Querschnitte: K1 ≈ 16 % · GATE-GOV-0 ≈ 25 % · Linux-Migration ≈ 35 %.</p>
+  </section>
+
+  <section>
+    <h2>G0-SRV-Gates <small>0/13 bestanden · server_changes_started: false · Diagramm: <a href="aurelia-status-live-gates.html">Gatefolge &amp; K1-Kette (Mermaid)</a></small></h2>
+    <table>
+      <thead><tr><th>Gate</th><th>Zweck</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="num">G0-SRV-0</td><td>Backup/Restore-Nachweis (echter Restore, ≥2 externe Kopien, Manifest)</td><td><span class="chip c-warn"><i>⏳</i>wartet auf Nachweis</span></td></tr>
+        <tr><td class="num">G0-SRV-1</td><td>IPMI / Remote-KVM / Virtual Media</td><td><span class="chip c-warn"><i>◐</i>bestätigt, Funktionstest offen</span></td></tr>
+        <tr><td class="num">G0-SRV-2</td><td>Hardware / Firmware / UEFI — ECC unbewiesen</td><td><span class="chip c-warn"><i>◐</i>Teilinventur ≈ 40 %</span></td></tr>
+        <tr><td class="num">G0-SRV-3</td><td>RAID1 / LUKS2 / LVM-Installation</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-4</td><td>Boot / Encryption / Recovery</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-5</td><td>Identitäten / SSH / VPN / Firewall</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-6</td><td>Minimales GNOME / Codex-Trennung</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-7</td><td>NVIDIA-Baseline (ohne CUDA)</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-8</td><td>Security / Logging / Updates</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-9</td><td>PostgreSQL-16-Basis</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-10</td><td>Offsite-Backup / RPO-RTO</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-11</td><td>Selektiver Projekt-Restore</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+        <tr><td class="num">G0-SRV-12</td><td>Gesamtbaseline / Soak-Tests</td><td><span class="chip c-lock"><i>🔒</i>gesperrt</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>K1 Kanonkonsolidierung <small>Zweig codex/aurelia-konsolidierung · Diagramm: <a href="aurelia-status-live-task3.html">Task-3-Review-Pfad (Mermaid)</a></small></h2>
+    <table>
+      <thead><tr><th>Task</th><th>Inhalt</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>Steuerung + V1/V2-Tip-Sanitisierung</td><td><span class="chip c-good"><i>✓</i>abgenommen</span></td></tr>
+        <tr><td class="num">2</td><td>Governance-Grenze GATE-GOV-0</td><td><span class="chip c-good"><i>✓</i>abgenommen</span></td></tr>
+        <tr><td class="num">3</td><td>Fail-closed Push-Graph-Scanner — <b>ABGESCHLOSSEN</b>: Head-first-Enumeration (linear), JWT-Fix (19,6 s → 32 ms), QOV-02-Cache-Fix, Spec- + Quality-PASS (E6), committed &amp; gepusht (e6f3089)</td><td><span class="chip c-good"><i>✓</i>abgeschlossen 28.08.</span></td></tr>
+        <tr><td class="num">4</td><td>K1-Matrix (<code>canon.ts</code>) + fail-closed Kanonvalidator (<code>check:canon</code>) — implementiert, 8/8 Fixture-Grün, Real-Check vertraglich rot (RED für T5/6: 10 aktive Textverletzungen, ID-Dopplungen, H fehlt)</td><td><span class="chip c-good"><i>✓</i>abgeschlossen 29.08. (1257283)</span></td></tr>
+        <tr><td class="num">5–12</td><td>Aktive Dokumente/Konzeptdaten auf K1, Portal, Testrunner, Auth-Abnahme, Vite-CLI, Smoke, Plattform-Assets (T12 external_blocker), Lint</td><td><span class="chip c-run"><i>◐</i>Task 5: Konsolidierung der 10 Befunde</span></td></tr>
+        <tr><td class="num">13–14</td><td>Lintabschluss · Integration, Browserabnahme, K1-VERIFICATION.md</td><td><span class="chip c-lock"><i>🔒</i>blockiert</span></td></tr>
+      </tbody>
+    </table>
+    <p class="pill-note">15 Commits <b>gepusht</b> (E5) · Dirty-Overlay <b>5 Dateien</b> (2 Scanner + 3 amendierte K1-Dokumente, Hash-diszipliniert, durch lokale Sicherungen abgedeckt) · Publikations-Gate formal <b>blocked</b> und funktionsfähig (Exit 1, 15 sichere Records, keine neuen) · Scanner läuft aktuell noch mit enger Terminatorklasse + quadratischem Worst Case (E4) — kein Aktualrisiko (0 externe PRs).</p>
+  </section>
+
+  <section>
+    <h2>Top-Risiken <small>vollständige Liste in 05_LUECKEN_RISIKEN_PROBLEMATIKEN_V6.md</small></h2>
+    <ul class="risks">
+      <li><span class="id">L1.1</span><span><b>G0-SRV-0 offen</b> — dominierender Blocker aller Produktphasen seit 25.08.</span><span class="chip c-crit"><i>●</i>kritisch</span></li>
+      <li><span class="id">L2.1</span><span><b>SPOF Workstation weitgehend entschärft</b> — 15 Commits auf GitHub ✓ (E5); nur noch 5 Dirty-Dateien + 15 ungetrackte Pläne rein lokal (durch vollständige lokale Sicherungen inkl. <code>.git</code> abgedeckt)</span><span class="chip c-warn"><i>◆</i>mittel</span></li>
+      <li><span class="id">L2.2</span><span><b>K1-Task-3-Bogen</b> — Spec-PASS ✓, aber Quality-Findings erst mit Overlap-Umbau geschlossen → Tasks 4–14 weiter blockiert</span><span class="chip c-serious"><i>▲</i>hoch</span></li>
+      <li><span class="id">L3.1</span><span><b>Kein RLS / keine CHECK-Constraints</b> — Isolation nur applikativ (3 Server-Functions)</span><span class="chip c-serious"><i>▲</i>hoch</span></li>
+      <li><span class="id">L3.2</span><span><b>Kein CSP / keine Security-Header</b> trotz Session-Cookie + iFrame-Preview</span><span class="chip c-serious"><i>▲</i>hoch</span></li>
+      <li><span class="id">L1.3</span><span><b>ECC unbewiesen</b> — 128 GB RAM meldeten „Error Correction Type: None"</span><span class="chip c-warn"><i>◆</i>mittel</span></li>
+      <li><span class="id">L4.1</span><span><b>Kein CI</b>; gh ✓ re-authentifiziert; <b>Branch-Protection planbedingt 403</b> (privates Repo, freier Plan) — Ersatz: Pre-Push-Hook + FF-Disziplin</span><span class="chip c-warn"><i>◆</i>mittel</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Prioritätenkette <small>Stand heute · Empfehlung: Stufe 5 (Replikation) vordateieren — vor dem Overlap-TDD-Lauf</small></h2>
+    <ul class="chain">
+      <li class="done"><span><b>Qualitätskette im Worktree ausführen</b> — E1: 199/214, 15× Windows-Artefakte, L3.4 präzisiert</span><span class="unlock">✓ erledigt 28.08.</span></li>
+      <li class="done"><span><b>gh re-authentifizieren</b> → E2-GitHub-Evidenz (0 PRs/Tags/Releases/CI; Protection 403)</span><span class="unlock">✓ erledigt 28.08.</span></li>
+      <li class="partial"><span><b>K1-Task 3 Reviews</b> — Spec-PASS ✓; Quality-Findings in Overlap-Umbau überführt (Option B, Design/Plan amendiert)</span><span class="unlock">TDD-Lauf offen</span></li>
+      <li class="done"><span><b>Replikation / FF-Push</b> — verkürzter Pfad (lokale Sicherungen vollständig): Task 8 PASS, <b>einer autorisierte FF-Push 029bdce..0414146</b>, CAS-Hook + Rücklesung + Beleg (E5)</span><span class="unlock">✓ erledigt 28.08. — SPOF committeter Zustand beseitigt</span></li>
+      <li class="done"><span><b>Overlap-TDD-Lauf</b> — implementiert, beiderseits PASS, committed &amp; gepusht (E6; Kette neu aufgebaut nach Gate-Block)</span><span class="unlock">✓ erledigt 28.08. — Tasks 4–14 eligible</span></li>
+      <li><span><b>K1-Tasks 4–14 ausführen</b> (Kanonmatrix, Windows-Runner, Auth-Abnahme) — <b>nächster Schritt: Startfreigabe Task 4</b></span><span class="unlock">entblockt: einheitlicher Kanon</span></li>
+      <li><span><b>K1-Tasks 4–14 ausführen</b> (Kanonmatrix, Windows-Runner, Auth-Abnahme)</span><span class="unlock">entblockt: einheitlicher Kanon</span></li>
+      <li><span><b>G0-SRV-0-Nachweis erbringen</b> und als „bestanden" protokollieren</span><span class="unlock">entblockt: Gates 1–12, AUDIT-02</span></li>
+      <li><span><b>Gatefolge 1–12</b> sequenziell; parallel Constraints/CSP/RLS + CI</span><span class="unlock">entblockt: Phase 1-Abschluss → Phase 2</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Diagramme (Mermaid) <small>Unterseiten · brauchen Internet für das Mermaid-CDN</small></h2>
+    <div class="diagrams">
+      <a href="aurelia-status-live-phasen.html"><div class="dt">Phasen &amp; Prioritätenkette</div><div class="dd">Phasenlandkarte, 7-Stufen-Kette mit aktueller Position</div></a>
+      <a href="aurelia-status-live-gates.html"><div class="dt">Gatefolge &amp; K1-Kette</div><div class="dd">G0-SRV-0 → 12 sequenziell; K1-Tasks 1–14 mit Blockaden</div></a>
+      <a href="aurelia-status-live-task3.html"><div class="dt">Task-3-Review-Pfad</div><div class="dd">Zustandsmaschine des heutigen Review-Bogens (E3/E4)</div></a>
+    </div>
+  </section>
+
+  <footer>
+    Quelle: <code>aurelia-tiefenanalyse-v6-2026-08-28/</code> (V6 + E1–E5 + Checkpoint, Stand 28.08. später Abend) ·
+    Basis: <code>8706186</code> (vorbereitung) / <code>0414146</code> (konsolidierung, lokal = remote) ·
+    Statusautorität: <code>docs/project-control/ground-zero/GATE-STATUS.md</code> ·
+    Diese Seite ist ein statischer Snapshot und ersetzt keine Gate-Entscheidung.
+    Neuer Snapshot: Analyseordner neu erzeugen lassen.
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+
+public class BroadcastScreen
+implements IDrawableElement,
+MouseClickObserver {
+    private AetherOneUI p;
+
+    public BroadcastScreen(AetherOneUI p) {
+        this.p = p;
+    }
+
+    @Override
+    public void draw() {
+        this.p.fill(255);
+        String signature = ((Textfield)this.p.getGuiElements().getCp5().get("SIGNATURE")).getText();
+        if (signature.length() > 0) {
+            this.p.text("Rate: " + this.p.generateRate(signature), 900.0f, 90.0f);
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "BROADCAST";
+    }
+
+    @Override
+    public void mouseClicked() {
+    }
+}
+

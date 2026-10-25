@@ -1,0 +1,169 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.server;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.isuret.polos.AetherOnePi.domain.BroadcastRequest;
+import de.isuret.polos.AetherOnePi.domain.Case;
+import de.isuret.polos.AetherOnePi.domain.SearchResult;
+import de.isuret.polos.AetherOnePi.domain.SearchResultJsonWrapper;
+import de.isuret.polos.AetherOnePi.domain.Settings;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.server.MateriaMedicaSearchEngine;
+import de.isuret.polos.AetherOnePi.server.WebSocketManager;
+import de.isuret.polos.AetherOnePi.utils.AetherOnePiProcessingConfiguration;
+import io.javalin.Javalin;
+import io.javalin.http.staticfiles.Location;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.List;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
+
+public class AetherOneServer {
+    private int port = 80;
+    private AetherOneUI p;
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private MateriaMedicaSearchEngine materiaMedicaSearchEngine = new MateriaMedicaSearchEngine();
+
+    public static void main(String[] args) {
+        new AetherOneServer(Location.EXTERNAL, null);
+    }
+
+    public AetherOneServer(Location location, AetherOneUI p) {
+        this.p = p;
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        new Thread(() -> {
+            try {
+                this.init(location);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void init(Location location) {
+        this.materiaMedicaSearchEngine.init();
+        this.port = AetherOneServer.findAvailablePort(this.port, 65535);
+        Javalin app = Javalin.create(config -> {
+            if (Location.CLASSPATH.equals((Object)location)) {
+                config.staticFiles.add(staticFileConfig -> {
+                    staticFileConfig.directory = "ui";
+                    staticFileConfig.location = Location.CLASSPATH;
+                });
+            } else {
+                config.staticFiles.add(staticFileConfig -> {
+                    staticFileConfig.directory = "src/main/resources/ui";
+                    staticFileConfig.location = Location.CLASSPATH;
+                });
+            }
+            config.bundledPlugins.enableCors(cors -> cors.addRule(it -> it.anyHost()));
+        }).start(this.port);
+        app.get("ping", ctx -> ctx.json("{\"result\":\"pong\"}"));
+        app.get("settings", ctx -> {
+            Settings settings = AetherOnePiProcessingConfiguration.loadSettings("Settings");
+            ctx.json(settings);
+        });
+        app.get("case/current", ctx -> ctx.json(this.p.getCaseObject()));
+        app.get("case", ctx -> {
+            if (ctx.queryParam("name") != null) {
+                ctx.json(this.p.getDataService().loadCase(ctx.queryParam("name")));
+            } else {
+                ctx.json(this.p.getDataService().getAllCasesNames());
+            }
+        });
+        app.post("case", ctx -> {
+            String json = ctx.body();
+            Case caseObject = this.objectMapper.readValue(json, Case.class);
+            this.p.getDataService().saveCase(caseObject);
+            this.p.setCaseObject(caseObject);
+        });
+        app.get("materiaMedicaSearch", ctx -> {
+            if (this.materiaMedicaSearchEngine.isBusy()) {
+                return;
+            }
+            String field = ctx.queryParam("field");
+            String query = ctx.queryParam("query");
+            System.out.println("field: " + field + "\nquery: " + query);
+            List<Document> documentList = this.materiaMedicaSearchEngine.searchIndex(field, query);
+            SearchResultJsonWrapper searchResultJsonWrapper = new SearchResultJsonWrapper();
+            for (Document doc : documentList) {
+                SearchResult searchResult = new SearchResult();
+                for (IndexableField fieldName : doc.getFields()) {
+                    String[] queryParts;
+                    String content = doc.get(fieldName.name());
+                    for (String queryPart : queryParts = query.split("[,\\s]\\s*")) {
+                        content = content.replaceAll(queryPart, "<b>" + queryPart + "</b>");
+                    }
+                    searchResult.getValues().put(fieldName.name(), content);
+                }
+                searchResultJsonWrapper.getSearchResults().add(searchResult);
+            }
+            ctx.json(searchResultJsonWrapper);
+        });
+        app.get("rates", ctx -> ctx.json(this.p.getDataService().getDatabaseNames()));
+        app.get("analysis", ctx -> ctx.json(this.p.getAnalysisResult()));
+        app.post("analysis", ctx -> ctx.json(this.p.getAnalyseService().analyseRateList(this.p.getDataService().findAllBySourceName(this.p.getSelectedDatabase()))));
+        app.post("gv", ctx -> ctx.json(String.format("{\"gv\":\"%d\"}", this.p.checkGeneralVitalityValue())));
+        app.post("searchAnomaly", ctx -> {
+            Integer width = Integer.parseInt(ctx.queryParam("width"));
+            Integer height = Integer.parseInt(ctx.queryParam("height"));
+            ctx.json(this.p.getAnalyseService().searchAnomaly(width, height));
+        });
+        app.post("broadcast", ctx -> {
+            String json = ctx.body();
+            BroadcastRequest request = this.objectMapper.readValue(json, BroadcastRequest.class);
+            this.p.getAetherOneEventHandler().broadcast(request.getSignature(), request.getSeconds());
+            this.p.getGuiElements().selectCurrentTab("BROADCAST");
+        });
+        app.ws("/analysisUpdate/{id}", ws -> {
+            ws.onConnect(wsConnectContext -> {
+                String id = wsConnectContext.pathParam("id");
+                WebSocketManager.addSession(id, wsConnectContext.session);
+                System.out.println("WebSocket connected for id: " + id);
+            });
+            ws.onClose(session -> System.out.println("WebSocket closed!"));
+        });
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public static int findAvailablePort(int preferredPort, int maxPort) {
+        for (int port = preferredPort; port <= maxPort; ++port) {
+            if (!AetherOneServer.isPortAvailable(port)) continue;
+            return port;
+        }
+        throw new RuntimeException("No available port found in range " + preferredPort + " to " + maxPort);
+    }
+
+    public static boolean isPortAvailable(int port) {
+        boolean bl;
+        ServerSocket serverSocket = new ServerSocket(port);
+        try {
+            serverSocket.setReuseAddress(true);
+            bl = true;
+        }
+        catch (Throwable throwable) {
+            try {
+                try {
+                    serverSocket.close();
+                }
+                catch (Throwable throwable2) {
+                    throwable.addSuppressed(throwable2);
+                }
+                throw throwable;
+            }
+            catch (IOException e) {
+                return false;
+            }
+        }
+        serverSocket.close();
+        return bl;
+    }
+}
+

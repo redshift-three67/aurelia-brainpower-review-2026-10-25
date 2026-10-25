@@ -1,0 +1,109 @@
+{
+  "format": "aurelia-review-gaps-v1",
+  "full_snapshot_without_exceptions": false,
+  "strict_original_byte_clone": false,
+  "items": [
+    {
+      "id": "G01",
+      "state": "open",
+      "description": "15 active runtime-lock payloads unread; exact metadata retained; no invented bytes"
+    },
+    {
+      "id": "G02",
+      "state": "bounded_capture",
+      "description": "21 active logs preserved as verified finite prefixes; later lines and continuously unchanged source not proven"
+    },
+    {
+      "id": "G03",
+      "state": "open",
+      "description": "4 specifically referenced attachment paths missing; no broad personal-folder search"
+    },
+    {
+      "id": "G04",
+      "state": "open",
+      "description": "7 historical Morphic Gitlinks reference one commit; referenced external repository content unavailable locally"
+    },
+    {
+      "id": "G05",
+      "state": "open",
+      "description": "300543 legacy-declared Governors payloads and44 upper control files verified; full fresh directory listing timed out, so unmanifested extras remain unproven"
+    },
+    {
+      "id": "G06",
+      "state": "open",
+      "description": "test VPS observation is selected configuration and runtime metadata, not all persistent application data or full machine/provider backup"
+    },
+    {
+      "id": "G07",
+      "state": "open",
+      "description": "test VPS source-to-running-product binding not established; two Git queries failed at assumed aggregate directory"
+    },
+    {
+      "id": "G08",
+      "state": "intentional_scope",
+      "description": "main server historical documentation plus requirements only; no fresh availability/hardware/LUKS repair attestation"
+    },
+    {
+      "id": "G09",
+      "state": "intentional_protection",
+      "description": "Credentials, client/case/session data, catalog payloads, local configuration, raw chat/transport material, generated deployment bundles and raw live SQL definitions held in protected preservation; known public committed migrations represented separately"
+    },
+    {
+      "id": "G10",
+      "state": "open",
+      "description": "RadiFarben original Access binary retained; complete readable VBA/forms/timers/reports and functional acceptance not established"
+    },
+    {
+      "id": "G11",
+      "state": "open",
+      "description": "full requirement-to-current-code/test/acceptance traceability remains unproven; source presence is not functional coverage"
+    },
+    {
+      "id": "G12",
+      "state": "open",
+      "description": "no complete NTFS/filesystem image, directory ADS/SACL coverage, power-loss durability or full restore acceptance"
+    },
+    {
+      "id": "G13",
+      "state": "known_boundary",
+      "description": "historical copies on same F drive are not an independent failure medium or proven offsite backup"
+    },
+    {
+      "id": "G14",
+      "state": "known_boundary",
+      "description": "multiple non-atomic source observations; Git commit/index/worktree equality are separate facts"
+    },
+    {
+      "id": "G15",
+      "state": "open",
+      "description": "full seven-module/platform integration, tenant isolation, billing/rights, central database choice, capacity/load/media/long-run/restore acceptance remain separately gated"
+    },
+    {
+      "id": "G16",
+      "state": "external_verification",
+      "description": "Selected source/reference export is frozen at5439 files; root manifest and remote byte/archived-state verification are separate release controls, not product acceptance"
+    }
+  ],
+  "private_release_selection": {
+    "source_reference_files": 5439,
+    "source_reference_bytes": 57652691,
+    "held_stage1_categories": {
+      "structured_data_requires_separate_semantic_review": 203,
+      "protected_local_configuration": 1,
+      "contact_data_requires_separate_semantic_review": 59,
+      "unclassified_text_or_tabular_data_kept_protected": 64,
+      "raw_transport_or_machine_evidence_kept_protected": 27,
+      "catalog_or_session_data_kept_protected": 2067,
+      "raw_sql_definition_or_data_kept_protected": 39
+    },
+    "held_later_raw_or_generated": 693,
+    "manual_false_positive_classifications": 13,
+    "public_committed_migration_references": 39,
+    "no_universal_privacy_absence_claim": true
+  },
+  "independent_document_review": {
+    "route": "Astra/medium",
+    "findings_closed": 2,
+    "scope": "document consistency only; no product/privacy approval"
+  }
+}

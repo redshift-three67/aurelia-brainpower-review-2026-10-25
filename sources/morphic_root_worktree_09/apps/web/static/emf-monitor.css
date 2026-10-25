@@ -1,0 +1,135 @@
+body {
+  margin: 0;
+  padding: 20px;
+  background: #0d1117;
+  color: #c9d1d9;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #58a6ff;
+  font-size: 18px;
+}
+
+.connection-state {
+  color: #8b949e;
+  font-size: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.card {
+  min-width: 0;
+  padding: 16px;
+  overflow-wrap: anywhere;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+}
+
+.card.wide {
+  grid-column: 1 / -1;
+}
+
+.monitor-source-card {
+  min-width: 0;
+}
+
+.val {
+  color: #7ee787;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.label {
+  margin-top: 4px;
+  color: #8b949e;
+  font-size: 12px;
+}
+
+.emf-progress {
+  width: 100%;
+  height: 8px;
+  margin-top: 8px;
+  overflow: hidden;
+  accent-color: #7ee787;
+}
+
+.emf-progress[hidden] {
+  display: none;
+}
+
+.monitor-source-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.monitor-source-key {
+  max-width: 100%;
+  padding: 2px 7px;
+  overflow-wrap: anywhere;
+  background: #0d1117;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  border-radius: 4px;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 12px;
+}
+
+.monitor-source-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.monitor-source-status.status-ok {
+  color: #fff;
+  background: #1f6f43;
+}
+
+.monitor-source-status.status-partial {
+  color: #fff;
+  background: #87451f;
+}
+
+.monitor-source-status.status-fallback {
+  color: #fff;
+  background: #7a4f00;
+}
+
+.monitor-source-status.status-unknown {
+  color: #fff;
+  background: #484f58;
+}
+
+.frequency-list {
+  margin-top: 8px;
+  color: #58a6ff;
+  font-size: 14px;
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 12px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .monitor-source-meta {
+    align-items: flex-start;
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,83 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.dialogs;
+
+import de.isuret.polos.AetherOnePi.processing2.hotbits.HotbitsHandler;
+import processing.core.PApplet;
+import processing.core.PFont;
+
+public class ImprobabilityMeterVerticalDialog
+extends PApplet {
+    public static int WIDTH = 400;
+    public static int HEIGHT = 700;
+    private HotbitsHandler hotbitsHandler;
+    private int cumulativeValue = 0;
+    private Integer lastRandomValue = null;
+
+    public static void main(String[] args) {
+        ImprobabilityMeterVerticalDialog.init(new HotbitsHandler(null));
+    }
+
+    public static void init(HotbitsHandler hotbitsHandler) {
+        ImprobabilityMeterVerticalDialog improbabilityMeterDialog = new ImprobabilityMeterVerticalDialog(hotbitsHandler);
+        String[] args2 = new String[]{""};
+        PApplet.runSketch(args2, improbabilityMeterDialog);
+    }
+
+    @Override
+    public void exit() {
+        this.surface.setVisible(false);
+        this.dispose();
+        System.out.println("CLOSED");
+        System.exit(0);
+    }
+
+    public ImprobabilityMeterVerticalDialog(HotbitsHandler hotbitsHandler) {
+        this.hotbitsHandler = hotbitsHandler;
+    }
+
+    @Override
+    public void settings() {
+        this.size(WIDTH, HEIGHT);
+    }
+
+    public void setTitle(String title) {
+        this.surface.setTitle(title);
+    }
+
+    @Override
+    public void setup() {
+        this.background(0);
+        this.surface.setTitle("Improbability Meter");
+        PFont font = this.createFont("Verdana", 20.0f);
+        this.textFont(font);
+    }
+
+    @Override
+    public void draw() {
+        this.background(0);
+        this.stroke(255);
+        if (this.lastRandomValue != null && this.lastRandomValue == 10) {
+            this.stroke(255.0f, 0.0f, 0.0f);
+        }
+        this.text("points: " + this.cumulativeValue, 20.0f, 30.0f);
+        for (int i = 0; i < 24; ++i) {
+            if (this.cumulativeValue <= i * 10) continue;
+            this.fill(255.0f, i * 10, 0.0f);
+            this.rect(20.0f, HEIGHT - 14 * i - 60, WIDTH - 40, 10.0f);
+        }
+        this.throwDice();
+        if (this.cumulativeValue > 0) {
+            --this.cumulativeValue;
+        }
+    }
+
+    public void throwDice() {
+        if (this.lastRandomValue != null && this.lastRandomValue == 10) {
+            this.cumulativeValue += this.lastRandomValue.intValue();
+        }
+        this.lastRandomValue = this.hotbitsHandler.getInteger(10);
+    }
+}
+

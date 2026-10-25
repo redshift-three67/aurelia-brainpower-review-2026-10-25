@@ -1,0 +1,13 @@
+{
+  "format": "git-attribute-reference-renames-v1",
+  "files": [
+    {
+      "original_export_path": "sources/radiworks_main/.gitattributes",
+      "export_path": "sources/radiworks_main/.gitattributes.reference.txt",
+      "sha256": "8542de93ec4a8c233139ec632e46397a6899509b03ab563f83e19260f123fc10",
+      "source_bytes_changed": false,
+      "reason": "Git attributes are reference data, not active checkout/filter rules"
+    }
+  ],
+  "other_reference_names": "instruction, Java, shader and schema reference names are documented in restore guidance; complete private source mapping remains protected"
+}

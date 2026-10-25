@@ -1,0 +1,148 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.events.KeyPressedObserver;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+import java.util.HashMap;
+import java.util.Map;
+import processing.core.PVector;
+
+public class RatesScreen
+implements IDrawableElement,
+MouseClickObserver,
+KeyPressedObserver {
+    private AetherOneUI p;
+    private Boolean clicked = false;
+    private PVector velocity;
+    private PVector pos;
+    private PVector target;
+    private Map<String, Integer> elementArray;
+    private String element;
+    private String rate;
+    private String intention;
+    private Boolean spacePressed = false;
+
+    public RatesScreen(AetherOneUI p) {
+        this.p = p;
+        this.target = new PVector(200.0f, 400.0f);
+    }
+
+    @Override
+    public void draw() {
+        this.p.fill(0.0f, 255.0f, 0.0f);
+        this.p.textSize(20.0f);
+        this.p.text("PRESS AND HOLD 'SPACE' KEY,\nWHILE FOCUSING ON YOUR INTENTION!", 60.0f, 100.0f);
+        if (this.p.getCaseObject() != null && this.p.getCaseObject().getSessionList().size() > 0) {
+            this.intention = this.p.getCaseObject().getSessionList().get(this.p.getCaseObject().getSessionList().size() - 1).getIntention();
+            if (this.intention != null) {
+                this.p.fill(255.0f, 0.0f, 0.0f);
+                this.p.textSize(30.0f);
+                this.p.text(this.intention, 60.0f, 150.0f);
+            }
+        }
+        if (this.rate != null) {
+            this.drawRate();
+        }
+        if (this.spacePressed.booleanValue()) {
+            this.handleElement();
+        }
+        if (this.element != null) {
+            if (this.pos.x > this.target.x) {
+                this.pos.x -= 1.0f;
+            }
+            if (this.pos.x < this.target.x) {
+                this.pos.x += 1.0f;
+            }
+            if (this.pos.y > this.target.y) {
+                this.pos.y -= 1.0f;
+            }
+            if (this.pos.y < this.target.y) {
+                this.pos.y += 1.0f;
+            }
+            this.p.fill(this.p.getHotbitsClient().getInteger(255), this.p.getHotbitsClient().getInteger(255), this.p.getHotbitsClient().getInteger(255));
+            this.p.textSize(40.0f);
+            this.p.text(this.element, this.pos.x, this.pos.y);
+            if (this.pos.x == this.target.x && this.pos.y == this.target.y) {
+                if (this.rate == null) {
+                    this.rate = "";
+                }
+                this.rate = this.element + this.rate;
+                this.element = null;
+                this.elementArray = null;
+                this.pos = null;
+            }
+        }
+        this.clicked = false;
+        this.spacePressed = false;
+    }
+
+    private void handleElement() {
+        this.initElementArray();
+        this.addEnergeticValue();
+        String highestElement = null;
+        Integer maxValue = 0;
+        for (String elementKey : this.elementArray.keySet()) {
+            Integer energeticValue = this.elementArray.get(elementKey);
+            if (maxValue < energeticValue) {
+                highestElement = elementKey;
+                maxValue = energeticValue;
+            }
+            if (highestElement != null) continue;
+            highestElement = elementKey;
+        }
+        this.element = highestElement;
+        if (this.pos == null) {
+            this.pos = new PVector(this.p.getHotbitsClient().getInteger(1200), this.p.getHotbitsClient().getInteger(700));
+        }
+    }
+
+    private void addEnergeticValue() {
+        for (String elementKey : this.elementArray.keySet()) {
+            Integer energeticValue = this.elementArray.get(elementKey);
+            if (this.p.getHotbitsClient().getInteger(100) > 95) {
+                Integer n = energeticValue;
+                energeticValue = energeticValue + 1;
+            }
+            this.elementArray.put(elementKey, energeticValue);
+        }
+    }
+
+    private void initElementArray() {
+        if (this.element == null) {
+            this.elementArray = new HashMap<String, Integer>();
+            for (int i = 0; i < 10; ++i) {
+                this.elementArray.put(String.valueOf(i), 0);
+            }
+        }
+    }
+
+    public void drawRate() {
+        this.p.fill(255);
+        this.p.text(this.rate, this.target.x, this.target.y);
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "RATES";
+    }
+
+    @Override
+    public void mouseClicked() {
+        this.clicked = true;
+    }
+
+    @Override
+    public void keyPressed(char key) {
+        char keyValue = key;
+        this.spacePressed = keyValue == ' ' ? Boolean.valueOf(true) : Boolean.valueOf(false);
+    }
+}
+

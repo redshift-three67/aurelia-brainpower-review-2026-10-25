@@ -1,0 +1,82 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.RateObjectWrapper;
+import de.isuret.polos.AetherOnePi.domain.Session;
+import de.isuret.polos.AetherOnePi.domain.osm.MapDesign;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+public class Case {
+    private String name;
+    private String description;
+    private Calendar created;
+    private Calendar lastChange;
+    private MapDesign mapDesign;
+    private List<Session> sessionList = new ArrayList<Session>();
+    private List<RateObjectWrapper> topTenList = new ArrayList<RateObjectWrapper>();
+
+    public Case() {
+        this.created = Calendar.getInstance();
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public MapDesign getMapDesign() {
+        return this.mapDesign;
+    }
+
+    public void setMapDesign(MapDesign mapDesign) {
+        this.mapDesign = mapDesign;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Calendar getCreated() {
+        return this.created;
+    }
+
+    public void setCreated(Calendar created) {
+        this.created = created;
+    }
+
+    public Calendar getLastChange() {
+        return this.lastChange;
+    }
+
+    public void setLastChange(Calendar lastChange) {
+        this.lastChange = lastChange;
+    }
+
+    public List<Session> getSessionList() {
+        return this.sessionList;
+    }
+
+    public void setSessionList(List<Session> sessionList) {
+        this.sessionList = sessionList;
+    }
+
+    public List<RateObjectWrapper> getTopTenList() {
+        return this.topTenList;
+    }
+
+    public void setTopTenList(List<RateObjectWrapper> topTenList) {
+        this.topTenList = topTenList;
+    }
+}
+

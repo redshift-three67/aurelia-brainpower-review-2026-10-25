@@ -1,0 +1,68 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.sound;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+
+public class Binaural {
+    private static final int SAMPLE_RATE = 16384;
+    private static final int SAMPLE_SIZE = 8;
+    private static final int NUM_CHANNELS = 2;
+    private final byte[] leftChannel = new byte[16384];
+    private final byte[] rightChannel = new byte[16384];
+    private SourceDataLine line = null;
+    private final AudioFormat audioFormat = new AudioFormat(16384.0f, 8, 2, true, true);
+
+    public static void main(String[] args) {
+        int leftFreq = 500;
+        int rightFreq = 508;
+        Binaural binauralGenerator = new Binaural(leftFreq, rightFreq, 0.5f);
+        binauralGenerator.play(3);
+        binauralGenerator.shutdown();
+    }
+
+    public Binaural(int leftFreq, int rightFreq, float volume) {
+        this.fillBufferWithSineWave(this.leftChannel, leftFreq, volume);
+        this.fillBufferWithSineWave(this.rightChannel, rightFreq, volume);
+        try {
+            this.line = AudioSystem.getSourceDataLine(this.audioFormat);
+            this.line.open(this.audioFormat, (int)this.audioFormat.getSampleRate());
+            this.line.start();
+        }
+        catch (LineUnavailableException ex) {
+            Logger.getLogger(Binaural.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+    }
+
+    private void fillBufferWithSineWave(byte[] buffer, int frequency, float volume) {
+        double period = 16384.0 / (double)frequency;
+        for (int i = 0; i < 16384; ++i) {
+            double angle = Math.PI * 2 * (double)i / period;
+            buffer[i] = (byte)(Math.sin(angle) * 127.0 * (double)volume);
+        }
+    }
+
+    public void play(int seconds) {
+        int samplePosition = 0;
+        int endPosition = (int)this.audioFormat.getSampleRate();
+        for (int i = 0; i < 16384 * seconds / 2; ++i) {
+            this.line.write(this.leftChannel, samplePosition, 2);
+            this.line.write(this.rightChannel, samplePosition, 2);
+            if ((samplePosition += 2) < endPosition) continue;
+            samplePosition = 0;
+        }
+    }
+
+    public void shutdown() {
+        this.line.flush();
+        this.line.close();
+    }
+}
+

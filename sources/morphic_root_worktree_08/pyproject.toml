@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "morphic-engine-v1"
+version = "0.1.0"
+description = "Morphic Engine V1 – modular resonance analysis and harmonization stack."
+requires-python = ">=3.10"
+authors = [{ name = "Radialgo" }]
+readme = "README.md"
+license = { text = "Proprietary" }
+dependencies = [
+  "numpy>=1.26",
+  "pydantic>=2.0",
+  "typer[all]>=0.9",
+  "fastapi>=0.110",
+  "uvicorn[standard]>=0.29",
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apps*", "core*", "providers*", "services*", "infra*", "data*"]

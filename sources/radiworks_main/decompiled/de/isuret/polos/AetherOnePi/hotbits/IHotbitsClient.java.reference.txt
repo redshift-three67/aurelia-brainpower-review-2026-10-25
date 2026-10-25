@@ -1,0 +1,13 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.hotbits;
+
+public interface IHotbitsClient {
+    public boolean getBoolean();
+
+    public int getInteger(int var1);
+
+    public int getInteger(Integer var1, Integer var2);
+}
+

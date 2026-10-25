@@ -1,0 +1,76 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import com.github.sarxos.webcam.Webcam;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+import java.awt.image.BufferedImage;
+import processing.core.PImage;
+
+public class HotbitsScreen
+implements IDrawableElement,
+MouseClickObserver {
+    private AetherOneUI p;
+
+    public HotbitsScreen(AetherOneUI p) {
+        this.p = p;
+    }
+
+    @Override
+    public void draw() {
+        this.p.fill(255.0f, 255.0f, 255.0f);
+        int y = 120;
+        int i = 0;
+        this.p.text("1) CLICK ON 'SHOW WEBCAMS'", 60.0f, (float)y);
+        this.p.text("2) TYPE THE NUMBER OF THE WEBCAM YOU WANT TO USE IN THE TEXTFIELD", 60.0f, (float)(y += 20));
+        this.p.text("3) CLICK ON 'SET WEBCAM' (YOUR WEBCAM SHOULD BE HIGHLIGHTED)", 60.0f, (float)(y += 20));
+        this.p.text("4) CLICK ON 'GET HOTBITS' (NOW YOU SHOULD SEE A INCREASE IN THE PACKAGES)", 60.0f, (float)(y += 20));
+        y += 20;
+        y += 20;
+        if (this.p.getWebcamList() == null) {
+            return;
+        }
+        for (Webcam webcam : this.p.getWebcamList()) {
+            this.p.fill(255.0f, 255.0f, 255.0f);
+            this.p.text(webcam.getName() + " [" + i + "]", 60.0f, (float)y);
+            if (this.p.getWebCamNumber() != null && this.p.getWebCamNumber() == i) {
+                this.p.text("*", 50.0f, (float)y);
+                this.p.fill(0.0f, 255.0f, 255.0f, 50.0f);
+                this.p.rect(45.0f, y - 15, 300.0f, 20.0f);
+            }
+            y += 20;
+            ++i;
+        }
+        if (this.p.getWebcam() != null) {
+            this.p.fill(0.0f, 255.0f, 0.0f);
+            this.p.text("Packages " + this.p.getCountPackages() + " of 20000", 60.0f, (float)y);
+            BufferedImage image = this.p.getWebcamImage();
+            if (image != null && !this.p.isHotbitsFromWebCamAcquiring()) {
+                this.p.image(new PImage(this.p.getWebcamImage()), 1000.0f, 150.0f);
+            }
+            if (this.p.isHotbitsFromWebCamAcquiring()) {
+                this.p.fill(255.0f, 100.0f, 100.0f);
+                this.p.text("ACQUIRING HOTBITS FROM WEBCAM (NO IMAGE IS SHOWN IN ORDER TO PRESERVE INDETERMITATED STATE)", 60.0f, (float)(y += 20));
+                this.p.fill(0.0f, 255.0f, 0.0f);
+                this.p.text("YOU CAN CONTINUE WORKING WHILE THIS PROCESS CONTINUES IN THE BACKGROUND!", 60.0f, (float)(y += 20));
+            }
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "HOTBITS";
+    }
+
+    @Override
+    public void mouseClicked() {
+    }
+}
+

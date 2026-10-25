@@ -1,0 +1,677 @@
+{
+  "schema_version": 1,
+  "application": "governor-workbench",
+  "version": "0.5.0",
+  "reasoning_policy": {
+    "version": "rh1-v1",
+    "default": "medium",
+    "settings_modes": ["medium", "auto", "high", "xhigh"],
+    "roles_reasoning_values_below_are_defaults": true,
+    "auto_low": "Terra only: explicitly attested independent .md/.txt pilot change with current accepted plan, scope and permission; completed ordinary scope_plan origin, no repair provenance, successor or answered questions. Unknown eligibility stays medium; supervisor stays medium.",
+    "manual_higher_effort": "high/xhigh only by explicit selection; no automatic escalation or silent model fallback",
+    "binding": "routing snapshot at enqueue and every transport call; sequence preview and change environment also bind settings; drift requires a new explicit job",
+    "legacy_jobs": "medium; no retroactive routing receipts",
+    "receipts": "model_call_routing records requested mode, effective sent effort, role, reason and rule version per attempted call; not a measurement of model-internal reasoning",
+    "validation_limit": "local adapter allowlist and zero-tool initialization; remote provider acceptance and quality require separate live evaluation",
+    "chat_settings_changed": false
+  },
+  "dependent_change_journal": {
+    "phase": "S3b internal integrity layer",
+    "storage": "separate append-only dependent_change_chains and dependent_change_events",
+    "max_transitions": 2,
+    "rollback": "latest active edge only; any rollback requires new plan for reexecution",
+    "concurrency": "BEGIN IMMEDIATE and expected-head comparison",
+    "retry": "identical request returns historical event; never replay",
+    "history_and_tip_separate": true,
+    "legacy_receipts_automatically_imported": false,
+    "execution_authorized": false,
+    "physical_writes": false,
+    "controller_integration": "S3c C1-C4 direct independent A-to-B integration implemented: fresh proof, shared claim, immutable original/effective bindings, own B tests/review and explicit authenticated API/UI decisions. Historical external prerequisites remain blocked. Full acceptance tracked in docs/FORTSETZUNG_SECHS_SCHRITTE_2026-09-18.md",
+    "test_inheritance": false,
+    "successor_h1_consent": "Separate explicit immutable acknowledgement; current consent revalidated at B proposal, transport, own test and apply. Newer B proposals supersede older sources. Later physical attempts including rollback consume consent. Acknowledgement never automatically proposes B; point-in-time check is not a future execution lease. H2 verification preserves historical A identity without inheriting tests"
+  },
+  "dependent_change_preview": {
+    "phase": "S3a",
+    "route": "/api/change-chains/preview",
+    "step_count": 2,
+    "profile": "direct dependent changes in active independent allowlisted pilot",
+    "disjoint_write_scopes_required": true,
+    "external_predecessors": "current accepted receipts required",
+    "absent_files": "explicit null source hash",
+    "observation": "two matching fresh observations; not an atomic filesystem snapshot",
+    "existing_transition": "original H0 preview stays blocked after transfer; separate authenticated successor-preview freshly validates H1",
+    "eligibility_is_execution_permission": false,
+    "execution_authorized": false,
+    "creates_jobs_or_receipts": false,
+    "model_transmission_required": false,
+    "general_change_execution": "Direct independent two-change pilot only. General product chains and historical external prerequisites remain blocked"
+  },
+  "strategy_adoption": {
+    "documentation": "docs/GOVERNOR_0_5.md",
+    "intake_drafts_are_accepted": false,
+    "requires_current_confirmed_intake": true,
+    "requires_completed_clean_hybrid_plan_job": true,
+    "requires_full_project_memory_receipt_for_new_adoption": true,
+    "requires_explicit_operator_adoption": true,
+    "execution_permission": false,
+    "legacy_gates_replaced": false,
+    "storage": "append-only strategy_revisions in local journal.db"
+  },
+  "authority": {
+    "user_request_over_document_instructions": true,
+    "source_documents_are_data": true,
+    "model_output_is_executable": false,
+    "model_generated_code": "raw replies never execute directly; a separately allowed validated patch may be staged and tested by the explicit bounded pilot adapter",
+    "model_review_grants_implementation_approval": false,
+    "configured_gates_are": "step_specific_rules_computed_from_source_hash_and_append_only_operator_decisions",
+    "real_source_egress": "requires explicit operator authorization; automatic reviews default false"
+  },
+  "roles": {
+    "orchestrator": {
+      "model": "gpt-5.6-terra",
+      "reasoning": "medium",
+      "default_transport": "isolated_hermes_python_api",
+      "tools": []
+    },
+    "supervisors": [
+      {
+        "model": "gpt-5.6-sol",
+        "reasoning": "medium"
+      },
+      {
+        "model": "gpt-6-astra",
+        "reasoning": "medium"
+      }
+    ],
+    "supervisor_transport": "separate_cc_switch_responses_request",
+    "silent_fallback": false,
+    "exact_response_model_required": true
+  },
+  "optional_route_b": {
+    "actions": ["scope_route_b_review", "scope_route_b_plan"],
+    "manual_start_only": true,
+    "scope": ["project", "group"],
+    "roles": [
+      {"model": "gpt-6-sol", "reasoning": "high", "role": "orchestrator"},
+      {"model": "gpt-6-luna", "reasoning": "max", "role": "worker_review"},
+      {"model": "gpt-6-astra", "reasoning": "medium", "role": "critical_independent_review", "condition": "every_route_b_plan_or_review_risk_signal_or_explicit_operator_choice"}
+    ],
+    "transport": "configured_router_endpoint_with_exact_response_model_and_effort_checks",
+    "existing_terra_route_replaced": false,
+    "automatic_review_enabled_by_this_route": false,
+    "every_scope_member_requires_model_egress": true,
+    "plan_requires_accepted_complete_intake": true,
+    "plan_independent_astra_receives_luna_report": false,
+    "route_b_strategy_adoption_requires_independent_astra_plan_receipt": true,
+    "risk_signals_are_complete_safety_detection": false,
+    "silent_fallback": false,
+    "model_review_grants_product_approval": false,
+    "plan_selection_and_strategy_adoption_remain_separate": true
+  },
+  "invariants": [
+    "Never infer GO from a green test, model recommendation or available directory.",
+    "Distinguish documented, observed, executed, reviewed and explicitly approved facts.",
+    "Bind reports to exact observed source and configuration fingerprints.",
+    "Stale or incomplete evidence cannot establish current approval.",
+    "Do not treat staged paths as committed current content.",
+    "Preserve existing unrelated WIP; never stage, commit, clean, migrate or deploy implicitly.",
+    "No real source transmission while its authorization remains blocked.",
+    "Never expose tokens, auth files, environment values or raw provider error bodies."
+  ],
+  "observation": {
+    "seconds": 15,
+    "git_seconds": 60,
+    "recursive_untracked_scan": false,
+    "model_calls_on_unchanged_state": false,
+    "registry_scope_rotation": "at most one local group or unassigned active single per monitor tick",
+    "registry_scope_limit": 100,
+    "registry_monitor_starts_models": false
+  },
+  "step_completion": {
+    "supported_actions": [
+      "clarify",
+      "review",
+      "test"
+    ],
+    "authority": "clarify/review: explicit operator attestation with mandatory note; test: successful bound standalone plan_test adapter",
+    "bound_to": [
+      "source scope hash",
+      "selection id",
+      "step hash",
+      "predecessor receipt ids"
+    ],
+    "storage": "append-only step_completions",
+    "withdrawal": "append-only; descendants become stale",
+    "technical_test_acceptance": "bounded standalone plan_test only; fresh evidence required",
+    "integration_acceptance": false,
+    "product_gate_approval": false,
+    "automatic_execution": false
+  },
+  "runtime_profiles": {
+    "documentation": "docs/RUNTIME_PROFILE_0_6.md",
+    "profile": "local_probe",
+    "fixed_builtin_only": true,
+    "product_execution": false,
+    "arbitrary_commands": false,
+    "platform": "Windows job objects",
+    "bind": "127.0.0.1",
+    "default_port": 8794,
+    "max_active": 1,
+    "max_seconds": 3600,
+    "automatic_restart": false,
+    "pid_reattach": false,
+    "readiness": "exact instance id and service identity",
+    "startup_requires": "current profile hash and explicit protected API request",
+    "explicit_recheck": "owned active instance only; timestamped identity/process/profile observation; no restart or product approval"
+  },
+  "automatic_reviews": {
+    "default": false,
+    "operator_reported_current_state": "paused; existing settings and limits retained",
+    "new_groups_trigger_automatic_models": false,
+    "minimum_interval_seconds": 900,
+    "daily_attempt_limit": 4,
+    "day_timezone": "UTC",
+    "failed_attempts_count": true,
+    "concurrent_jobs": 1
+  },
+  "actions": [
+    "refresh",
+    "hybrid_review",
+    "compare_reviews",
+    "scope_review",
+    "scope_compare",
+    "scope_plan",
+    "scope_patch",
+    "stage_test",
+    "governance_report",
+    "model_check",
+    "radiworks_tests",
+    "hermes_check",
+    "live_start",
+    "live_capture",
+    "live_stop"
+  ],
+  "registry": {
+    "max_projects_including_archived": 50,
+    "max_groups_including_archived": 50,
+    "existing_ids_preserved": true,
+    "membership": "permanent, at most one group per project; archival preserves membership",
+    "roles": [
+      "parent",
+      "module",
+      "contracts",
+      "member"
+    ],
+    "role_changes_supported": false,
+    "max_parent_per_group_including_archived": 1,
+    "new_project_egress_default": false,
+    "legacy_egress": "known five IDs plus explicit legacy_review_egress_authorized=true on first migration only",
+    "legacy_review_egress_authorized_default": false,
+    "path_overlap_rejected": true
+  },
+  "scoped_vault": {
+    "configured_root_required": true,
+    "root_config": "vault_root",
+    "automatic_discovery": false,
+    "explicit_scope_mapping_required": true,
+    "new_mapping_egress_default": false,
+    "source_authority": "reference_data_only, including system_prompts.md",
+    "global_fallback": false,
+    "max_sources_per_mapping_scope": 10,
+    "max_source_bytes": 524288,
+    "max_excerpt_bytes_per_vault_context": 65536,
+    "full_source_hash_required": true,
+    "truncation_explicit": true,
+    "export_or_bidirectional_sync": false
+  },
+  "intake": {
+    "explicit_operator_acceptance": true,
+    "fields": [
+      "requirements",
+      "test_strategy",
+      "dependencies",
+      "open_evidence"
+    ],
+    "source_bound": true,
+    "plan_ready_requires": "current accepted intake, memories and bounded complete evidence for every scoped project",
+    "template_is_acceptance": false,
+    "acceptance_grants_product_permission": false
+  },
+  "plan_candidates": {
+    "immutable_version_history": true,
+    "max_steps": 50,
+    "actions": [
+      "clarify",
+      "review",
+      "test",
+      "change"
+    ],
+    "malformed_proposal_blocks_supervisor_call": true,
+    "candidate_requires": "fresh scoped plan and independent REVIEW_ONLY with no findings or required evidence",
+    "operator_selection": "single or dependency-ordered sequence, plan_selection_only",
+    "selection_grants_execution": false,
+    "source_or_revision_drift_invalidates_selection": true,
+    "automatic_progress_tracking": false
+  },
+  "staging_pilot": {
+    "config": "staging_pilot_roots",
+    "default": [],
+    "max_configured_roots": 5,
+    "requires": "explicit allowlisted independent single project, current intake and plan selection, change step without dependencies",
+    "grouped_projects_supported": false,
+    "historical_five_products_supported": false,
+    "max_files": 20,
+    "max_file_bytes": 262144,
+    "max_total_bytes": 1048576,
+    "original_wip_preserved": true,
+    "trusted_manifest_hash_required": true,
+    "source_and_stage_drift_checks": true,
+    "product_apply_back": false,
+    "repair_loop": false,
+    "dependent_sequence_execution": false
+  },
+  "staged_tests": {
+    "adapter": "Python stdlib unittest discover in explicitly staged tests directory",
+    "interpreter_flags": [
+      "-I",
+      "-S",
+      "-B"
+    ],
+    "timeout_seconds": 60,
+    "writes": "ordinary tests: separate scratch under Python audit restrictions; trusted runner: final completion record outside scratch",
+    "network_and_child_processes": "denied by Python audit guard",
+    "completion": "runner-owned record outside ordinary test scratch; stdout is not proof",
+    "success_requires": "verified completion, exit zero, count greater than skipped, zero errors/failures and unchanged sources/staging",
+    "all_skipped_is_success": false,
+    "hostile_code_os_sandbox": false,
+    "other_frameworks": false
+  },
+  "post_test_review": {
+    "supervisor_only": true,
+    "actual_diffs_hashes_and_test_evidence_required": true,
+    "verified_requires": "actual successful completed tests, clean REVIEW_ONLY, no missing evidence and current source scope",
+    "model_can_override_failed_tests": false,
+    "model_error_preserves_test_report": true,
+    "grants_product_permission": false
+  },
+  "live_adapters": {
+    "existing_configured_loopback_chrome_cdp_retained": true,
+    "new_registry_projects_auto_connected": false,
+    "general_app_adapter_system": false
+  },
+  "decision_journal": {
+    "append_only": true,
+    "kinds": [
+      "authorize",
+      "revoke",
+      "accept",
+      "reject"
+    ],
+    "acceptance_source_bound": true,
+    "model_can_accept": false,
+    "source_and_decision_fingerprints_separate": true
+  },
+  "model_comparison": {
+    "one_orchestrator_plan": true,
+    "identical_supervisor_inputs": true,
+    "partial_failures_explicit": true,
+    "disagreement_never_grants_approval": true
+  },
+  "memory_writes": {
+    "scope": "existing-memory editor",
+    "existing_markdown_only": true,
+    "max_bytes": 524288,
+    "expected_sha256_required": true,
+    "backup_required": true,
+    "conflict_http_status": 409
+  },
+  "registry_memory_provisioning": {
+    "active_grouped_project_required": true,
+    "membership_action_attempts_provisioning": true,
+    "existing_strategy_memory": "select exactly one unchanged; reject ambiguity",
+    "missing_strategy_memory": "exclusive creation of incomplete stable-index template",
+    "status": "provisioned_incomplete is not assessed intake",
+    "model_calls": false,
+    "max_bytes": 524288
+  },
+  "planned_modules": {
+    "prototype_required": false,
+    "creates_repository": false,
+    "creates_implementation_approval": false,
+    "dependency_ids_required": true
+  },
+  "checks": {
+    "unit": "python -m unittest discover -s tests -v",
+    "doctor": "python -m governor_workbench doctor --config config.local.json",
+    "live_models": "separate explicit evaluations; historical real reviews do not establish live acceptance of new 0.3 workflows; small comparisons are not proof of global optimality",
+    "new_windows_host": "repeat local installation, auth, Hermes isolation and synthetic model verification"
+  },
+  "limits": [
+    "A-D are partially delivered, not completed by the presence of plans",
+    "single local operator",
+    "not an internet service",
+    "no autonomous product apply-back, commit, merge or deployment",
+    "restricted staging unittest adapter is not an OS sandbox against hostile same-process Python or native code",
+    "no general progress engine, repair loop or dependent execution sequences",
+    "Hermes API compatibility tested on 21.1",
+    "browser memory excerpts and Vault excerpts are explicitly marked; selected project memories are reread in full and hash-checked for explicit legacy/Route-B review and plan jobs; oversized full contexts use independently read and hash-bound source stages with validated quotations, explicit staged status and final size check; missing coverage fails closed",
+    "Windows sleep/logout stops local observation"
+  ],
+  "operator_questions": {
+    "actions": [
+      "scope_plan",
+      "scope_patch"
+    ],
+    "status": "waiting_for_operator",
+    "persistent": true,
+    "max_per_job": 3,
+    "max_answer_chars": 4000,
+    "resume_same_job": true,
+    "both_models_must_confirm_existing_scope": true,
+    "answer_grants_permission": false,
+    "exact_patch_sources_include_untracked_and_absent": true,
+    "terminal_stdin_adapter": false,
+    "scope_change_status": "review_required"
+  },
+  "pilot_apply": {
+    "enabled_by_default": false,
+    "requires": [
+      "allowlisted independent active single project",
+      "current source-bound plan selection",
+      "verified actual staged unittest and independent post-review",
+      "exact displayed proposal hash approval"
+    ],
+    "historical_products_and_groups": false,
+    "one_worker": true,
+    "backup_before_write": true,
+    "drift_blocks": true,
+    "automatic_retry": false,
+    "rollback": "own bytes only, conflict checked",
+    "multi_file_atomic": false,
+    "hard_kill": "durable block, manual recovery review",
+    "automatic_followup": false
+  },
+  "post_apply_verification": {
+    "endpoint": "/api/pilot/verify",
+    "request_fields": [
+      "transaction_id"
+    ],
+    "single_worker": true,
+    "persistent_timestamped_job_result": true,
+    "checks": [
+      "completed transaction and proposal",
+      "latest staged test and current adapter",
+      "recorded selection and pilot eligibility",
+      "all sealed target files match staged bytes"
+    ],
+    "scope_transition_automatically_accepted": false,
+    "target_tests_executed": false,
+    "step_completion_granted": false,
+    "product_files_changed": false,
+    "atomic_filesystem_snapshot": false
+  },
+  "technical_transfer_completion": {
+    "endpoint": "/api/pilot/complete",
+    "request_fields": [
+      "verified_job_id",
+      "observed_scope_hash",
+      "note"
+    ],
+    "latest_successful_verification_required": true,
+    "fresh_reverification_before_recording": true,
+    "binding": "transaction, stage, manifest, staged test, candidate, step, selection, before/after scope, test and completion adapter hashes",
+    "storage": "append-only technical_completions",
+    "operator_confirms": "displayed observed after-state of the isolated applied change",
+    "plan_rebased": false,
+    "intake_renewed": false,
+    "target_tests_executed": false,
+    "dependent_execution": false,
+    "standalone_test_step_completion": false,
+    "freshness": "derived current/stale only on explicit re-verification; historical receipts remain historical"
+  },
+  "standalone_plan_tests": {
+    "endpoint": "/api/plans/test",
+    "request_fields": [
+      "candidate_id",
+      "step_id",
+      "scope_hash",
+      "selection_id"
+    ],
+    "scope": "active allowlisted independent pilots only; current plan selection and predecessor receipts required",
+    "adapter": "fixed restricted stdlib unittest on sealed unchanged copy of explicit scope files",
+    "models_called": false,
+    "original_files_changed": false,
+    "receipt": "append-only step_completions kind=plan_test with job, evidence, source, selection, adapter and predecessor bindings",
+    "chain_recognition": "latest successful completed job, fresh files/configuration/adapters and exact current predecessor receipt IDs",
+    "withdrawal_supported": true,
+    "automatic_followup": false,
+    "product_gate_approved": false,
+    "general_change_chain_recognition": false,
+    "hostile_code_os_sandbox": false,
+    "attempt_policy": {
+      "limit": 3,
+      "key": [
+        "candidate_id",
+        "step_id"
+      ],
+      "all_journal_statuses_count": true,
+      "selection_does_not_reset": true,
+      "active_duplicate_blocked": true,
+      "worker_rechecks": true,
+      "automatic_retry": false,
+      "reset_requires_new_plan": true,
+      "history_limit": 3,
+      "successful_last_receipt_remains_usable": true
+    }
+  },
+  "themes": {
+    "choices": [
+      "system",
+      "light",
+      "dark"
+    ],
+    "default": "system",
+    "local_browser_preference": true
+  },
+  "model_usage": {
+    "documentation": "docs/HERMES_KONTEXT_USAGE_UMSETZUNG.md",
+    "prompt_limits_chars": {
+      "hermes": 95000,
+      "router": 120000
+    },
+    "silent_truncation": false,
+    "persistent_per_job_call_receipts": true,
+    "unknown_usage_is_zero": false,
+    "legacy_results_backfilled": false,
+    "provider_cost_estimation": false,
+    "hard_interruption": "started receipt remains with unknown usage",
+    "display": "reported partial sums and individual call status; no double counting nested reports"
+  },
+  "explicit_change_chain_transition": {
+    "endpoint": "/api/pilot/transition",
+    "request_fields": [
+      "technical_receipt_id",
+      "observed_scope_hash",
+      "selection_id",
+      "note"
+    ],
+    "scope": "one applied independent allowlisted pilot change without predecessors per candidate",
+    "current_intake_required": true,
+    "explicit_operator_confirmation_required": true,
+    "fresh_technical_verification": true,
+    "storage": "atomic append-only plan_scope_transitions and step_completions",
+    "effective_scope": "confirmed after-state for chain diagnostics and new test/review receipts; original candidate and selection unchanged",
+    "invalidation": "source/file/adapter drift, rollback, latest test/revision/selection mismatch; withdrawal invalidates dependent receipts",
+    "new_selection_requires_new_candidate": true,
+    "old_followup_receipts_reused": false,
+    "dependent_change_execution": false,
+    "automatic_followup": false,
+    "models_called": false,
+    "product_gate_approved": false
+  },
+  "test_failure_diagnosis": {
+    "endpoint": "/api/plans/test-failure",
+    "request_fields": [
+      "job_id"
+    ],
+    "worker_action": "plan_failure",
+    "explicit_request_required": true,
+    "eligible_source": "terminal failed standalone plan_test with stored unsuccessful result",
+    "freshness_checks": [
+      "latest test attempt",
+      "current source and selection",
+      "current predecessor receipts",
+      "test adapter",
+      "original and staging files",
+      "registered root and scope"
+    ],
+    "diagnostic_success_is_repair_authorization": false,
+    "automatic_retry": false,
+    "models_called": false,
+    "product_files_changed": false,
+    "output_excerpt": "first and last 2000 characters with explicit truncation marker; SHA-256 of stored source output; original job retains stored output which can itself be bounded",
+    "classification": "current evidenced test failure or blocked; no automatic root-cause determination",
+    "history": "dated job report; recheck explicitly; no test budget consumed by diagnosis"
+  },
+  "bounded_repair_planning": {
+    "endpoint": "/api/plans/repair",
+    "request_fields": [
+      "diagnosis_job_id",
+      "note"
+    ],
+    "explicit_model_egress_request": true,
+    "worker_action": "scope_plan with internal bound repair references",
+    "routing": "existing configured Terra transport and selected independent supervisor; medium",
+    "limit": 2,
+    "limit_key": [
+      "original_candidate_id",
+      "original_step_id"
+    ],
+    "all_job_statuses_count": true,
+    "evidence": "fresh usable diagnostic, exact source/selection/predecessor/adapter bindings, sealed file contents, marked log excerpt, operator note",
+    "checks_before_send_and_before_save": true,
+    "scope_expansion": false,
+    "required_proposal": "one independent change and a subsequent dependent test covering that change",
+    "clean_independent_review_required": true,
+    "creates": "new candidate only; previous candidate superseded",
+    "automatic_selection": false,
+    "execution_permission": false,
+    "automatic_retry": false,
+    "product_files_changed": false,
+    "questions": "existing explicit operator question flow; answers can cause additional model calls within the same planning job",
+    "validation": "mock model HTTP integration and simulated browser; local zero-tool probe, no real project model request for implementation verification",
+    "manual_execution_acceptance": {
+      "scope": "isolated temporary allowlisted pilot only",
+      "pipeline": [
+        "real failing standalone test",
+        "fresh failure diagnosis",
+        "repair plan with simulated Terra/supervisor calls",
+        "separate operator selection",
+        "patch and isolated test/review",
+        "separate apply approval",
+        "completion and source transition",
+        "dependent test/review",
+        "rollback and stale receipts"
+      ],
+      "test_files_unchanged": true,
+      "real_model_quality_verified": false,
+      "automatic_execution": false,
+      "ui_navigation_grants_approval": false
+    }
+  },
+  "sequence_preview": {
+    "implementation": "preview_only",
+    "endpoint": "/api/sequences/preview",
+    "request_fields": [
+      "stage_job_id"
+    ],
+    "profile_id": "pilot_test_assess_v1",
+    "proposed_actions": [
+      "stage_test",
+      "pilot_assess"
+    ],
+    "requires": "completed scoped patch, current intake/selection, independent allowlisted pilot, model egress, sealed original/staging evidence",
+    "binding": "profile files, source job/stage/manifest, candidate/step/selection, scope/root identity, pilot roots, test adapter, supervisor/transport/medium, latest staging test id",
+    "binding_is_execution_permission": false,
+    "stop_before": [
+      "pilot_prepare",
+      "pilot_apply"
+    ],
+    "model_calls": false,
+    "creates_jobs_or_approvals": false,
+    "changes_source_files": false,
+    "local_observation_cache_refresh": true,
+    "start_cancel_endpoints_implemented": true,
+    "internal_sequence_reservation_implemented": true,
+    "automatic_execution": false,
+    "failure_details": "bounded controller-owned reason and blocked_at phase; no raw exception",
+    "new_selection": "current valid reselection changes preview hash; prior preview cannot approve new selection",
+    "identity_limit": "on-disk implementation and observed source state; not loaded-code or OS attestation"
+  },
+  "test_chain_preview": {
+    "implementation": "S2a_preview_with_separate_S2bc_execution",
+    "endpoint": "/api/test-chains/preview",
+    "request_fields": ["candidate_id", "step_ids"],
+    "profile_id": "plan_test_chain_v1",
+    "step_limit": [2, 5],
+    "eligible_scope": "current selected unfinished test steps of one active allowlisted independent pilot",
+    "ordering": "topological; ties follow saved plan order; input permutation does not change binding",
+    "external_predecessors": "all must have current accepted receipts",
+    "internal_predecessors": "conditional only; no fabricated completion or readiness for later execution",
+    "binding": "candidate/revision/selection/effective scope/transition, steps, root identity, explicit file bytes, external receipts, budgets/latest attempts, adapter/profile files",
+    "freshness": "two fresh observations with matching binding; not an atomic filesystem snapshot",
+    "model_calls": false,
+    "requires_model_egress": false,
+    "creates_jobs_or_receipts": false,
+    "changes_source_files": false,
+    "execution_authorized": false,
+    "start_cancel_journal_ui_implemented": true
+  },
+  "test_chain_execution": {
+    "profile_id": "plan_test_chain_v1",
+    "start_endpoint": "/api/test-chains/start",
+    "start_fields": ["candidate_id", "step_ids", "binding_hash", "note"],
+    "cancel_endpoint": "/api/test-chains/cancel",
+    "cancel_fields": ["chain_id"],
+    "consent": "fresh matching preview and explicit nonempty note <=2000 characters",
+    "journal": "additive immutable consent, children, events and terminal runs",
+    "reservation": "shared S1/S2/manual/question-resume slot; BEGIN IMMEDIATE",
+    "activation": "one per candidate/selection/canonical steps; exact retry returns history only",
+    "worker": "existing single worker; fixed plan_test only; no model or arbitrary command",
+    "budget": "atomic child allocation; original remaining budget and latest attempt must match",
+    "progression": "original binding rechecked before/after each child; normalize owned attempts only; terminal successful child plus current technical completion receipt required before next allocation",
+    "checking_phase": "reservation retained after terminal child until receipt validation; crash interrupts without replay",
+    "cancel": "running child retains reservation until stopped; no further children",
+    "restart": "interrupt active chains and children without replay",
+    "history": "last 40 in /api/state test_chains",
+    "ui": "explicit test selection, conditional preview, required note, start/cancel/history; dialog drafts survive state refresh; reload never starts",
+    "model_calls": false,
+    "changes_original_files": false,
+    "product_gate_or_deployment_approval": false
+  },
+  "sequence_journal": {
+    "implementation": "explicitly_approved_fixed_sequence_S1c",
+    "worker_dispatch": "existing single worker; existing stage_test and pilot_assess adapters",
+    "public_start_cancel": true,
+    "start_fields": ["stage_job_id", "binding_hash", "note"],
+    "cancel_fields": ["sequence_id"],
+    "start_requires": "session/Origin/CSRF, fresh matching preview, explicit nonempty note <=2000 chars",
+    "egress_guard": "revalidate original consent before child execution, each supervisor transport call and child completion; replace only latest-test identity with owned first child",
+    "drift_after_test": "preserve observed output but mark stale=true and verified=false; no follow-up",
+    "history": "last 40 persisted sequences in /api/state; historical statuses do not grant approval",
+    "ui": "preview dialog with model transmission and halt notice, required note, explicit start, cancellation and history; no automatic start on navigation/reload",
+    "profile_id": "pilot_test_assess_v1",
+    "transaction": "BEGIN IMMEDIATE: reservation and first child, child outcome and next child, cancellation",
+    "uniqueness": "one active reservation globally; one run per staged patch job; at most two fixed children",
+    "retry": "identical binding/hash/note returns existing run without replay; conflicts rejected",
+    "immutable": "consent binding, child links, transition events, terminal sequence history",
+    "admission": "ordinary jobs, automatic reviews and operator-question resumes respect reservation",
+    "running_cancel": "retain reservation until child acknowledges cancellation; suppress follow-up",
+    "restart": "active sequences and queued/running jobs interrupted atomically; no automatic resume",
+    "controller_obligations": "fresh preview/consent validation before admission; current file, source, policy, routing and adapter checks before dispatch/egress and transition",
+    "storage_hash_is_authorization": false,
+    "evidence_current_default": false,
+    "successful_terminal": "awaiting_transfer_decision",
+    "automatic_apply_or_plan_completion": false
+  }
+}

@@ -1,0 +1,53 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+import processing.core.PImage;
+
+public class ImageLayerScreen
+implements IDrawableElement,
+MouseClickObserver {
+    private AetherOneUI p;
+    private final int START_X = 36;
+    private final int START_Y = 75;
+    private final int WIDTH = 1215;
+    private final int HEIGHT = 460;
+
+    public ImageLayerScreen(AetherOneUI p) {
+        this.p = p;
+    }
+
+    @Override
+    public void draw() {
+        if (this.p.getImageLayersAnalysis() != null) {
+            this.p.getImageLayersAnalysis().draw();
+        }
+        int imageCount = 0;
+        for (PImage image : this.p.getClipBoardImages()) {
+            if (imageCount > 0) {
+                this.p.blend(image, 36, 75, 1215, 460, 36, 75, 1215, 460, 32);
+            } else {
+                this.p.image(image, 36.0f, 75.0f, 1215.0f, 460.0f);
+            }
+            ++imageCount;
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "IMAGE";
+    }
+
+    @Override
+    public void mouseClicked() {
+    }
+}
+

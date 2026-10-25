@@ -1,0 +1,29 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import java.util.Calendar;
+
+public class ResonanceObject {
+    private Calendar dateTime = Calendar.getInstance();
+    private RateObject rateObject;
+
+    public Calendar getDateTime() {
+        return this.dateTime;
+    }
+
+    public void setDateTime(Calendar dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public RateObject getRateObject() {
+        return this.rateObject;
+    }
+
+    public void setRateObject(RateObject rateObject) {
+        this.rateObject = rateObject;
+    }
+}
+

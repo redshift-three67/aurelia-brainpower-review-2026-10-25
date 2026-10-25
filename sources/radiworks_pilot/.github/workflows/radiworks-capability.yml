@@ -1,0 +1,33 @@
+name: RadiWorks CP1 (manual capability proof)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: radiworks-cp1
+  cancel-in-progress: false
+jobs:
+  capability:
+    if: github.repository == 'redshift-three67/radiworks-pilot' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout the approved control workflow revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: control
+          persist-credentials: false
+      - name: Checkout the fixed existing product
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: d1eb34260179a499e2b0362bf609ce96957b78aa
+          path: source
+          persist-credentials: false
+      - name: Verify, build and run synthetic CP1 tests
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+          PIP_NO_INPUT: '1'
+          PIP_DISABLE_PIP_VERSION_CHECK: '1'
+        shell: bash
+        run: bash control/pilot/cloud_ci/run-ci.sh

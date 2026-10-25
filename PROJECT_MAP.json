@@ -1,0 +1,208 @@
+{
+  "format": "aurelia-review-project-map-v1",
+  "sources": [
+    {
+      "source_id": "worktree-00",
+      "component": "aurelia",
+      "head": "8706186af01e10e4253e25abb31bf3577110dae4",
+      "role": "main_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-01",
+      "component": "aurelia",
+      "head": "a6a8e7dca456d14a6748b204b787b235fdedf9be",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-02",
+      "component": "aurelia",
+      "head": "b20ee873347c5fd767e2089c993f1cf93a625def",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-03",
+      "component": "aurelia",
+      "head": "1185a68ed984b525686764f995513355701929e3",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-04",
+      "component": "radiworks",
+      "head": "866f52146ad212157bfb20c9852714cb307a3b12",
+      "role": "main_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-05",
+      "component": "radiworks",
+      "head": "a242d24758d53e86ab290454ae4772f0827acc06",
+      "role": "canonical_development",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-06",
+      "component": "radiworks",
+      "head": "067b1142ec02f4db3b590b1d9e4c8cbc7c578284",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-07",
+      "component": "morphic_root",
+      "head": "411ff09ff8964f820b7d15839994b1ad3502675a",
+      "role": "main_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-08",
+      "component": "morphic_root",
+      "head": "7b1ea52c0094e0a8c047b1d9778237996de7ea95",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-09",
+      "component": "morphic_root",
+      "head": "151e2bb0a69d49677a0b1e40e0bffd0f172d34c4",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-10",
+      "component": "morphic_root",
+      "head": "9a3ffa2b6330a353f667631af98308a8b9525b4d",
+      "role": "parallel_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-11",
+      "component": "radi144",
+      "head": "b8ac33a1360f1cb56f06e602fcd37cbda2a9c641",
+      "role": "main_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "worktree-12",
+      "component": "module_templates",
+      "head": "041ae65ee5ff2a7aa4a0cc0a1bd82666e4e3ac04",
+      "role": "main_worktree",
+      "source_names_are_reference_only": true,
+      "working_bytes_equal_git_commit_not_assumed": true
+    },
+    {
+      "source_id": "radiworks-private-pilot",
+      "component": "radiworks_pilot",
+      "head": "7058764d9ef899535b3fabc672967f5dfb1474ca",
+      "role": "private_pilot_control_and_product_source"
+    },
+    {
+      "source_id": "explorer-public-original",
+      "component": "explorer_copen_bohm",
+      "head": "c69d5aa224018b0484efd90ae456a10aecc78a77",
+      "role": "shared_source_for_two_modules"
+    },
+    {
+      "source_id": "thom-public-original",
+      "component": "thom",
+      "head": "18e6c12c238985da698f9a46743d893b30d61ba7",
+      "role": "separate_module_source"
+    },
+    {
+      "source_id": "brainpower-current",
+      "component": "brainpower",
+      "role": "local_governor_workbench_control_plane",
+      "git_scope": "project-filtered history and original project commit/index objects; not personal profile clone"
+    },
+    {
+      "source_id": "radifarben-current",
+      "component": "radifarben",
+      "role": "highest_current_central_RMF_Access_original",
+      "readable_vba_forms_complete": false
+    },
+    {
+      "source_id": "governance-vault",
+      "component": "governance_vault",
+      "role": "reference_documents"
+    }
+  ],
+  "modules": [
+    "radiworks",
+    "radi144",
+    "morphic",
+    "radifarben",
+    "copen",
+    "bohm",
+    "thom"
+  ],
+  "central_database_decision_accepted": false,
+  "module_template_integration_accepted": false,
+  "server_scope": {
+    "test_vps": "current bounded readonly observations and selected configuration; persistent-data/full-machine restore open",
+    "main_server": "historical documentation and target requirements only"
+  },
+  "withdrawn_other_project_repositories_excluded": true,
+  "public_migration_reference_sources": [
+    {
+      "component": "explorer_copen_bohm_git_reference",
+      "source_commit": "c69d5aa224018b0484efd90ae456a10aecc78a77",
+      "source_files": 20,
+      "candidate": 19,
+      "held": 1,
+      "transport_sha256": "8ed31b8d9e3e0de8fdeab027c7994284c44c039663895f13d6c3d8116c678745",
+      "source_type": "pinned public repository migration reference; not live database export",
+      "publication_approved": false
+    },
+    {
+      "component": "thom_git_reference",
+      "source_commit": "18e6c12c238985da698f9a46743d893b30d61ba7",
+      "source_files": 20,
+      "candidate": 20,
+      "held": 0,
+      "transport_sha256": "c2ffbd48de99a31cc7c9294b57eb45516c204ef8377b1e417a026af806c787db",
+      "source_type": "pinned public repository migration reference; not live database export",
+      "publication_approved": false
+    }
+  ],
+  "source_file_counts": {
+    "brainpower": 679,
+    "explorer_copen_bohm": 257,
+    "thom": 241,
+    "governance_vault": 9,
+    "module_templates": 16,
+    "aurelia_main": 250,
+    "aurelia_worktree_01": 155,
+    "aurelia_worktree_02": 141,
+    "aurelia_worktree_03": 165,
+    "radi144_main": 147,
+    "radiworks_main": 548,
+    "radiworks_worktree_06": 376,
+    "morphic_root_main": 438,
+    "morphic_root_worktree_08": 360,
+    "morphic_root_worktree_09": 929,
+    "morphic_root_worktree_10": 388,
+    "radiworks_pilot": 207,
+    "radiworks_canonical": 94,
+    "explorer_copen_bohm_git_reference": 19,
+    "thom_git_reference": 20
+  },
+  "review_source_selection_complete": true,
+  "full_original_data_in_review_export": false,
+  "review_export_content_complete_for_selected_scope": true,
+  "remote_verification_embedded": false
+}

@@ -1,0 +1,21 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.SearchResult;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SearchResultJsonWrapper {
+    private List<SearchResult> searchResults = new ArrayList<SearchResult>();
+
+    public List<SearchResult> getSearchResults() {
+        return this.searchResults;
+    }
+
+    public void setSearchResults(List<SearchResult> searchResults) {
+        this.searchResults = searchResults;
+    }
+}
+

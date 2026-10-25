@@ -1,0 +1,78 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain.osm;
+
+import java.util.List;
+import java.util.Map;
+
+public class OsmElement {
+    private String type;
+    private String id;
+    private Double lat;
+    private Double lon;
+    private String role;
+    private Map<String, String> tags;
+    private List<String> nodes;
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Double getLat() {
+        return this.lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLon() {
+        return this.lon;
+    }
+
+    public void setLon(Double lon) {
+        this.lon = lon;
+    }
+
+    public String getRole() {
+        return this.role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Map<String, String> getTags() {
+        return this.tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
+    }
+
+    public List<String> getNodes() {
+        return this.nodes;
+    }
+
+    public void setNodes(List<String> nodes) {
+        this.nodes = nodes;
+    }
+
+    public String toString() {
+        return "OsmElement{type='" + this.type + "', id='" + this.id + "', lat=" + this.lat + ", lon=" + this.lon + ", role='" + this.role + "', tags=" + String.valueOf(this.tags) + ", nodes=" + String.valueOf(this.nodes) + "}";
+    }
+}
+

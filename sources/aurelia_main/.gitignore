@@ -1,0 +1,28 @@
+node_modules/
+.worktrees/
+.vercel/
+.tanstack/
+screenshots/
+artifacts/
+.grok/
+public/__grok/
+attachments/
+*.log
+.node_modules.lock
+.DS_Store
+.env
+.env.*
+!.env.example
+dist/
+.nitro/
+coverage/
+*.pem
+*.key
+witness-samples/
+secrets/
+
+# Local-only developer-analysis sources. These archives can contain credentials
+# and detailed internal server evidence; only separately sanitized reports may
+# be committed under docs/project-control.
+/aurelia-tiefenanalyse*/
+/docs/project-control/external-analyses/**/source/

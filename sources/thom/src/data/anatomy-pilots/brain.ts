@@ -1,0 +1,50 @@
+export const BRAIN_SCHEMA = {
+  organ_code: 'BRAIN',
+  organ_name: 'Brain',
+  source_dataset: 'BodyParts3D',
+  source_concept_id: 'FMA_50801',
+  coordinate_system: 'RAS',
+  regions: [
+    { region_code: 'LFRONT', name: 'Left Frontal Lobe' },
+    { region_code: 'RFRONT', name: 'Right Frontal Lobe' },
+    { region_code: 'LPARI', name: 'Left Parietal Lobe' },
+    { region_code: 'RPARI', name: 'Right Parietal Lobe' },
+    { region_code: 'LTEMP', name: 'Left Temporal Lobe' },
+    { region_code: 'RTEMP', name: 'Right Temporal Lobe' },
+    { region_code: 'LOCC', name: 'Left Occipital Lobe' },
+    { region_code: 'ROCC', name: 'Right Occipital Lobe' },
+    { region_code: 'LCEREB', name: 'Left Cerebellum' },
+    { region_code: 'RCEREB', name: 'Right Cerebellum' },
+    { region_code: 'BRAINSTEM', name: 'Brainstem' },
+    { region_code: 'MIDLINE', name: 'Midline' },
+  ],
+  point_classes: ['A', 'S', 'V'] as const,
+  sampling_config: {
+    method: 'region_geodesic_fps',
+    min_surface_distance_mm: 6.0,
+    target_points_per_region: {
+      LFRONT: 4, RFRONT: 4, LPARI: 4, RPARI: 4,
+      LTEMP: 4, RTEMP: 4, LOCC: 3, ROCC: 3,
+      LCEREB: 4, RCEREB: 4, BRAINSTEM: 3, MIDLINE: 3,
+    },
+  },
+  validation_config: {
+    must_be_on_surface: true,
+    max_projection_error_mm: 1.0,
+    require_unique_labels: true,
+    require_region_assignment: true,
+    mirror_symmetry: { plane: 'sagittal', tolerance_mm: 2.0 },
+  },
+  version: 'v1.0',
+};
+
+export const BRAIN_LANDMARKS = [
+  { point_id: 'BRAIN_A_001', label: 'Left frontal pole', point_class: 'A', region_code: 'LFRONT', structure_concept_id: 'FMA_74886', x: 32.0, y: 82.0, z: 18.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, mirror_pair: 'BRAIN_A_002', notes: 'Anterior left frontal anchor' },
+  { point_id: 'BRAIN_A_002', label: 'Right frontal pole', point_class: 'A', region_code: 'RFRONT', structure_concept_id: 'FMA_74886', x: -32.0, y: 82.0, z: 18.0, scan_frequency: 40, placement_method: 'mirrored', confidence: 1.0, mirror_pair: 'BRAIN_A_001', notes: 'Anterior right frontal anchor' },
+  { point_id: 'BRAIN_A_003', label: 'Left occipital pole', point_class: 'A', region_code: 'LOCC', structure_concept_id: 'FMA_67325', x: 28.0, y: -88.0, z: 8.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, mirror_pair: 'BRAIN_A_004', notes: 'Posterior left occipital anchor' },
+  { point_id: 'BRAIN_A_004', label: 'Right occipital pole', point_class: 'A', region_code: 'ROCC', structure_concept_id: 'FMA_67325', x: -28.0, y: -88.0, z: 8.0, scan_frequency: 40, placement_method: 'mirrored', confidence: 1.0, mirror_pair: 'BRAIN_A_003', notes: 'Posterior right occipital anchor' },
+  { point_id: 'BRAIN_A_005', label: 'Vertex superior mid', point_class: 'A', region_code: 'MIDLINE', structure_concept_id: 'FMA_50801', x: 0.0, y: 5.0, z: 72.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, notes: 'Superior cranial anchor' },
+  { point_id: 'BRAIN_A_006', label: 'Inferior mid ref', point_class: 'A', region_code: 'MIDLINE', structure_concept_id: 'FMA_50801', x: 0.0, y: -8.0, z: -34.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, notes: 'Inferior mid reference' },
+  { point_id: 'BRAIN_A_007', label: 'Cerebellum superior mid', point_class: 'A', region_code: 'MIDLINE', structure_concept_id: 'FMA_67944', x: 0.0, y: -56.0, z: 22.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, notes: 'Cerebellar superior anchor' },
+  { point_id: 'BRAIN_A_008', label: 'Brainstem ventral ref', point_class: 'A', region_code: 'BRAINSTEM', structure_concept_id: 'FMA_79876', x: 0.0, y: -42.0, z: -26.0, scan_frequency: 40, placement_method: 'manual', confidence: 1.0, notes: 'Brainstem ventral reference' },
+];

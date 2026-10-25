@@ -1,0 +1,50 @@
+/* Layer 1 — Plattform-Basis (Aurelia). Kopie aus
+   Modul_Templates/standards/UI_DESIGN_STANDARD.md §1.
+   KEINE Modul-Farben hier. */
+
+:root {
+  --aur-parchment: #F3EFE6;  /* Pergament */
+  --aur-ink:       #1C241E;  /* Tinte     */
+  --aur-sage:      #2C4A3E;  /* Sage      */
+
+  --aur-sage-soft: color-mix(in srgb, var(--aur-sage) 14%, var(--aur-parchment));
+  --aur-line:      color-mix(in srgb, var(--aur-ink) 22%, var(--aur-parchment));
+  --aur-card:      color-mix(in srgb, var(--aur-parchment) 88%, white);
+
+  --aur-radius: 10px;
+  --aur-gap: 14px;
+  --aur-font-display: "Fraunces Variable", "Iowan Old Style", Georgia, serif;
+  --aur-font-body: "Source Sans 3 Variable", "Segoe UI", system-ui, sans-serif;
+
+  /* Zustandsfarben (aus Basis abgeleitet, kein Neon) */
+  --aur-ok:   color-mix(in srgb, var(--aur-sage) 78%, white);
+  --aur-warn: #8a6d2f;
+  --aur-stop: #7c3a35;
+}
+
+/* Dunkle Belegung — gleiche Hue-Familie, eigene Helligkeit.
+   Zwei Pfade: OS-Einstellung (media query, respektiert light-Override)
+   und manueller Umschalter (data-mode="dark" im Header). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    --aur-parchment: #141815;
+    --aur-ink:       #E9E5DB;
+    --aur-sage:      #7FA491;
+    --aur-sage-soft: color-mix(in srgb, var(--aur-sage) 12%, var(--aur-parchment));
+    --aur-line:      color-mix(in srgb, var(--aur-ink) 24%, var(--aur-parchment));
+    --aur-card:      color-mix(in srgb, var(--aur-parchment) 90%, white 4%);
+    --aur-warn: #c9a35a;
+    --aur-stop: #c4685f;
+  }
+}
+
+:root[data-mode="dark"] {
+  --aur-parchment: #141815;
+  --aur-ink:       #E9E5DB;
+  --aur-sage:      #7FA491;
+  --aur-sage-soft: color-mix(in srgb, var(--aur-sage) 12%, var(--aur-parchment));
+  --aur-line:      color-mix(in srgb, var(--aur-ink) 24%, var(--aur-parchment));
+  --aur-card:      color-mix(in srgb, var(--aur-parchment) 90%, white 4%);
+  --aur-warn: #c9a35a;
+  --aur-stop: #c4685f;
+}

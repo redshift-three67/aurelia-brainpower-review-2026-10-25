@@ -1,0 +1,4 @@
+archive_root: "C:\\Benutzer_Archive_Start"
+synergy_root: "C:\\Benutzer_Synergy_Start"
+export_root: "C:\\Benutzer_Remedies_Start"
+log_dir: "logs"

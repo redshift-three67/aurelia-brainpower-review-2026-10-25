@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AURELIA · Phasen &amp; K1-Fortsetzung</title><style>:root{--bg:#f3efe6;--card:#fffdf8;--line:#e3dbc9;--ink:#1f2a24;--muted:#5b6b62;--accent:#2c4a3e;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5}.wrap{max-width:1100px;margin:auto;padding:24px}h1{margin:0;font-size:1.4rem}h2{font-size:1rem;color:var(--accent)}.sub,.note,footer{color:var(--muted);font-size:.86rem}.back{display:inline-block;margin-top:12px;color:var(--accent);text-decoration:none}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:16px}.mermaid{background:var(--card);overflow:auto}.mermaid svg{max-width:100%;height:auto}</style></head>
+<body><main class="wrap"><h1>AURELIA — Phasen &amp; K1-Fortsetzung</h1><p class="sub">Stand 2026-09-09, 09:17 CEST · E6 unbestimmt, keine Produkt- oder Serverfreigabe</p><a class="back" href="aurelia-status-live.html">← zurück zum Status-Live</a>
+<section class="card"><h2>Phasenlage</h2><pre class="mermaid">
+flowchart LR
+ P0["Phase 0 Konzept\n100 % abgenommen"] --> G0["G0-SRV\n0/13 bestanden\nG0-SRV-0 offen"] --> P1["Phase 1 Gehäuse\nlokal weiter geprüft\nProduktarbeit pausiert"] --> P2["Phasen 2+\nnur Konzept"]
+ P9["Phase 9 Video/WebRTC\ngestrichen"]
+ classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+ classDef wait fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+ classDef open fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+ classDef gone fill:#eceae3,stroke:#5b6b62,color:#5b6b62,stroke-dasharray:4 3
+ class P0 done
+ class G0,P1 wait
+ class P2 open
+ class P9 gone
+</pre><p class="note">Der lokale E6-Nachweis erweitert keine Phase und ersetzt G0-SRV-12 nicht.</p></section>
+<section class="card"><h2>K1-Fortsetzung</h2><pre class="mermaid">
+flowchart TD
+ C["T5 c00fd83\nPASS"] --> D["T6 1185a68\nPASS"] --> E["E2/E3/E5\nlokal grün"] --> F["T11 / E6\n11 von 14 Teilansichten\nVerdict fehlt"] --> G["explizite Entscheidung\nRetry-Scope + Artefakte"] --> H["E6 Vollmatrix"] --> I["E4 Linux + E7 Assets\nGesamtabnahme"]
+ classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+ classDef current fill:#f7eed2,stroke:#ca8a04,color:#7a5306,stroke-width:2px
+ classDef open fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+ class C,D,E done
+ class F current
+ class G,H,I open
+</pre><p class="note">Kein automatischer Retry: direkte Artefaktnamen unter <code>screenshots/e6/</code> sind bewusst no-clobber.</p></section>
+<footer>Mermaid wird über CDN geladen; statischer Snapshot, keine Gate-Entscheidung.</footer></main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';mermaid.initialize({startOnLoad:true,theme:'neutral'});</script></body></html>

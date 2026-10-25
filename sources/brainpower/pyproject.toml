@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "governor-workbench"
+version = "0.5.0"
+description = "Local evidence-based multi-project Governor Workbench"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+governor-workbench = "governor_workbench.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["governor_workbench*"]
+
+[tool.setuptools.package-data]
+governor_workbench = ["static/*"]

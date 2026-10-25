@@ -1,0 +1,29 @@
+# RadiWorks C23 — Dauerübernahme und Portable5 Implementation Plan
+
+> Agentic workers: Root übernimmt Daten-/Taskprüfung, gesicherten Release und kontrollierten lokalen Wechsel; Luna bounded portable Paketbau/Startwerkzeuge; Astra unabhängige Spezifikations- und Qualitätsprüfung vor Livewechsel. Benutzer hat Übernahme in Dauerinstanzen und Beenden laufender Broadcasts ausdrücklich am05.10genehmigt. Bereits genehmigter Paketplan wird konkret umgesetzt, kein erneutes Produktdesign.
+
+**Goal:** geprüften131-Dateien-C23-Stand in sieben lokale Dauerinstanzen mit erhaltenen Fällen übernehmen und portables Windows64-Testpaket für fünf isolierte Liveinstanzen ohne Codex/echtenInstaller bereitstellen.
+**Architecture:** neuer unveränderlicher versionierter Release im Brainpower-runtime; vorhandeneHome/Katalog/Scope/8103Key bleiben identisch. Bestehende Scheduler-/Watchdogzuständigkeit beibehalten. Neuer äußerer Servicewrapper bietet geordneten Stopflag-Shutdown. Altprozesswechsel nach AutoAUS/Queueleer, stabilem Datencheckpoint und exakter Prozessbaum-/Taskprüfung; kein blindesPIDStop. Rollback nur Code/Startweg, niemals alteFallkopie überneuereDaten.8110synthetisch getrennt erhalten, nach produktiverÜbernahme optional separat aktualisieren. Release/Adapter aufS4.8nichtfreigegeben.
+**Tech Stack:** bestehende FastAPI-App unverändert, Python/Uvicorn/vanillaJS, WindowsTaskScheduler/pythonw; optionaleCPU-Abhängigkeiten separat. PortablePaket enthältRuntime+Abhängigkeiten+Kataloge+Lizenzen, leereInstanzhomes/keineechtenFälle/Keys, versionsgebundenesManifest; keinNetzwerkmodell/Codex nötig. StartfähigohneInstallation, bis5LoopbackPorts, unabhängigeHomes/Scopes/Fernetschlüssel; AnmeldungAutostartoptionalexplizit.
+
+## Tasks / Checkpoints
+- [x] Kontext: PinC23Produkt/SHA/Referenzen und aktuelleTaskaktionen/Prozessbäume/Homepfade, Originaldatenanzahl/Dateihashes lesen ohne Falldaten auszugeben. Katalog-/ClarkeLizenz/Paketabhängigkeiten konkret bestimmen. Kein fremder8090Eingriff.
+- [x] Wrapper: tests first für Manifest-/Pfad-/Port-/Env-/Startupdrift, StopflagLebenszyklus/Sperre und eigeneHome; vorhandeneApp unverändert. Release131Dateien ausManifest kopieren, eigenerStartadapter separat, CPUdeps explizit.
+- [x] Portable: gebundelteWindowsPythonRuntime oder dokumentiertepassendeLokaleVoraussetzung nurfallswirklichkeinlokalbundelbarerRuntimebestand; empfehlenswertkomplettesOfflineBundle. EigeneStart/Stop/Status+kurze5InstanzenAnleitung+Lizenzen, optionalScheduler ohneAutoaktivierung. KeinPersistenzbestand/Keys/absolutenBenutzerpfade. Relocation-/Whitespace-/fremderPort-/Duplicate-/Stop/Restart/Scope-Isolationtesten. CPUProdukt80kSinglejobtesten, 5InstanzenkeinungeprüfterglobalerCPUparallelitätsclaim.
+- [x] Astra Spezifikationsreview, dann Qualitätsreview der Übernahme/Wrapper/Paketstrategie; Regressionsbefunde beheben und passendeTests erneutführen.
+- [x] Wartung: Tasks/XML/Startskripte sichern, Watchdog und7Hosts kontrolliertdeaktivieren; AutoAUS/Broadcastsbeenden, APIzustandruhig. Falls unerwarteteJobs/Useränderung: sicheranhalten stattDatenübergehen. ExakteAltprozessbäumegeprüftstoppen, alleHomesgeschlossenkopieren inklSQLitekonsistent; privateBackupACL, keineexternenKeys intransportabelArchiv.
+- [x] Firstport8104wechseln, API/Quelle/CPUfähigkeit, Falldateibytes/Counts/Scope/Recoverypfadeprüfen; dannrestliche8103/8105–8109nacheinander. HoststartsameHomes,Tasksaktivieren; bestehendeAnmeldetrigger/konsolefreieStartsbeibehalten. GeordneterneuerServiceStop/Restartstichprobe; keinealtenBroadcastsautomatischstarten.
+- [x] Nachweise:7Ports/Produktdateien/Falldigests/vorher-nachherTaskzuständigkeit, BrowserOriginalDefault+neueAnsicht mitpassenderQuelle ohneRealfallmutation.5portableInstanzenisoliertauf8120–8124testen, erfundeneDaten,Originalanalyse/21GV/Broadcast/EXPWiederanlauf. KeinrealerWindowsreboot/zweiterPCvorgeben.
+- [x] VersionspaketZIPundSHA,CheckpointmitZeitstempel/Restoreanleitung/Phasenbericht/WIEDERAUFNAHME. KanonischeModulTemplates-/Aurelia/S4.8/GesamtFBackup bleibenseparatePakete.
+
+## Freigabe / Grenzen
+
+PersönlicheC3-Abnahme bleibt Betreiberhandlung, Übernahme ist jetzt explizit autorisiert; keine zweiteBestätigung für bereits erlaubte Wartung verlangen. LeerePortableDaten sind beabsichtigt. Aktuelle Fälle werden nicht transportiert. DatencheckpointbewahrtOriginalbestand vorÜbernahme; keineGarantie fürvorherunvollständigeFall-/Recoverydateien. Beim StochasticAltbestand vorhandenenKey unverändert erhalten. Wohnort-/Geburtsort/BildKontextverträgeundheuristischeFokusSuchebleibenC23entsprechend. KeineneueFormel/Modellroute/klinischeWirkungszusage.
+
+## Konkretes Rollback vor Wechsel festgehalten
+
+Nach nachgewiesenem Ende aller neuen Services/Writer: nur altes tools/radiworks_scheduled_host.ps1 wiederherstellen. Für8104–8109 ausschließlich die vorMigrationgesicherten Hostmarker instance.json wiederherstellen (oder nach Sicherung des neuen Markers entfernen), da deren source nachStartaufC23zeigtundalterHost diesen ablehnt. Neue service.stop darf nur bei ausdrücklichemStart im eigenenHome entfernt werden. Niemals ältere cases/config/drafts/journals überneueren Datenbestand kopieren. Taskdefinitionen bleibenidentisch; vorherigen enabled-Zustand wiederherstellen. VorRollback SourceHash/Manifest und eigenePID/Portbindung prüfen. Falls neuerCodeDatenmigrationunerklärlicheDrift verursacht: anhalten undabklären stattblindesDatenrollback.
+
+## Verifizierter Abschluss
+
+Stand 2026-10-05T16:27:59.139086+02:00: siehe [C23-/Portable5-Abschluss](RADIWORKS_C23_PORTABLE5_ABSCHLUSS_2026-10-05.md). Finale Quelle rw-c23-fixed-release-20261005 mit drei begrenzten exakten Katalogprüfungen. Tasks/Quellen/Falldaten/Portable5 lokal geprüft; zweiter PC, kanonischeQuellen/Templates, GesamtF:-Backup und S4.8 bleiben separat offen.

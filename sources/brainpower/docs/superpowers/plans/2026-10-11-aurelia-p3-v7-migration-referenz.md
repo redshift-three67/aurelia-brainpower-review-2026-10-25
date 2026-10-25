@@ -1,0 +1,12 @@
+# P3 – separater Windows-v7→v8-Migrationsnachweis
+
+Fortsetzung des freigegebenen Referenzplans; keine Produktmigration oder Änderung bestätigter Algorithmen. Der positive Windows-v8-Nachweis bleibt unverändert versiegelt.
+
+- [x] M1 Luna6/max: begrenzte statische Bindung des zusätzlichen originalen `migration.py`, Abhängigkeiten, Fixture-/Schema-/Verlust-/Revalidierungsvertrag. Kein Produktimport durch Worker.
+- [x] M2 Leitung: neuer eigener Harness, zehn bisherige Module plus exakt `.migration`; gebundene Bytes/HEAD/tracked-only, leere Namespacepakete und geprüfte Python-/SQLite-/Native-Eingabegrenzen. Kein Defaults-/Key-/Patienten-/Netz-/CLI-/Job-/Livezugriff. Python-Guards sind keine OS-Sandbox.
+- [x] M3 Astra6/medium: vor Ausführung SPEC→QUALITY-Review von Fixture, Loader und zwölf genauen Prüffällen. Synthetische v7-Fixture aus v8-Testkatalog ohne Attestationstabelle muss dem unveränderten v7-Fingerprint entsprechen; keine beliebige Schemaattrappe. Fault injection nur am vorhandenen `_migration_checkpoint`, ohne Ersetzen der Migration/Registry.
+- [x] M4 Leitung: Originalmigration direkt, erneuter v8-Aufruf idempotent, unsupported schema fail-closed, Rollback vor DDL/nach DDL/vor Commit; öffentlicher v7-Bundle→v8-Bundle→Restore, Draft-/Kontext-/Revalidierungsgrenzen. Öffentlich vorhandenes Ziel, Tamper, Zusatzdatei, v8 statt v7 und kontrollierter Migrationsfehler samt temporärem Cleanup; Guardkontrollen zuerst ohne vorherige Produkt-Fixture.
+- [x] M5 Zweiter frischer Lauf bei unverändertem geprüften Harness; genaue Namen/Anzahlen/Skips, elf Module, Quellen/Harness/Artefakte unabhängig nachrechnen. Funktionsdelegationen nicht als WinAPI-Aufrufzahlen ausweisen.
+- [x] M6 Bericht/Hauptplan/Restarbeiten/Wiederaufnahme und lokaler Vorherpunkt vorbereitet; Vorher-Manifest separat geprüft. Nachherpunkt, historischer Bytesuffix und Abschlussmanifest werden ausschließlich durch den erfolgreichen `final`-Lauf samt `ROOT-after.json` und `MANIFEST.json` bestätigt; dieser vorbereitete Plan allein bestätigt sie nicht.
+
+POSIX-Negativ/Cleanup, allgemeine Registry-/Writer-/Job-/Auth-/Access-RMF-Abnahmen, P0/P1/P2 und RF-E1 bleiben getrennt offen. Danach P4 vollständige siebenmodulige Matrix mit Aurelia/Modul_Templates, erst P5 zentrale Datenstrukturentscheidung. Keine normative Templatesynchronisierung, Quellstandentscheidung oder F:-Vollsicherung in diesem Paket. Zwei begrenzte Helfer, keine Routingänderung. 60–90 Minuten Orientierung, keine Qualitätszeitgrenze.

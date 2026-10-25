@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Morphic Operator Workbench</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23102133'/%3E%3Cpath d='M14 43V21h7l11 13 11-13h7v22h-7V31L32 44 21 31v12z' fill='%236ee7d8'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
+
+    <header class="topbar" role="banner">
+      <div>
+        <p class="eyebrow">Morphic Operator Workbench</p>
+        <h1>Morphic Engine V1</h1>
+        <p class="topbar-subtitle">Analyse, Hardware-Kontext, Review, Ergebnis, Harmonisierung und Export in einem offiziellen Operator-Flow.</p>
+      </div>
+      <div class="status-strip" aria-label="Systemstatus Kurzfassung" role="status" aria-live="polite">
+        <span id="health-pill" class="pill neutral">Health wird geladen</span>
+        <span id="source-pill" class="pill neutral">Quellen werden geladen</span>
+        <span id="mode-pill" class="pill neutral">Modus: Standard</span>
+      </div>
+    </header>
+
+    <section id="auth-session-panel" class="auth-session-panel" aria-labelledby="auth-session-title" hidden>
+      <form id="auth-session-form" class="auth-session-form">
+        <div>
+          <p class="eyebrow">Geschützter lokaler Zugriff</p>
+          <h2 id="auth-session-title">Operator-Sitzung anmelden</h2>
+          <p>Der API-Schlüssel wird nur für diese Anmeldung übertragen und weder im Quelltext noch im Browser-Speicher abgelegt.</p>
+        </div>
+        <label><span>API-Schlüssel</span><input name="api_key" type="password" autocomplete="current-password" required></label>
+        <button class="primary-button" type="submit">Sitzung starten</button>
+        <span id="auth-session-state" class="inline-state" role="status" aria-live="polite">Anmeldung erforderlich</span>
+      </form>
+    </section>
+
+    <nav class="wizard-stepper" id="wizard-stepper" role="navigation" aria-label="Workbench-Navigation">
+      <button class="wizard-step active" type="button" data-step="0" aria-current="step"><span>1</span>Vorpruefung</button>
+      <button class="wizard-step" type="button" data-step="1"><span>2</span>Klient / Kontext</button>
+      <button class="wizard-step" type="button" data-step="2"><span>3</span>Fokus &amp; Zielsetzung</button>
+      <button class="wizard-step" type="button" data-step="3"><span>4</span>Analyseprofil</button>
+      <button class="wizard-step" type="button" data-step="4"><span>5</span>Hardware &amp; Realtime</button>
+      <button class="wizard-step" type="button" data-step="5"><span>6</span>Review &amp; Freigabe</button>
+      <button class="wizard-step" type="button" data-step="6"><span>7</span>Analyse-Lauf</button>
+      <button class="wizard-step" type="button" data-step="7"><span>8</span>Ergebnis-Uebersicht</button>
+      <button class="wizard-step" type="button" data-step="8"><span>9</span>Technische Details</button>
+      <button class="wizard-step" type="button" data-step="9"><span>10</span>Harmonisierung &amp; Abschluss</button>
+      <button class="wizard-step" type="button" data-step="10"><span>11</span>Berichtskatalog &amp; Export</button>
+    </nav>
+
+    <main id="main-content" class="workspace">
+      <div class="wizard-status" role="status" aria-live="polite" aria-label="Workbench-Fortschritt">
+        <span class="op-label">Fortschritt</span>
+        <div class="op-bar"><div class="op-fill" id="wizard-progress-fill" role="progressbar" aria-label="Workbench-Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="9"></div></div>
+        <span class="op-pct" id="wizard-progress-label">1 / 11</span>
+      </div>
+
+      <div class="wizard-controls">
+        <button class="secondary-button" id="btn-prev" type="button" disabled>Zurueck</button>
+        <button class="primary-button" id="btn-next" type="button">Weiter</button>
+        <span id="wizard-navigation-state" class="inline-state" role="status" aria-live="polite"></span>
+      </div>
+
+      <!-- Phase 0: Vorpruefung -->
+      <section id="runtime-phase" class="panel wizard-panel active phase-diagnose" data-step="0">
+        <div class="step-header">
+          <span class="step-icon">1</span>
+          <div>
+            <p class="eyebrow">Vorpruefung</p>
+            <h2>System-Check &amp; Workspace</h2>
+            <p class="step-subtitle">Lokale Laufzeit pruefen, Datenbanken und Quellen validieren, Bereitschaft fuer die Analyse bestaetigen.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Lokale Laufzeit und Datenbanken pruefen</li>
+          <li>Bereitschaft fuer die Workbench bestaetigen</li>
+          <li>Read-only Datenquellenstatus einsehen</li>
+        </ul>
+        <div class="metric-grid" aria-live="polite">
+          <div class="metric"><span>Python</span><strong id="python-version">-</strong></div>
+          <div class="metric"><span>Profile</span><strong id="profile-count">-</strong></div>
+          <div class="metric"><span>Datenbanken</span><strong id="database-count">-</strong></div>
+          <div class="metric"><span>Status</span><strong id="health-status">-</strong></div>
+        </div>
+        <ul id="health-list" class="compact-list"></ul>
+        <div class="section-title section-title-inline"><h3>Datenquellen-Readiness</h3></div>
+        <div id="source-summary" class="source-summary"></div>
+        <div id="source-analysis-integration" class="notice source-integration-notice" role="status" aria-live="polite">
+          Registry-Prüfung läuft; Scanprofil-Pool wird geladen. Keine Wirkung auf diesen Scan, Profilpool oder Score. Externe Scanprofile erst nach validierter Catalog-Freigabe in Gate 14.
+        </div>
+        <ul id="source-list" class="source-list compact-list scroll-region" aria-live="polite" tabindex="0"></ul>
+      </section>
+
+      <!-- Phase 2: Klient / Kontext -->
+      <section id="client-phase" class="panel wizard-panel phase-diagnose" data-step="1">
+        <div class="step-header">
+          <span class="step-icon">2</span>
+          <div>
+            <p class="eyebrow">Phase 2</p>
+            <h2>Klient / Kontext</h2>
+            <p class="step-subtitle">Personendaten erfassen, Geburtskontext setzen, Wellbeing-Hinweis akzeptieren.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Klientenaufnahme: Personendaten erfassen</li>
+          <li>Geburtskontext setzen</li>
+          <li>Wellbeing-Hinweis akzeptieren</li>
+        </ul>
+        <div class="notice">
+          <strong>Wellbeing- und Forschungszweck.</strong>
+          <span>Keine Diagnose, keine Therapieempfehlung, kein Heilversprechen. Medizinische Entscheidungen bleiben aerztlicher oder therapeutischer Fachverantwortung vorbehalten.</span>
+        </div>
+        <label class="checkline"><input id="consent-local" type="checkbox"><span>Lokale Verarbeitung und Berichtserzeugung bestaetigt <span class="required-badge">erforderlich</span></span></label>
+        <label class="checkline"><input id="consent-safety" type="checkbox"><span>Wellbeing-Hinweis gelesen und akzeptiert <span class="required-badge">erforderlich</span></span></label>
+        <section id="client-vector-context" class="step-card client-vector-context" aria-labelledby="client-vector-title">
+          <div class="card-title-row">
+            <strong id="client-vector-title">Vektor-Typ</strong>
+            <span class="optional-badge">Aktiver Standard</span>
+          </div>
+          <div class="client-vector-grid" aria-label="Verfuegbarkeit der Vektor-Typen">
+            <div class="client-vector-card" data-vector="client" data-vector-state="active">
+              <span class="client-vector-icon" aria-hidden="true">◉</span>
+              <div>
+                <strong>Klient</strong>
+                <p>Standard-Signatur aus Name, Geburtsdatum und Geburtsort</p>
+                <span class="vector-state-badge active">Aktiver Standard</span>
+              </div>
+            </div>
+            <div class="client-vector-card" data-vector="group" data-vector-state="local-draft">
+              <span class="client-vector-icon" aria-hidden="true">◌</span>
+              <div>
+                <strong>Gruppe</strong>
+                <p>Lokalen, einwilligungsgebundenen Gruppenentwurf verwalten.</p>
+                <span class="vector-state-badge optional">Lokaler Entwurf</span>
+              </div>
+            </div>
+            <div class="client-vector-card is-unavailable" data-vector="geo" data-vector-state="not-activated" aria-disabled="true">
+              <span class="client-vector-icon" aria-hidden="true">⌖</span>
+              <div>
+                <strong>Geo</strong>
+                <p>Koordinaten und Radius werden noch nicht verarbeitet.</p>
+                <span class="vector-state-badge unavailable">Noch nicht aktiviert</span>
+              </div>
+            </div>
+            <div class="client-vector-card is-optional" data-vector="image" data-vector-state="optional">
+              <span class="client-vector-icon" aria-hidden="true">▣</span>
+              <div>
+                <strong>Bild</strong>
+                <p>Foto-basierte Signatur: Referenzbild in Phase 4 optional waehlen.</p>
+                <span class="vector-state-badge optional">Optional in Phase 4</span>
+              </div>
+            </div>
+          </div>
+          <details class="optional-group-workflow">
+            <summary>Optionale Gruppenfunktionen verwalten</summary>
+          <section id="group-vector-draft" class="group-draft-panel" aria-labelledby="group-draft-title">
+            <div class="card-title-row">
+              <strong id="group-draft-title">Lokaler Gruppenentwurf</strong>
+              <span class="optional-badge">Nicht in Analyse einbezogen</span>
+            </div>
+            <label><span>Gruppenbezeichnung (lokal)</span><input id="group-draft-label" maxlength="120" autocomplete="off" aria-describedby="group-draft-help"></label>
+            <label class="optional-field"><span>Pseudonyme Mitglieder (je Zeile oder Komma)</span><textarea id="group-draft-members" rows="3" placeholder="cli-alpha&#10;cli-beta" aria-describedby="group-draft-help"></textarea></label>
+            <label class="checkline"><input id="group-members-consent" type="checkbox" aria-describedby="group-draft-help"><span>Einwilligung jedes aufgeführten Mitglieds wurde geprüft</span></label>
+            <label class="checkline"><input id="group-persistence-consent" type="checkbox" aria-describedby="group-draft-help"><span>Lokalen Gruppenentwurf ausdrücklich per Windows-DPAPI speichern</span></label>
+            <label class="checkline"><input id="group-analysis-consent" type="checkbox" aria-describedby="group-draft-help"><span>Spätere Gruppenanalyse ausdrücklich vormerken</span></label>
+            <p id="group-draft-help" class="field-hint"><strong>Zweck:</strong> Einen pseudonymen Gruppenentwurf lokal vorbereiten. <strong>Standard:</strong> nicht gespeichert und nicht aktiv. <strong>Auswirkung:</strong> Speichern nutzt DPAPI als an dieses Windows-Benutzerkonto gebundene Verschlüsselung und legt den Entwurf im lokalen Temp-Bereich ab. <strong>Keine Auswirkung:</strong> Nicht Teil der Scan-Anfrage; keine Auswirkung auf den aktuellen Scan, und der Löschplan-Dry-Run löscht oder markiert nichts. <strong>Datenschutz-/Hardwaregrenze:</strong> Keine Browser-Geolocation, keine Hardwarewirkung und keine Rohgruppenwerte in Berichten. <strong>Speicherort:</strong> Windows-geschützte lokale Temp-Datei. <strong>Aufbewahrung:</strong> 30 Tage als Metadatenfrist, ohne automatische Löschung durch diese Ansicht. <strong>Löschweg:</strong> Entwurf nach exakter ID-Bestätigung löschen. <strong>Aktueller Scan:</strong> unverändert, bis alle separaten Aktivierungsgates erfüllt sind.</p>
+            <div class="action-row">
+              <button id="save-group-draft-button" class="secondary-button" type="button" aria-describedby="group-draft-help" disabled>Lokalen Gruppenentwurf speichern</button>
+              <button id="group-erasure-dry-run-button" class="secondary-button" type="button" aria-describedby="group-draft-help">Löschplan prüfen</button>
+              <button id="delete-group-draft-button" class="secondary-button" type="button" aria-describedby="group-draft-help" disabled>Entwurf löschen</button>
+              <span id="group-draft-state" class="inline-state" aria-live="polite">nicht gespeichert</span>
+            </div>
+            <label class="optional-field"><span>Löschbestätigung (exakte Entwurfs-ID)</span><input id="group-delete-confirmation" autocomplete="off" aria-describedby="group-draft-help"></label>
+          </section>
+          <section id="group-consent-panel" class="step-card" aria-labelledby="group-consent-title">
+            <div class="card-title-row">
+              <strong id="group-consent-title">Individuelle Gruppenanalyse-Einwilligung</strong>
+              <span class="optional-badge">Lokales Enrollment</span>
+            </div>
+            <div class="control-row">
+              <label><span>Vorname</span><input id="group-identity-first-name" autocomplete="given-name" maxlength="120" aria-describedby="group-consent-help"></label>
+              <label><span>Nachname</span><input id="group-identity-last-name" autocomplete="family-name" maxlength="120" aria-describedby="group-consent-help"></label>
+              <label><span>Geburtsdatum</span><input id="group-identity-birth-date" inputmode="numeric" maxlength="32" aria-describedby="group-consent-help"></label>
+              <label><span>Geburtsort</span><input id="group-identity-birth-place" maxlength="160" aria-describedby="group-consent-help"></label>
+              <label><span>Aufbewahrung (Tage)</span><input id="group-identity-retention-days" type="number" min="1" max="3650" value="365" aria-describedby="group-consent-help"></label>
+            </div>
+            <label class="checkline"><input id="group-identity-persistence-consent" type="checkbox" aria-describedby="group-consent-help"><span>Identität ausdrücklich lokal und Windows-DPAPI-geschützt registrieren</span></label>
+            <div class="action-row">
+              <button id="register-group-identity-button" class="secondary-button" type="button" aria-describedby="group-consent-help" disabled>Identität sicher registrieren</button>
+              <span id="group-consent-state" class="inline-state" aria-live="polite">keine Identität ausgewählt</span>
+            </div>
+            <label class="optional-field"><span>Pseudonyme Client-ID</span><input id="group-consent-client-id" aria-describedby="group-consent-help" readonly></label>
+            <div class="control-row">
+              <label><span>Einwilligung gültig bis</span><input id="group-consent-valid-until" type="datetime-local" aria-describedby="group-consent-help"></label>
+              <label><span>Bestätigung (exakte Client-ID)</span><input id="group-consent-confirmation" autocomplete="off" aria-describedby="group-consent-help"></label>
+            </div>
+            <div class="action-row">
+              <button id="enable-group-consent-button" class="secondary-button" type="button" aria-describedby="group-consent-help" disabled>Einwilligung aktivieren</button>
+              <button id="revoke-group-consent-button" class="secondary-button" type="button" aria-describedby="group-consent-help" disabled>Einwilligung widerrufen</button>
+            </div>
+            <p id="group-consent-help" class="field-hint"><strong>Zweck:</strong> Einwilligungen für pseudonyme Gruppenmitglieder lokal verwalten. <strong>Standard:</strong> keine registrierte oder aktive Einwilligung; Aufbewahrung bei Neuregistrierung 365 Tage. <strong>Auswirkung:</strong> Registrierung nutzt DPAPI als an dieses Windows-Benutzerkonto gebundene Verschlüsselung; Aktivieren oder Widerrufen ändert den lokalen Einwilligungsstatus. <strong>Keine Auswirkung:</strong> Keine Scanaktivierung; Registrierung und Einwilligung aktivieren allein keinen Scan. <strong>Datenschutz-/Hardwaregrenze:</strong> Lokaler Datenschutzvorgang ohne Hardwarewirkung. <strong>Speicherort:</strong> Windows-geschützte lokale Identitätsdatei. <strong>Aufbewahrung:</strong> gewählte Frist; kein in dieser Ansicht belegter automatischer Löschlauf. <strong>Löschweg:</strong> Widerruf entzieht die Einwilligung, löscht aber weder Identität noch Entwurf. <strong>Aktueller Scan:</strong> unverändert, bis alle Aktivierungsgates erfüllt sind.</p>
+          </section>
+          <section id="group-analysis-policy-panel" class="step-card" aria-labelledby="group-analysis-policy-title">
+            <div class="card-title-row">
+              <strong id="group-analysis-policy-title">Gruppenanalyse-Aktivierungspolicy</strong>
+              <span id="group-analysis-feature-state" class="optional-badge">serverseitig deaktiviert</span>
+            </div>
+            <div class="control-row">
+              <label><span>Explizite Gruppenstärke [0–1]</span><input id="group-analysis-strength" type="number" min="0" max="1" step="0.01" placeholder="z. B. 0.25" aria-describedby="group-policy-help"></label>
+              <button id="save-group-analysis-policy-button" class="secondary-button" type="button" aria-describedby="group-policy-help" disabled>Stärke vormerken</button>
+              <span id="group-analysis-policy-state" class="inline-state" aria-live="polite">keine Stärke festgelegt</span>
+            </div>
+            <p id="group-policy-help" class="field-hint"><strong>Zweck:</strong> Eine Gruppenstärke von 0 = keine Gruppenwirkung bis 1 = volle angeforderte Gruppenwirkung vormerken. <strong>Standard:</strong> nicht festgelegt und serverseitig deaktiviert. <strong>Auswirkung:</strong> Der Wert bleibt als Policy-Kandidat, also nur vorgemerkter Vorschlag, im laufenden Serverprozess. <strong>Keine Auswirkung:</strong> Keine Scanaktivierung allein durch die Policy. <strong>Datenschutz-/Hardwaregrenze:</strong> Der serverseitige Kill-Switch ist ein serverseitiger Not-Aus-Schalter; keine Hardwarewirkung. <strong>Speicherort:</strong> nur Prozessspeicher. <strong>Aufbewahrung:</strong> bis zum Serverneustart. <strong>Löschweg:</strong> Serverneustart beziehungsweise spätere Policy-Verwaltung. <strong>Aktueller Scan:</strong> unverändert ohne bewusste Aktivierung und alle weiteren Freigaben.</p>
+          </section>
+          <section id="group-scan-activation-panel" class="step-card" aria-labelledby="group-scan-activation-title">
+            <div class="card-title-row">
+              <strong id="group-scan-activation-title">Gruppenwirkung für diesen Scan</strong>
+              <span class="optional-badge">Bewusste Einzelaktivierung</span>
+            </div>
+            <label class="checkline"><input id="group-scan-activation-enabled" type="checkbox" aria-describedby="group-activation-help"><span>Gruppenwirkung für den nächsten realen Scan bewusst anfordern</span></label>
+            <div class="control-row">
+              <label><span>Explizit ausgewählter Gruppenentwurf</span>
+                <select id="group-scan-draft-id" aria-describedby="group-activation-help">
+                  <option value="" selected>Keine Gruppe aktivieren</option>
+                </select>
+              </label>
+              <span id="group-scan-activation-state" class="inline-state neutral" aria-live="polite">Keine produktive Wirkung: nicht bewusst aktiviert</span>
+            </div>
+            <p id="group-activation-help" class="field-hint"><strong>Zweck:</strong> Einen freigegebenen Gruppenentwurf für genau den nächsten realen Scan anfordern. <strong>Standard:</strong> aus und keine Gruppe ausgewählt. <strong>Auswirkung:</strong> Nur bewusste Aktivierung plus Auswahl darf die pseudonyme Entwurfs-ID an den Server senden. <strong>Keine Auswirkung:</strong> Preview und Templates bleiben gruppenfrei. <strong>Datenschutz-/Hardwaregrenze:</strong> Alle Einwilligungs-, Policy- und Kill-Switch-Gates bleiben erforderlich; keine Hardwarewirkung. <strong>Speicherort:</strong> Auswahl nur im aktuellen Browserzustand. <strong>Aufbewahrung:</strong> bis Fallwechsel oder Reset. <strong>Löschweg:</strong> Auswahl auf keine Gruppe setzen oder Aktivierung ausschalten. <strong>Aktueller Scan:</strong> nur der ausdrücklich gestartete reale Scan kann Gruppenwirkung erhalten.</p>
+          </section>
+          </details>
+          <p class="field-hint">Diese Uebersicht aendert keine Analyseparameter. Nur der Klient-Vektor ist hier aktiv; Bild bleibt ein bestehendes, ausdrueckliches Opt-in in Phase 4.</p>
+          <p id="profile-context-help" class="field-hint"><strong>Zweck:</strong> Einen optionalen Profilkontext transparent auswählen. <strong>Standard:</strong> derzeit nicht auswählbar; alle/neutral. <strong>Auswirkung:</strong> Gate 12 führt zuerst kuratierte Metadaten und Shadow-Vergleiche ein. <strong>Keine Auswirkung:</strong> Dieser Hinweis filtert keine Profile und ändert keine Scores. <strong>Datenschutz-/Hardwaregrenze:</strong> Keine Ableitung aus Name oder Geburtsdaten und keine Hardwarewirkung.</p>
+        </section>
+        <form id="scan-form" class="form-grid">
+          <label><span>Nachname <span class="required-badge">Pflichtfeld</span></span><input name="last_name" autocomplete="family-name" required></label>
+          <label><span>Vorname <span class="required-badge">Pflichtfeld</span></span><input name="first_name" autocomplete="given-name" required></label>
+          <label><span>Geburtsdatum <span class="required-badge">Pflichtfeld · DDMMYYYY</span></span><input name="birth_date" inputmode="numeric" maxlength="8" placeholder="z. B. 01011990" required></label>
+          <label><span>Geburtsort <span class="required-badge">Pflichtfeld</span></span><input name="birth_place" required></label>
+        </form>
+        <section id="optional-client-context" class="step-card" aria-labelledby="optional-client-context-title">
+          <div class="card-title-row">
+            <strong id="optional-client-context-title">Optionaler Klientenkontext</strong>
+            <span class="optional-badge">Lokaler Entwurf</span>
+          </div>
+          <div class="control-row">
+            <label><span>Geburtszeit</span><input form="scan-form" name="birth_time" type="time" aria-describedby="client-context-help"></label>
+            <label><span>E-Mail</span><input form="scan-form" name="email" type="email" autocomplete="email" aria-describedby="client-context-help"></label>
+          </div>
+          <label class="optional-field"><span>Notizen</span><textarea form="scan-form" name="notes" rows="3" placeholder="Weitere lokale Informationen" aria-describedby="client-context-help"></textarea></label>
+          <p id="client-context-help" class="field-hint"><strong>Zweck:</strong> Geburtszeit, E-Mail und Notizen als separaten lokalen Kontextentwurf erfassen. <strong>Standard:</strong> leer und nicht gespeichert. <strong>Auswirkung:</strong> Nur die ausdrückliche Speicherfreigabe schreibt den Kontext samt Basisdaten in eine tenantgebundene lokale JSON-Datei. <strong>Keine Auswirkung:</strong> Diese Felder sind nicht Teil der Scan-Anfrage und ändern weder Vektor noch Score. <strong>Datenschutz-/Hardwaregrenze:</strong> Keine Hardwarewirkung; lokale Klartext-JSON innerhalb des geschützten Runtimebereichs. <strong>Speicherort:</strong> lokaler Workbench-Runtimeordner. <strong>Aufbewahrung:</strong> keine automatische Löschung durch einen neuen Fall. <strong>Löschweg:</strong> derzeit kein eigener Löschknopf in der Workbench. <strong>Aktueller Scan:</strong> unverändert.</p>
+          <label class="checkline"><input id="context-persistence-consent" type="checkbox" aria-describedby="client-context-help"><span>Optionalen Klientenkontext ausdrücklich lokal speichern</span></label>
+          <div class="action-row">
+            <button id="save-client-context-button" class="secondary-button" type="button" aria-describedby="client-context-help" disabled>Lokalen Kontextentwurf speichern</button>
+            <span id="client-context-state" class="inline-state" aria-live="polite">nicht gespeichert</span>
+          </div>
+        </section>
+      </section>
+
+      <!-- Phase 3: Fokus & Zielsetzung -->
+      <section id="focus-phase" class="panel wizard-panel phase-diagnose" data-step="2">
+        <div class="step-header">
+          <span class="step-icon">3</span>
+          <div>
+            <p class="eyebrow">Phase 3</p>
+            <h2>Fokus &amp; Zielsetzung</h2>
+            <p class="step-subtitle">Fokus oder Symptom festlegen, Top-N Zielumfang waehlen, Priorisierung in die Vorschau uebernehmen.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Fokus oder Symptom als Freitext festlegen</li>
+          <li>Top-N Zielumfang waehlen</li>
+          <li>Fokuspriorisierung in die Vorschau uebernehmen</li>
+        </ul>
+        <div class="control-row">
+          <label class="focus-input">
+            <span>Fokus <span class="required-badge">Pflichtfeld</span></span>
+            <input form="scan-form" name="focus" required>
+          </label>
+          <label><span>Level</span>
+            <select form="scan-form" name="profile_level">
+              <option value="1">Level 1</option><option value="2">Level 2</option>
+              <option value="3" selected>Level 3</option><option value="4">Level 4</option>
+            </select>
+          </label>
+          <label><span>Top-N</span>
+            <select form="scan-form" name="top_n">
+              <option value="3">Top-3</option><option value="5" selected>Top-5</option>
+              <option value="7">Top-7</option><option value="9">Top-9</option>
+            </select>
+          </label>
+        </div>
+        <p class="field-hint">📚 Der Fokus-Text fliesst direkt in die Analyse ein (CLI-Parameter <code>--focus</code>) und beeinflusst Matrix-Scoring und Ergebnispriorisierung. Ohne Fokus kann die Analyse nicht gestartet werden.</p>
+        <label class="checkline"><input id="focus-history-consent" type="checkbox" aria-describedby="focus-history-help"><span>Fokus-Historie lokal in diesem Browser speichern (optional)</span></label>
+        <button id="clear-focus-history" class="secondary-button" type="button" aria-describedby="focus-history-help">Lokale Fokus-Historie loeschen</button>
+        <p id="focus-history-help" class="field-hint"><strong>Zweck:</strong> Bis zu acht frühere Fokus-Texte in diesem Browser wiederverwenden. <strong>Standard:</strong> aus. <strong>Auswirkung:</strong> Eine Auswahl übernimmt den Text in das Fokusfeld. <strong>Keine Auswirkung:</strong> Die Historie startet keinen Scan und ändert keine Scores selbst. <strong>Datenschutz-/Hardwaregrenze:</strong> Nur Browser-localStorage, kein Hardwarezugriff. <strong>Speicherort:</strong> localStorage dieses Browsers. <strong>Aufbewahrung:</strong> höchstens acht Einträge ohne Zeitautomatik. <strong>Löschweg:</strong> Löschtaste oder Deaktivieren der Freigabe. <strong>Aktueller Scan:</strong> nur der in das Fokusfeld übernommene Text wirkt.</p>
+        <div id="focus-history-chips" class="chip-row" aria-live="polite"></div>
+        <label class="optional-field">
+          <span>Hauptsymptom / Anliegen <span class="optional-badge">optional</span></span>
+          <input form="scan-form" name="main_symptom" placeholder="z. B. wiederkehrende Erschoepfung" aria-describedby="main-symptom-help">
+        </label>
+        <p id="main-symptom-help" class="field-hint"><strong>Zweck:</strong> Ein optionales Hauptanliegen zusätzlich zum Fokus angeben. <strong>Standard:</strong> leer. <strong>Auswirkung:</strong> Wird mit dem Fokus kombiniert und kann Profilpriorisierung sowie Berichtstexte ändern. <strong>Keine Auswirkung:</strong> Keine eigenständige Diagnose und kein eigener Scanmodus. <strong>Datenschutz-/Hardwaregrenze:</strong> Wird lokal an den Scanpfad übergeben; keine Hardwareaktivierung.</p>
+        <div class="hint-box">
+          <span class="hint-box-icon">📚</span>
+          <span><strong>Hinweis zu Level &amp; Top-N.</strong> Der Profil-Level waehlt den vollstaendig gescreenten Profilpool (<code>get_top_n_analysis_profiles_by_level</code>), Top-N die daraus vollstaendig analysierten Profile. Adaptive Limits begrenzen den Detailumfang dieser Analysen auf <code>max(32, top_n * 16)</code>; sie aendern weder den Screening-Pool noch die Scoreformel.</span>
+        </div>
+        <dl class="mini-snapshot" aria-live="polite" id="focus-mini-snapshot">
+          <div class="mini-snapshot-item"><dt>Aktueller Fokus</dt><dd id="mini-snapshot-focus">-</dd></div>
+          <div class="mini-snapshot-item"><dt>Profil-Level</dt><dd id="mini-snapshot-level">Level 3</dd></div>
+          <div class="mini-snapshot-item"><dt>Zielumfang</dt><dd id="mini-snapshot-topn">Top-5</dd></div>
+        </dl>
+      </section>
+
+      <!-- Phase 4: Analyseprofil -->
+      <section id="profile-phase" class="panel wizard-panel phase-diagnose" data-step="3">
+        <div class="step-header">
+          <span class="step-icon">4</span>
+          <div>
+            <p class="eyebrow">Phase 4</p>
+            <h2>Analyseprofil</h2>
+            <p class="step-subtitle">Profilvorlage festlegen, Entropie-Modus bestimmen, Adaptive Limits bei Bedarf aktivieren.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Profilvorlage festlegen</li>
+          <li>Entropie-Modus bestimmen</li>
+          <li>Adaptive Limits bei Bedarf aktivieren</li>
+        </ul>
+        <div class="step-card">
+          <div class="card-title-row"><strong>Profilvorlage</strong></div>
+          <div id="profile-template-choices" class="choice-card-grid" aria-label="Profilvorlage" aria-describedby="profile-template-help"></div>
+          <select form="scan-form" name="profile_template" id="profile-template-select" class="visually-hidden" aria-hidden="true" tabindex="-1">
+            <option value="phase1-default" data-hint="Neutraler Ausgangspunkt: alle vier persönlichen Achsen werden gleich gewichtet." selected>Phase-1 Standard</option>
+            <option value="personal-balanced" data-hint="Etwas breitere persönliche Gewichtung: alle vier Achsen werden gleichmäßig angehoben.">Persoenlich ausgewogen</option>
+            <option value="personal-focused" data-hint="Körperbetonte Auswahl: physische Signale erhalten mehr, astrale Signale weniger Gewicht.">Persoenlich fokussiert</option>
+          </select>
+          <p id="profile-template-help" class="field-hint"><strong>Zweck:</strong> Die vier persönlichen Vergleichsachsen vorgeben. <strong>Standard:</strong> Phase-1 Standard mit gleicher Gewichtung. <strong>Auswirkung:</strong> Andere Vorlagen können Scores von Profilen mit persönlichem Vergleichsvektor verändern. <strong>Keine Auswirkung:</strong> Kein eigener Profilpool und keine automatische Hardware- oder Speicherwirkung. <strong>Datenschutz-/Hardwaregrenze:</strong> Lokaler Analyseparameter ohne externen Zugriff.</p>
+        </div>
+        <div class="step-card">
+          <div class="card-title-row"><strong>Entropie-Modus</strong></div>
+          <div id="entropy-mode-choices" class="choice-card-grid" aria-label="Entropie-Modus" aria-describedby="entropy-mode-help"></div>
+          <select form="scan-form" name="entropy_mode" id="entropy-mode-select" class="visually-hidden" aria-hidden="true" tabindex="-1">
+            <option value="legacy" data-hint="Bewährte Standardauswahl der verfügbaren Entropiequelle mit definiertem Fallback." selected>Legacy</option>
+            <option value="enhanced" data-hint="Prüft eine breitere Auswahl verfügbarer Entropiequellen; nicht verfügbare Quellen werden kontrolliert ersetzt.">Enhanced</option>
+            <option value="hybrid" data-hint="Kombiniert mehrere verfügbare Entropiequellen; ohne geeignete Hardware bleibt ein ausgewiesener Fallback aktiv.">Hybrid</option>
+          </select>
+          <p id="entropy-mode-help" class="field-hint"><strong>Zweck:</strong> Die technische Entropiequelle für den Scan wählen. <strong>Standard:</strong> Legacy. <strong>Auswirkung:</strong> Enhanced und Hybrid erweitern oder kombinieren verfügbare Quellen und Fallbacks. <strong>Keine Auswirkung:</strong> Keine physische EMF-Messung und keine garantierte Hardwarequelle. <strong>Datenschutz-/Hardwaregrenze:</strong> Fallbacks können Software- und Netzwerk-Timing verwenden; aktive Quellen müssen separat ausgewiesen werden.</p>
+        </div>
+        <div class="step-card">
+          <div class="card-title-row"><strong>Referenzbild (optional)</strong></div>
+          <label>
+            <span>Datei waehlen (nur .jpg/.jpeg)</span>
+            <input type="file" id="image-file-input" accept="image/jpeg" aria-describedby="reference-image-help">
+          </label>
+          <input form="scan-form" name="image_path" id="image-path-input" placeholder="C:/bilder/klient-reference.jpg" aria-describedby="reference-image-help">
+          <p id="reference-image-help" class="field-hint"><strong>Zweck:</strong> Eine lokal serverseitig erreichbare JPG-Datei als zusätzlichen Analysevektor verwenden. <strong>Standard:</strong> keine Datei. <strong>Auswirkung:</strong> Ein gültiger Pfad kann den Bildvektor und damit Scores beeinflussen. <strong>Keine Auswirkung:</strong> Die Browserauswahl lädt keine Datei hoch und aktiviert keine Kamera. <strong>Datenschutz-/Hardwaregrenze:</strong> Nur der Dateiname wird übernommen; die Datei muss für den lokalen Server erreichbar sein.</p>
+        </div>
+        <div class="step-card">
+          <div class="card-title-row"><strong>Planetarer Vektor <span class="optional-badge">Opt-in</span></strong></div>
+          <label class="checkline"><input form="scan-form" name="planetary_vector_enabled" type="checkbox" aria-describedby="planetary-vector-help"><span>Planetaren Vektor explizit in die Analyse einbeziehen</span></label>
+          <label><span>Planetentyp</span>
+            <select form="scan-form" name="planet_type" aria-describedby="planetary-vector-help">
+              <option value="">Keinen Planetentyp verwenden</option>
+              <option value="Mars">Mars</option><option value="Venus">Venus</option><option value="Sonne">Sonne</option><option value="Saturn">Saturn</option><option value="Neptun">Neptun</option>
+            </select>
+          </label>
+          <p id="planetary-vector-help" class="field-hint"><strong>Zweck:</strong> Eine deterministisch aus der gewählten Bezeichnung erzeugte zusätzliche Rate verwenden. <strong>Standard:</strong> aus und kein Typ. <strong>Auswirkung:</strong> Nur aktivierter Vektor plus Typ kann Scores verändern. <strong>Keine Auswirkung:</strong> Die Typauswahl allein wirkt nicht. <strong>Datenschutz-/Hardwaregrenze:</strong> Keine Astronomie-, Standort- oder Sensormessung.</p>
+        </div>
+        <label class="checkline"><input form="scan-form" name="adaptive_limits" type="checkbox" aria-describedby="adaptive-limits-help"><span>Adaptive Limits aktivieren</span></label>
+        <p id="adaptive-limits-help" class="field-hint"><strong>Zweck:</strong> Den internen Phase-2-Detailumfang und die ownergebundene sichtbare Top-Profilliste bewusst begrenzen. <strong>Standard:</strong> aus. <strong>Auswirkung:</strong> Alle Profile des Levels bleiben im Screening-Pool und Top-N bestimmt weiterhin die vollständig in Phase 2 analysierten Profile; nur der Phase-2-Detailumfang je ausgewähltem Profil wird auf höchstens <code>max(32, Top-N × 16)</code> begrenzt, ohne einen kleineren angeforderten Umfang zu erhöhen. Dadurch kann ReportDETAIL weniger Detailtreffer enthalten, und die ownergebundene sichtbare Top-Profilliste zeigt höchstens 5 Treffer. <strong>Keine Auswirkung:</strong> Screening-Pool und Top-N-Profilwahl werden nicht verändert. Scoreformel und Reihenfolge werden nicht verändert. Der globale Berichtskatalog bleibt unverändert; durch gekürzte Detail- und Displaymengen können sichtbare Detailtreffer fehlen. <strong>Datenschutz-/Hardwaregrenze:</strong> Reiner lokaler Umfangsparameter ohne zusätzliche Datenspeicherung oder Hardwareaktivierung.</p>
+      </section>
+
+      <!-- Phase 5: Hardware & Realtime -->
+      <section id="hardware-phase" class="panel wizard-panel phase-diagnose" data-step="4">
+        <div class="step-header">
+          <span class="step-icon">5</span>
+          <div>
+            <p class="eyebrow">Phase 5</p>
+            <h2>Hardware &amp; Realtime</h2>
+            <p class="step-subtitle">Ehrliche Hardware-Klassifikation einsehen, Realtime-Kalibrierung pruefen, Expert-Modus-Warnungen beachten.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Ehrliche Hardware-Klassifikation einsehen</li>
+          <li>Realtime-Kalibrierung pruefen</li>
+          <li>Expert-Modus-Warnungen beachten</li>
+        </ul>
+        <div class="control-row">
+          <label><span>Workbench-Modus</span>
+            <select id="workbench-mode" aria-describedby="workbench-mode-help">
+              <option value="standard" selected>Standard</option>
+              <option value="expert">Expert</option>
+            </select>
+          </label>
+        </div>
+        <p id="workbench-mode-help" class="field-hint"><strong>Zweck:</strong> Zusätzliche technische Warnungen ein- oder ausblenden. <strong>Standard:</strong> Standard. <strong>Auswirkung:</strong> Expert ergänzt Gate- und Fallbackhinweise und wird im Laufkontext vermerkt. <strong>Keine Auswirkung:</strong> Keine Änderung von Score, Profilpool oder Hardwareaktivierung. <strong>Datenschutz-/Hardwaregrenze:</strong> Reine lokale Anzeige- und Protokolloption.</p>
+        <div class="hint-box">
+          <span class="hint-box-icon">📚</span>
+          <span><strong>Hinweis zur Klassifikation.</strong> Jede Komponente wird ehrlich als <code>real_active</code>, <code>real_available_not_used</code>, <code>software_fallback</code> oder <code>not_implemented</code> eingestuft (<code>build_hardware_truth_snapshot()</code>). Nicht erkannte Payload-Statuswerte werden als <code>unknown</code> angezeigt. Es wird nie eine Hardware-Beschleunigung vorgetaeuscht, die tatsaechlich per Software-Fallback laeuft.</span>
+        </div>
+        <div id="hardware-gate-warnings" aria-live="polite"></div>
+        <div id="hardware-truth-grid" class="hardware-truth-grid" aria-live="polite"></div>
+        <div class="step-card emf-control-card" aria-describedby="emf-help">
+          <div class="card-title-row">
+            <div>
+              <span class="op-label">EMF-Telemetrie</span>
+              <strong>Bewusste Aktivierung</strong>
+            </div>
+            <span id="emf-telemetry-state" class="inline-state neutral" role="status" aria-live="polite">Status wird geladen.</span>
+          </div>
+          <div class="action-row compact-actions">
+            <button id="emf-enable-button" class="secondary-button" type="button" aria-describedby="emf-help emf-telemetry-state">EMF-Telemetrie aktivieren</button>
+            <button id="emf-disable-button" class="secondary-button" type="button" aria-describedby="emf-help emf-telemetry-state" disabled>EMF-Telemetrie deaktivieren</button>
+          </div>
+        </div>
+        <div id="realtime-calibration" class="realtime-calibration" aria-describedby="emf-help"></div>
+        <p id="emf-help" class="field-hint"><strong>Zweck:</strong> <strong>System-/Entropie-basierter EMF-Proxy-Index</strong> als technischen Proxy transparent anzeigen. <strong>Standard:</strong> aus; bewusst aktivierbar. <strong>Auswirkung:</strong> Bei aktivierter Autorität können Proxywerte angezeigt und dem Scan als autorisierte EMF-Quelle bereitgestellt werden. <strong>Keine Auswirkung:</strong> Kein geschätzter Nullwert und keine automatische Ermittlung ohne Nutzeraktivierung. <strong>Datenschutz-/Hardwaregrenze:</strong> Abgeleiteter System-/Entropie-Proxy; keine physische Feldmessung.</p>
+        <label class="checkline"><input form="scan-form" id="local-ai-enabled" name="local_ai_enabled" type="checkbox" aria-describedby="local-ai-help"><span>Lokale KI-Interpretation für diesen Fall aktivieren</span></label>
+        <p id="local-ai-help" class="field-hint"><strong>Zweck:</strong> Nach dem Scan optional eine lokale Ollama-Deutung erzeugen. <strong>Standard:</strong> aus bei jedem neuen Fall. <strong>Auswirkung:</strong> Verwendet ein fest angeheftetes lokales Loopback-Modell und beeinflusst ausschließlich die nachgelagerte Interpretation. <strong>Keine Auswirkung:</strong> Keine Änderung an Score, Profilpool, Profilwahl, Quellen oder Registry. <strong>Datenschutz-/Hardwaregrenze:</strong> Ausschließlich lokaler Loopback; ist Ollama nicht verfügbar oder fehlt das Modell, wird wahrheitsgemäß ein regelbasierter Fallback gekennzeichnet. <strong>Speicherort:</strong> Nur im aktuellen Anfrage-Payload und in der Report-Provenienz. <strong>Aufbewahrung:</strong> Für den nächsten Fall nicht gespeichert. <strong>Löschweg:</strong> Checkbox deaktivieren oder New Case ausführen. <strong>Aktueller Scan:</strong> Wirkt nur auf die nachgelagerte Interpretation.</p>
+      </section>
+
+      <!-- Phase 6: Review & Freigabe -->
+      <section id="review-phase" class="panel wizard-panel phase-diagnose" data-step="5">
+        <div class="step-header">
+          <span class="step-icon">6</span>
+          <div>
+            <p class="eyebrow">Phase 6</p>
+            <h2>Review &amp; Freigabe</h2>
+            <p class="step-subtitle">Klientendaten final pruefen, Scan-Profil bestaetigen, Hardware-Kontext zur Kenntnis nehmen.</p>
+          </div>
+        </div>
+        <ul class="substep-list">
+          <li>Klientendaten final pruefen</li>
+          <li>Scan-Profil bestaetigen</li>
+          <li>Hardware-Kontext zur Kenntnis nehmen</li>
+        </ul>
+        <div class="review-grid">
+          <article class="review-card" id="review-client"></article>
+          <article class="review-card" id="review-focus"></article>
+          <article class="review-card" id="review-profile"></article>
+          <article class="review-card" id="review-hardware"></article>
+          <article class="review-card review-scan-scope" id="review-scan-scope"></article>
+        </div>
+        <div class="action-row">
+          <button id="preview-button" class="secondary-button" type="button" aria-describedby="preview-state" disabled>Vorschau erzeugen</button>
+          <button id="start-analysis-button" class="primary-button" type="button" aria-describedby="preview-state" disabled>Analyse starten</button>
+          <span id="preview-state" class="inline-state neutral" role="status" aria-live="polite" aria-atomic="true">Scanprofil-Pool wird geladen; Vorschau und Start bleiben gesperrt.</span>
+        </div>
+        <pre id="command-preview" class="command-box scroll-region" role="status" aria-live="polite" tabindex="0">Noch keine Vorschau erzeugt.</pre>
+      </section>
+
+      <!-- Phase 7: Analyse-Lauf -->
+      <section id="run-phase" class="panel wizard-panel phase-analyse" data-step="6">
+        <div class="step-header">
+          <span class="step-icon">7</span>
+          <div>
+            <p class="eyebrow">Phase 7</p>
+            <h2>Analyse-Lauf</h2>
+            <p class="step-subtitle">Tatsaechlicher Web-Scan: Fortschritt des gestarteten Top-N-Scans aus dessen CLI-Markern.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="card-title-row">
+            <div>
+              <span class="op-label">Web-Scan-Stages</span>
+              <strong>Tatsaechlicher Web-Scan</strong>
+            </div>
+            <span id="substep-timeline-state" class="inline-state">bereit</span>
+          </div>
+          <ul id="substep-timeline" class="substep-timeline" aria-live="polite">
+            <li class="substep-timeline-item pending" data-stage-id="phase1"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">1. Hauptprofil-Screening</div><p class="substep-timeline-radi">phase1</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="top_profiles"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">2. Top-Profile</div><p class="substep-timeline-radi">top_profiles</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="phase2"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">3. Vollstaendige Analyse</div><p class="substep-timeline-radi">phase2</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="export"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">4. Resonanz-Export</div><p class="substep-timeline-radi">export</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="synergy"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">5. Synergy-Bericht</div><p class="substep-timeline-radi">synergy</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="remedy"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">6. Remedy-Bericht</div><p class="substep-timeline-radi">remedy</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="interpretation"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">7. Deutungsbericht</div><p class="substep-timeline-radi">interpretation</p></div></li>
+            <li class="substep-timeline-item pending" data-stage-id="trend"><span class="substep-timeline-marker"></span><div class="substep-timeline-content"><div class="substep-timeline-label">8. Trendbericht</div><p class="substep-timeline-radi">trend</p></div></li>
+          </ul>
+          <p class="helper-text">Die angezeigten Stages stammen aus dem tatsaechlichen Top-N-Scan und bilden keinen separaten System-Walkthrough ab.</p>
+        </div>
+        <div id="job-status-panel" class="job-status-panel" aria-live="polite" hidden>
+          <div class="job-status-header">
+            <span class="op-label">Analyse-Lauf</span>
+            <strong id="job-status-label">nicht gestartet</strong>
+          </div>
+          <div class="job-progress-track"><div id="job-progress-fill" role="progressbar" aria-label="Analysefortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div>
+          <div class="job-progress-meta">
+            <span class="op-label">Fortschritt aus CLI-Markern</span>
+            <strong id="job-progress-label">wird aus Ausgabe abgeleitet</strong>
+          </div>
+          <dl class="job-meta">
+            <div><dt>Job</dt><dd id="job-id-label">-</dd></div>
+            <div><dt>Rueckgabe</dt><dd id="job-returncode">-</dd></div>
+          </dl>
+          <div class="job-substeps">
+            <div><span class="op-label">Aktuelle Phase</span><strong id="job-phase-label">-</strong></div>
+            <div><span class="op-label">Aktueller Substep</span><strong id="job-substep-label">Warte auf Ausgabe...</strong></div>
+          </div>
+          <div class="action-row compact-actions">
+            <button id="scan-refresh-button" class="secondary-button" type="button" disabled>Status erneut laden</button>
+            <button id="scan-stop-button" class="secondary-button" type="button" disabled>Scan manuell stoppen</button>
+          </div>
+          <ul id="job-substep-list" class="job-checklist"></ul>
+          <pre id="job-log-tail" class="command-box compact-log scroll-region" tabindex="0">Noch keine Logausgabe.</pre>
+        </div>
+      </section>
+
+      <!-- Phase 8: Ergebnis-Uebersicht -->
+      <section id="results-phase" class="panel wizard-panel phase-analyse" data-step="7" aria-labelledby="results-phase-title" aria-describedby="results-phase-subtitle">
+        <div class="step-header">
+          <span class="step-icon">8</span>
+          <div class="results-heading-copy">
+            <p class="eyebrow">Phase 8</p>
+            <h2 id="results-phase-title">Ergebnis-Uebersicht</h2>
+            <p id="results-phase-subtitle" class="step-subtitle">Top-Profile und Resonanzen aus dem letzten Scan kompakt pruefen.</p>
+          </div>
+        </div>
+        <div id="results-metric-grid" class="metric-grid"></div>
+        <div id="results-profile-list" class="results-profile-list" aria-live="polite"></div>
+        <div class="action-row">
+          <button class="secondary-button" type="button" id="open-details-button">Technische Details ansehen</button>
+          <button class="secondary-button" type="button" id="open-finalize-button">Zu Harmonisierung &amp; Abschluss</button>
+        </div>
+      </section>
+
+      <!-- Phase 9: Technische Details & Nachvollziehbarkeit -->
+      <section id="details-phase" class="panel wizard-panel phase-analyse" data-step="8">
+        <div class="step-header">
+          <span class="step-icon">9</span>
+          <div>
+            <p class="eyebrow">Phase 9</p>
+            <h2>Technische Details &amp; Nachvollziehbarkeit</h2>
+            <p class="step-subtitle">Run-Trace, Seed, Entropie-Quelle und Debug-Informationen einsehen.</p>
+          </div>
+        </div>
+        <pre id="run-trace-display" class="command-box scroll-region" tabindex="0">Noch keine Run-Trace-Daten verfuegbar.</pre>
+      </section>
+
+      <!-- Phase 10: Harmonisierung &amp; Abschluss -->
+      <section id="harmonize-phase" class="panel wizard-panel phase-harmonize" data-step="9">
+        <div class="step-header">
+          <span class="step-icon">10</span>
+          <div>
+            <p class="eyebrow">Phase 10</p>
+            <h2>Harmonisierung &amp; Abschluss</h2>
+            <p class="step-subtitle">Impuls/Pause-Zyklus, Solfeggio-Basis und Workflowabschluss.</p>
+          </div>
+        </div>
+        <div class="completion-stack">
+          <div class="report-preview-card harmonization-card">
+            <div class="report-preview-header">
+              <div>
+                <span class="op-label">Harmonisierung</span>
+                <strong>Workflowabschluss &amp; Harmonisierung</strong>
+              </div>
+              <span id="harmonization-preview-state" class="inline-state">Waehle nach dem Scan einen Bericht fuer den Abschluss.</span>
+            </div>
+            <form id="harmonization-form" class="form-grid">
+              <label><span>Intention</span>
+                <select name="intention" aria-describedby="harmonization-intention-help">
+                  <option value="healing">Healing</option>
+                  <option value="clearing">Clearing</option>
+                  <option value="protection">Protection</option>
+                  <option value="transformation">Transformation</option>
+                  <option value="harmonization" selected>Harmonization</option>
+                  <option value="activation">Activation</option>
+                </select>
+              </label>
+              <label><span>Frequenz (Hz)</span><input name="target_frequency" type="number" min="0.1" max="2000" step="0.1" value="432.0" aria-describedby="harmonization-frequency-help" required></label>
+              <label><span>Impuls (Sekunden)</span><input name="pulse_seconds" type="number" min="0.1" max="5" step="0.1" value="3" aria-describedby="harmonization-cycle-help" required></label>
+              <label><span>Pause (Sekunden)</span><input name="pause_seconds" type="number" min="0.1" max="5" step="0.1" value="2" aria-describedby="harmonization-cycle-help" required></label>
+              <label><span>Dauer-Faktor (× 21 Min)</span><input name="duration_factor" type="number" min="1" max="21" step="1" value="1" aria-describedby="harmonization-duration-help" required></label>
+              <label class="checkline"><input id="harmonization-max-duration-confirmation" type="checkbox" aria-describedby="harmonization-duration-help"><span>Maximaldauer von 441 Minuten ausdrücklich bestätigen</span></label>
+              <span id="harmonization-confirmation-state" class="inline-state" role="status" aria-live="polite"></span>
+            </form>
+            <p id="harmonization-intention-help" class="field-hint"><strong>Zweck:</strong> Den lokalen Job organisatorisch kennzeichnen. <strong>Standard:</strong> Harmonization. <strong>Auswirkung:</strong> Die Auswahl wird im Jobkontext protokolliert. <strong>Keine Auswirkung:</strong> Keine nachgewiesene therapeutische Wirkung und keine rückwirkende Änderung des Scans. <strong>Datenschutz-/Hardwaregrenze:</strong> Keine zusätzliche Datenfreigabe oder Hardwareaktivierung.</p>
+            <p id="harmonization-cycle-help" class="field-hint"><strong>Zweck:</strong> Länge lokaler Rechenphasen und Wartezeiten festlegen. <strong>Standard:</strong> 3 Sekunden Impuls und 2 Sekunden Pause. <strong>Auswirkung:</strong> Verändert Zykluslänge und Zykluszahl des lokalen Jobs. <strong>Keine Auswirkung:</strong> Kein physischer Impuls und keine Änderung des vorherigen Scans. <strong>Datenschutz-/Hardwaregrenze:</strong> Lokale Prozesssteuerung ohne externe Ausgabe.</p>
+            <p id="harmonization-duration-help" class="field-hint"><strong>Zweck:</strong> Die Gesamtdauer als Faktor × 21 Minuten wählen. <strong>Standard:</strong> 1 = 21 Minuten. <strong>Auswirkung:</strong> 7 = 147 Minuten und 21 = 441 Minuten; Faktor 21 erfordert eine ausdrückliche Bestätigung. <strong>Keine Auswirkung:</strong> Keine Änderung von Scan oder Bericht. <strong>Datenschutz-/Hardwaregrenze:</strong> Lange lokale Rechenlaufzeit; keine Wirksamkeitszusage.</p>
+            <div class="control-row">
+              <span class="field-label">Solfeggio-Basis</span>
+              <div id="solfeggio-base-choices" class="choice-card-grid" role="radiogroup" aria-label="Solfeggio-Basisfrequenz" aria-describedby="harmonization-frequency-help"></div>
+            </div>
+            <p id="harmonization-frequency-help" class="field-hint"><strong>Zweck:</strong> Eine Zielrate für lokale Rechen- und Speicher-Timinglast wählen. <strong>Standard:</strong> 432 Hz. <strong>Auswirkung:</strong> Frequenzfeld und Solfeggio-Schnellauswahl setzen denselben technischen Wert. <strong>Keine Auswirkung:</strong> Kein Ton, keine physische Feldabgabe und keine garantierte reale Taktfrequenz. <strong>Datenschutz-/Hardwaregrenze:</strong> Lokaler Timingparameter ohne externe Übertragung.</p>
+            <div class="control-row hardware-options">
+              <label class="checkline compact"><input form="harmonization-form" name="use_cpu" type="checkbox" aria-describedby="harmonization-hardware-help" checked><span>CPU</span></label>
+              <label class="checkline compact"><input form="harmonization-form" name="use_gpu" type="checkbox" aria-describedby="harmonization-hardware-help"><span>GPU</span></label>
+              <label class="checkline compact"><input form="harmonization-form" name="use_ram" type="checkbox" aria-describedby="harmonization-hardware-help"><span>RAM</span></label>
+              <label class="checkline compact"><input form="harmonization-form" name="use_websocket" type="checkbox" aria-describedby="harmonization-hardware-help"><span>WebSocket</span></label>
+              <label class="checkline compact"><input form="harmonization-form" name="use_driver_layer" type="checkbox" aria-describedby="harmonization-hardware-help"><span>Driver Layer</span></label>
+            </div>
+            <p id="harmonization-hardware-help" class="field-hint"><strong>Zweck:</strong> Optionale lokale Arbeitslasten für den Job auswählen. <strong>Standard:</strong> CPU an; GPU, RAM, WebSocket und Driver Layer aus. <strong>Auswirkung:</strong> CPU erzeugt Rechenlast, RAM temporäre Zugriffe auf etwa 10 MiB; GPU ist derzeit CPU-simulierte Matrixlast, WebSocket eine Simulation, Driver Layer öffnet keine Geräte. <strong>Keine Auswirkung:</strong> Keine physische Feldabgabe und keine rückwirkende Scanänderung. <strong>Datenschutz-/Hardwaregrenze:</strong> Nur lokale, ausgewiesene Prozess- und Telemetriepfade.</p>
+            <div class="action-row">
+              <button id="harmonization-start-button" class="primary-button" type="button" disabled>Harmonisierung starten</button>
+              <button id="harmonization-refresh-button" class="secondary-button" type="button" disabled>Status aktualisieren</button>
+              <button id="harmonization-stop-button" class="secondary-button" type="button" disabled>Harmonisierung stoppen</button>
+            </div>
+            <div id="harmonization-status-panel" class="job-status-panel" aria-live="polite" hidden>
+              <div class="job-status-header">
+                <span class="op-label">Harmonisierung</span>
+                <strong id="harmonization-status-label">nicht gestartet</strong>
+              </div>
+              <div id="harmonization-progress" class="job-progress-track" role="progressbar" aria-label="Harmonisierungsfortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="harmonization-progress-fill"></div></div>
+              <div class="job-progress-meta">
+                <div><span class="op-label">Phase</span><strong id="harmonization-phase-label">-</strong></div>
+                <div><span class="op-label">Fortschritt</span><strong id="harmonization-progress-label">-</strong></div>
+              </div>
+              <dl class="job-meta">
+                <div><dt>Job</dt><dd id="harmonization-job-id-label">-</dd></div>
+                <div><dt>Modus</dt><dd id="harmonization-mode-label">-</dd></div>
+                <div><dt>Lease</dt><dd id="harmonization-lease-label">-</dd></div>
+              </dl>
+              <div class="job-substeps">
+                <div><span class="op-label">Zyklen</span><strong id="harmonization-cycles-label">-</strong></div>
+                <div><span class="op-label">Fehler</span><strong id="harmonization-error-label">kein Fehler</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+      <div class="action-row">
+          <button class="secondary-button" type="button" id="open-harmonize-button">Zu Berichtskatalog &amp; Export</button>
+        </div></section>
+
+      <!-- Phase 11: Berichtskatalog &amp; Export -->
+      <section id="finalize-phase" class="panel wizard-panel phase-analyse" data-step="10">
+        <div class="step-header">
+          <span class="step-icon">11</span>
+          <div>
+            <p class="eyebrow">Phase 11</p>
+            <h2>Berichtskatalog &amp; Export</h2>
+            <p class="step-subtitle">Berichtskatalog und Inline-Vorschau vor dem Workflowabschluss.</p>
+          </div>
+        </div>
+        <div class="reports-layout">
+          <aside id="report-catalog-panel" class="reports-column report-catalog-panel" aria-labelledby="reports-heading" aria-label="Berichtskatalog">
+            <div class="section-title section-title-inline">
+              <h3 id="reports-heading">Berichtskatalog</h3>
+            </div>
+            <div class="report-toolbar">
+              <span id="reports-state" class="inline-state">lade Berichte</span>
+              <button id="refresh-reports-button" class="secondary-button" type="button">Berichte aktualisieren</button>
+            </div>
+            <div id="report-list" class="report-list scroll-region" role="toolbar" aria-label="Berichte auswaehlen" aria-orientation="horizontal" aria-live="polite"></div>
+          </aside>
+          <div id="report-preview-panel" class="reports-column report-preview-column report-preview-panel" aria-label="Berichtsvorschau">
+            <div class="completion-stack">
+              <div class="report-preview-card">
+                <div class="report-preview-header">
+                  <div>
+                    <span class="op-label">Inline-Vorschau</span>
+                    <strong id="report-preview-title">Noch kein Bericht gewaehlt</strong>
+                    <span id="report-preview-state" class="inline-state neutral" role="status" aria-live="polite">bereit</span>
+                  </div>
+                  <a id="report-open-link" class="secondary-button report-open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Datei oeffnen</a>
+                </div>
+                <p id="report-preview-meta" class="report-preview-meta">HTML, JSON und TXT erscheinen direkt hier. PDF bleibt als Datei-Link verfuegbar.</p>
+                <iframe id="report-preview-frame" class="report-preview-frame" sandbox hidden title="Berichtsvorschau"></iframe>
+                <pre id="report-preview-text" class="command-box report-preview-text scroll-region" role="status" aria-live="polite" tabindex="0">Waehle oben einen Bericht fuer die Vorschau.</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      <div class="action-row">
+          <label class="checkline"><input id="template-sensitive-consent" type="checkbox" aria-describedby="template-persistence-help"><span>Klientendaten bewusst im lokalen Template speichern</span></label>
+          <button class="secondary-button" type="button" id="save-template-button" aria-describedby="template-persistence-help">Als Template speichern</button>
+          <button class="secondary-button" type="button" id="new-case-button">Neuen Fall starten</button>
+        </div>
+        <p id="template-persistence-help" class="field-hint"><strong>Zweck:</strong> Die aktuellen Scanparameter als lokale Vorlage speichern. <strong>Standard:</strong> Freigabe aus; sensible Templates werden dann abgelehnt. <strong>Auswirkung:</strong> Speichert Klienten-, Fokus- und Bildpfaddaten in einer tenantgebundenen lokalen JSON-Datei. <strong>Keine Auswirkung:</strong> Optionaler Kontext und Gruppenaktivierung werden nicht übernommen; ein Template startet keinen Scan. <strong>Datenschutz-/Hardwaregrenze:</strong> Lokale Klartext-JSON ohne Hardwarewirkung. <strong>Speicherort:</strong> Workbench-Runtimeordner. <strong>Aufbewahrung:</strong> keine automatische Löschung. <strong>Löschweg:</strong> derzeit kein eigener Template-Löschknopf in der Workbench. <strong>Aktueller Scan:</strong> unverändert.</p></section>
+    </main>
+
+    <script src="/static/workbench-state.js" defer></script>
+    <script src="/static/workbench-api.js" defer></script>
+    <script src="/static/workbench-render.js" defer></script>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

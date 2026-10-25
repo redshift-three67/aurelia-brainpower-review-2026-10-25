@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morphic Engine V1 – Workflow Stepping (12 Steps)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="workflow_stepping.css">
+</head>
+<body>
+<div class="header">
+  <div class="header-badge">MORPHIC ENGINE V1 &middot; WORKFLOW STEPPING</div>
+  <h1>12-Step Resonanz-Analyse Pipeline</h1>
+  <p>Interaktive Schritt-f&uuml;r-Schritt Darstellung des vollst&auml;ndigen Workflow-Orchestrators</p>
+  <span class="version-tag">v1.0 &middot; Quantum-Synergy &amp; Hardware-Entropy</span>
+</div>
+
+<nav class="stepper-nav" id="stepperNav"><div class="stepper-nav-inner" id="navInner"></div></nav>
+
+<main class="main">
+<div class="overall-progress">
+  <span class="op-label">Fortschritt</span>
+  <div class="op-bar"><div class="op-fill" id="overallFill" style="width:8.3%"></div></div>
+  <span class="op-pct" id="overallPct">1 / 12</span>
+</div>
+
+<!-- STEP 1 -->
+<section class="step-panel active" data-step="0">
+<div class="step-header"><div class="step-icon si-cyan">&#9881;</div><div><h2>System-Initialisierung</h2><span class="step-sub">Hardware-Erkennung, CUDA/CPU-Adaption &amp; Engine-Bootstrap</span></div></div>
+<div class="card"><div class="ct"><span>&#128268;</span> Schichtenmodell</div>
+<pre class="arch">┌─────────────────────────────────────────────────────────┐
+│              USER / ADMIN UI                            │
+│  Web-UI (user_workflow.html) + CLI + REST API           │
+└──────────────────────┬──────────────────────────────────┘
+              ┌────────┴────────┐
+              ▼                 ▼
+┌─────────────────────┐ ┌───────────────────────────────┐
+│  EMF COMPENSATION   │ │   CORE COMPUTATION LAYER      │
+│  CPU Jitter / RNG   │◄│   WorkflowOrchestrator        │
+│  Network Entropy    │ │   55 Profile × 5 Iterationen  │
+│  HID / TrueRNG      │ └───────────┬───────────────────┘
+└──────────┬──────────┘             ▼
+           └──────────► ┌───────────────────────────────┐
+  Counter-Frequencies   │  EXPORT + REPORTING           │
+  + Timing Advice       │  PDF / HTML / JSON / Synergy  │
+                        └───────────────────────────────┘</pre></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128187;</span> Hardware-Erkennung <b class="badge bg">Auto</b></div>
+<div class="mr"><span class="ml">Modul</span><span class="mv tc">step01_init.py</span></div>
+<div class="mr"><span class="ml">CPU</span><span class="mv">psutil.cpu_count()</span></div>
+<div class="mr"><span class="ml">RAM</span><span class="mv">psutil.virtual_memory()</span></div>
+<div class="mr"><span class="ml">GPU</span><span class="mv">cupy.cuda.is_available()</span></div>
+<div class="mr"><span class="ml">Entropy</span><span class="mv tc">CPU Timer + Network</span></div></div>
+<div class="card"><div class="ct"><span>&#128200;</span> Adaptive Skalierung</div>
+<table class="dt"><tr><th>Modus</th><th>Bedingung</th><th>Kandidaten</th></tr>
+<tr><td><b class="badge br">Extreme</b></td><td>VRAM≥20GB</td><td class="tc mono">1.000.000</td></tr>
+<tr><td><b class="badge ba">High</b></td><td>VRAM≥8GB</td><td class="tc mono">500.000</td></tr>
+<tr><td><b class="badge bc">Standard</b></td><td>CUDA</td><td class="tc mono">200.000</td></tr>
+<tr><td><b class="badge bg">CPU 16GB</b></td><td>RAM≥15GB</td><td class="tc mono">150.000</td></tr></table></div>
+</div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step-panel" data-step="1">
+<div class="step-header"><div class="step-icon si-purple">&#128100;</div><div><h2>Benutzer-Eingabe</h2><span class="step-sub">Klienten-Daten &amp; Parameter validieren</span></div></div>
+<div class="card"><div class="ct"><span>&#128221;</span> Eingabe-Kan&auml;le</div>
+<div class="fr"><div class="fb hl">Web-UI<br><small class="dim">user_workflow.html</small></div><span class="fa">→</span><div class="fb hl">REST API<br><small class="dim">POST /api/scan/jobs</small></div><span class="fa">→</span><div class="fb hl">CLI<br><small class="dim">apps.cli.main scan</small></div></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128101;</span> Klienten-Daten</div>
+<div class="mr"><span class="ml">Vorname</span><span class="mv tg">Pflicht</span></div>
+<div class="mr"><span class="ml">Nachname</span><span class="mv tg">Pflicht</span></div>
+<div class="mr"><span class="ml">Geburtsdatum</span><span class="mv tg">DDMMYYYY</span></div>
+<div class="mr"><span class="ml">Geburtsort</span><span class="mv tg">Pflicht</span></div></div>
+<div class="card"><div class="ct"><span>&#127919;</span> Parameter</div>
+<div class="mr"><span class="ml">Fokus</span><span class="mv tc">Freitext-Intention</span></div>
+<div class="mr"><span class="ml">Top-N</span><span class="mv">3 · 5 · 9</span></div>
+<div class="mr"><span class="ml">Level</span><span class="mv">1 · 2 · 3</span></div>
+<div class="mr"><span class="ml">Harmonize</span><span class="mv ta">Boolean</span></div></div>
+</div>
+<div class="card"><div class="ct"><span>&#128230;</span> Validierung</div>
+<p class="dim small">Input-Validation via Pydantic Models (apps/web/contracts.py). API-Key-Auth bei POST-Endpoints.</p></div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step-panel" data-step="2">
+<div class="step-header"><div class="step-icon si-green">&#128273;</div><div><h2>Klienten-Signatur</h2><span class="step-sub">Frequenz-Signatur aus bio-grafischen Daten</span></div></div>
+<div class="card"><div class="ct"><span>&#127912;</span> Signatur-Pipeline</div>
+<div class="ls">
+<div class="li"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">1</div><div class="lt"><strong>Name→Frequenz</strong><span>Phonetik + Numerologie → Modulo 1000 Hz</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">2</div><div class="lt"><strong>Geburt→Frequenz</strong><span>Julian Day + Ort-Hash + Zeit</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">3</div><div class="lt"><strong>Organuhr TCM</strong><span>Uhrzeit → Organ → Frequenz (194–587 Hz)</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#128290;</span> Ausgabe</div>
+<pre class="code">{ "frequency": 437.82, "components": {"name":312.5, "birth":567.1, "organ_clock":440.0} }</pre></div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step-panel" data-step="3">
+<div class="step-header"><div class="step-icon si-amber">&#127919;</div><div><h2>Fokus-Vektorisierung</h2><span class="step-sub">Semantisches Embedding + Bio-Knowledge-Matching</span></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128301;</span> Fokus→Vektor</div>
+<pre class="code">_embed_focus("Bronchien")
+  → MD5 → Seed → numpy.randn(256)
+  // Deterministisch: Gleicher Fokus = Gleicher Vektor</pre></div>
+<div class="card"><div class="ct"><span>&#128156;</span> Bio-Matching</div>
+<div class="fr"><div class="fb">Fokus</div><span class="fa">→</span><div class="fb hl">Chakra-Scan</div><span class="fa">→</span><div class="fb hl">Meridian-Scan</div><span class="fa">→</span><div class="fb">50/50 Mix</div></div></div>
+</div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step-panel" data-step="4">
+<div class="step-header"><div class="step-icon si-red">&#128225;</div><div><h2>EMF-Kompensation</h2><span class="step-sub">Echtzeit-Messung &amp; Neutralisierung</span></div></div>
+<div class="card"><div class="ct"><span>&#128752;</span> 3-Schichten-Architektur</div>
+<div class="ls">
+<div class="li" style="border-color:hsl(0 65% 50% / 0.35)"><div class="ln" style="background:hsl(0 65% 50% / 0.12);color:var(--red)">S</div><div class="lt"><strong>SENSING</strong><span>CPU Jitter · RNG Entropy · Network Timing · System Load</span></div></div>
+<div class="li" style="border-color:hsl(35 85% 55% / 0.35)"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">P</div><div class="lt"><strong>PROFILING</strong><span>composite_emf_index (0–1) · entropy_score · recommendation</span></div></div>
+<div class="li" style="border-color:hsl(145 50% 40% / 0.35)"><div class="ln" style="background:var(--gg);color:var(--green)">C</div><div class="lt"><strong>COMPENSATE</strong><span>Inverser Vektor · Solfeggio Counter-Freq · Seed-Verbesserung</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#127925;</span> Solfeggio Counter-Frequencies</div>
+<div class="sg">
+<div class="si"><div class="sh">174</div><div class="sl">Schmerzlinderung</div></div>
+<div class="si"><div class="sh">285</div><div class="sl">Regeneration</div></div>
+<div class="si"><div class="sh">396</div><div class="sl">Angstbefreiung</div></div>
+<div class="si"><div class="sh">528</div><div class="sl">DNA-Reparatur</div></div>
+<div class="si"><div class="sh">639</div><div class="sl">Harmonie</div></div>
+<div class="si"><div class="sh">741</div><div class="sl">Reinigung</div></div>
+<div class="si"><div class="sh">963</div><div class="sl">Einheit</div></div>
+</div></div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step-panel" data-step="5">
+<div class="step-header"><div class="step-icon si-pink">&#128142;</div><div><h2>Amplifier-System</h2><span class="step-sub">Heilsteine &amp; Kristalle als Verst&auml;rker</span></div></div>
+<div class="card"><div class="ct"><span>&#9878;</span> Pipeline</div>
+<div class="fr"><div class="fb">amplifiers.json</div><span class="fa">→</span><div class="fb hl">12-Dim Vektor</div><span class="fa">→</span><div class="fb hl">Cosinus-Match</div><span class="fa">→</span><div class="fb">Top-3 Empfehlung</div></div></div>
+<div class="card"><div class="ct"><span>&#128302;</span> 5-Elemente Frequenzen</div>
+<div class="mr"><span class="ml">Holz</span><span class="mv" style="color:#66bb6a">294.0 Hz</span></div>
+<div class="mr"><span class="ml">Feuer</span><span class="mv" style="color:#ef5350">440.0 Hz</span></div>
+<div class="mr"><span class="ml">Erde</span><span class="mv" style="color:#ffa726">264.0 Hz</span></div>
+<div class="mr"><span class="ml">Metall</span><span class="mv" style="color:#bdbdbd">352.0 Hz</span></div>
+<div class="mr"><span class="ml">Wasser</span><span class="mv" style="color:#42a5f5">308.0 Hz</span></div></div>
+</section>
+
+<!-- STEP 7 -->
+<section class="step-panel" data-step="6">
+<div class="step-header"><div class="step-icon si-amber">&#127912;</div><div><h2>Farbpaletten-Generierung</h2><span class="step-sub">6 Strategien: Client-Koh&auml;rent bis Natur-Heilsam</span></div></div>
+<div class="card"><div class="ct"><span>&#127752;</span> Palette-Strategien</div>
+<table class="dt"><tr><th>Strategie</th><th>Quelle</th><th>Stil</th></tr>
+<tr><td><b class="badge bc">client_focus</b></td><td>Client+Fokus</td><td>Analog 30°</td></tr>
+<tr><td><b class="badge bg">nature_healing</b></td><td>Foggy Forest</td><td>12 Naturtöne</td></tr>
+<tr><td><b class="badge bp">focus_emf</b></td><td>Fokus+EMF+Bio</td><td>Multi-Layer HSV</td></tr>
+<tr><td><b class="badge br">unified</b></td><td>⅔Client+⅓Fokus</td><td>Golden-Ratio</td></tr>
+</table></div>
+</section>
+
+<!-- STEP 8 -->
+<section class="step-panel" data-step="7">
+<div class="step-header"><div class="step-icon si-cyan">&#9889;</div><div><h2>Matrix-Suche</h2><span class="step-sub">Monte-Carlo Screening &uuml;ber 55 Profile</span></div></div>
+<div class="card"><div class="ct"><span>&#128202;</span> Phasen</div>
+<div class="ls">
+<div class="li"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">1</div><div class="lt"><strong>Phase 1: Screening</strong><span>55 Haupt-Profile × 5 Iterationen → Avg-Score</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">2</div><div class="lt"><strong>Top-N Auswahl</strong><span>Fokus-Gewichtung 25%/15%/10% → Top 3/5/9</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">3</div><div class="lt"><strong>Phase 2: Vollanalyse</strong><span>Vollständige MultiPlex-Analyse der Top-N Profile</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#128230;</span> Module</div>
+<div class="fr"><div class="fb hl">scan.py: top3_scan</div><span class="fa">→</span><div class="fb hl">nls_db.py</div><span class="fa">→</span><div class="fb hl">procedural_groups.py</div><span class="fa">→</span><div class="fb">JSON+HTML Export</div></div></div>
+</section>
+
+<!-- STEP 9 -->
+<section class="step-panel" data-step="8">
+<div class="step-header"><div class="step-icon si-purple">&#9879;</div><div><h2>Quantum-Synergy</h2><span class="step-sub">Grover-Algorithmus f&uuml;r Remedy-Optimierung</span></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#9883;</span> Quantum-Pipeline</div>
+<div class="ls">
+<div class="li"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">1</div><div class="lt"><strong>Pre-Filtering (klassisch)</strong><span>Top-200 Items aus Datenbank + Scan-Results</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">2</div><div class="lt"><strong>Grover-Suche</strong><span>O(√N) Amplitude Amplification mit Qiskit</span></div></div>
+<div class="li"><div class="ln" style="background:var(--gg);color:var(--green)">3</div><div class="lt"><strong>Ranking &amp; Details</strong><span>Synergy-Score + Komponenten-Analyse</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#128300;</span> Auto-Detect</div>
+<div class="mr"><span class="ml">Qiskit</span><span class="mv tg" id="qiskitStatus">Prüfe...</span></div>
+<div class="mr"><span class="ml">Modus</span><span class="mv tc" id="quantumMode">--</span></div>
+<script>
+fetch('/api/synergy/status').then(r=>r.json()).then(d=>{
+  document.getElementById('qiskitStatus').textContent=d.qiskit_available?'Verfügbar':'Nicht installiert';
+  document.getElementById('quantumMode').textContent=d.mode;
+});
+</script></div>
+</div>
+</section>
+
+<!-- STEP 10 -->
+<section class="step-panel" data-step="9">
+<div class="step-header"><div class="step-icon si-green">&#128202;</div><div><h2>Post-Processing</h2><span class="step-sub">Konsolidierte Berichte erstellen</span></div></div>
+<div class="card"><div class="ct"><span>&#128230;</span> Berichte-Pipeline</div>
+<div class="fr"><div class="fb hl">Synergy<br><small class="dim">synergy_consolidator.py</small></div><span class="fa">→</span><div class="fb hl">Remedy<br><small class="dim">remedy_reporter.py</small></div><span class="fa">→</span><div class="fb hl">Deutung<br><small class="dim">interpretation_generator.py</small></div><span class="fa">→</span><div class="fb hl">Trend<br><small class="dim">trend_analyzer.py</small></div></div></div>
+<div class="card"><div class="ct"><span>&#128190;</span> Ausgabe-Formate</div>
+<div class="mr"><span class="ml">HTML</span><span class="mv tc">Legacy-Layout mit Cards &amp; Tables</span></div>
+<div class="mr"><span class="ml">JSON</span><span class="mv tc">Schema: morphic_*_report v1</span></div>
+<div class="mr"><span class="ml">PDF</span><span class="mv tc">tools/simple_pdf.py (ohne pdfkit)</span></div>
+<div class="mr"><span class="ml">TXT</span><span class="mv tc">Lesbare Gruppe-Labels</span></div>
+</div>
+</section>
+
+<!-- STEP 11 -->
+<section class="step-panel" data-step="10">
+<div class="step-header"><div class="step-icon si-amber">&#128190;</div><div><h2>Export &amp; Archivierung</h2><span class="step-sub">Berichte im Legacy-Archive-Shape speichern</span></div></div>
+<div class="card"><div class="ct"><span>&#128193;</span> Archiv-Struktur</div>
+<pre class="code">Benutzer_Archive_Start/
+  └── Mustermann_Klaus_09041966_Augsburg/
+      └── 20260702_120000_TOP3_SESSION/
+          ├── 01_pathogen/
+          │   └── *_top3_multiplex_scan.json/.html/.pdf
+          ├── 02_toxin/
+          └── 03_immune/
+Mustermann_Klaus_09041966_Augsburg_Synergy/
+  └── *_synergy_report/synergy_gesamt.html/.json/.pdf
+Mustermann_Klaus_09041966_Augsburg_Remedies/
+  └── *_top3_remedies.html/.json/.pdf
+Mustermann_Klaus_09041966_Augsburg_Trends/
+  └── trendanalyse_*.html/.json/.pdf</pre></div>
+</section>
+
+<!-- STEP 12 -->
+<section class="step-panel" data-step="11">
+<div class="step-header"><div class="step-icon si-pink">&#128142;</div><div><h2>Harmonisierung</h2><span class="step-sub">Optionale Frequenz-Harmonisierung</span></div></div>
+<div class="card"><div class="ct"><span>&#127925;</span> Harmonisierungs-Pipeline</div>
+<div class="fr"><div class="fb">Start</div><span class="fa">→</span><div class="fb hl">CPU-Last</div><span class="fa">→</span><div class="fb hl">RAM-Modulation</div><span class="fa">→</span><div class="fb hl">WebSocket (optional)</div><span class="fa">→</span><div class="fb">Fertig</div></div></div>
+<div class="card"><div class="ct"><span>&#9881;</span> Konfiguration</div>
+<div class="mr"><span class="ml">Frequenz</span><span class="mv tc">432 Hz (Standard)</span></div>
+<div class="mr"><span class="ml">Dauer</span><span class="mv">1-60 Minuten</span></div>
+<div class="mr"><span class="ml">Intention</span><span class="mv">harmonization · analysis · regulation</span></div>
+<div class="mr"><span class="ml">API</span><span class="mv tc">POST /api/harmonization/jobs</span></div>
+</div>
+</section>
+
+</main>
+
+<script>
+const TOTAL_STEPS = 12;
+let currentStep = 0;
+const STEPS = [
+  {label:"Init"},{label:"Eingabe"},{label:"Signatur"},{label:"Fokus"},
+  {label:"EMF"},{label:"Amplifier"},{label:"Palette"},{label:"Matrix"},
+  {label:"Quantum"},{label:"Post"},{label:"Export"},{label:"Harmonie"}
+];
+
+// Build nav
+const nav = document.getElementById("navInner");
+nav.innerHTML = STEPS.map((s, i) =>
+  `<div class="ns${i === 0 ? " active" : ""}" onclick="showStep(${i})">` +
+  `<div class="nn">${i+1}</div><span>${s.label}</span></div>` +
+  (i < STEPS.length - 1 ? '<div class="nc"></div>' : '')
+).join("");
+
+function showStep(step) {
+  document.querySelectorAll(".step-panel").forEach((s, i) => {
+    s.classList.toggle("active", i === step);
+  });
+  document.querySelectorAll(".ns").forEach((n, i) => {
+    n.classList.toggle("active", i === step);
+    n.classList.toggle("done", i < step);
+  });
+  document.querySelectorAll(".nc").forEach((n, i) => n.classList.toggle("done", i < step));
+  currentStep = step;
+  const pct = ((step + 1) / TOTAL_STEPS) * 100;
+  document.getElementById("overallFill").style.width = pct + "%";
+  document.getElementById("overallPct").textContent = `${step + 1} / ${TOTAL_STEPS}`;
+}
+
+// Keyboard navigation
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowRight" && currentStep < TOTAL_STEPS - 1) showStep(currentStep + 1);
+  if (e.key === "ArrowLeft" && currentStep > 0) showStep(currentStep - 1);
+});
+</script>
+</body>
+</html>

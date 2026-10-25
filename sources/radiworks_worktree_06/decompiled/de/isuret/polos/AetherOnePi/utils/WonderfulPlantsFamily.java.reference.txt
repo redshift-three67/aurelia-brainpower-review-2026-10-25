@@ -1,0 +1,100 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.utils;
+
+import de.isuret.polos.AetherOnePi.utils.WonderfulPlantsRemedy;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WonderfulPlantsFamily {
+    private List<WonderfulPlantsFamily> subFamilies = new ArrayList<WonderfulPlantsFamily>();
+    private List<WonderfulPlantsRemedy> remedies = new ArrayList<WonderfulPlantsRemedy>();
+    private List<String> alternativeNames = new ArrayList<String>();
+    private String name;
+    private String series;
+    private String phase;
+
+    public static WonderfulPlantsFamily builder() {
+        return new WonderfulPlantsFamily();
+    }
+
+    public WonderfulPlantsFamily init() {
+        this.alternativeNames = new ArrayList<String>();
+        this.subFamilies = new ArrayList<WonderfulPlantsFamily>();
+        this.remedies = new ArrayList<WonderfulPlantsRemedy>();
+        return this;
+    }
+
+    public String getKey() {
+        return this.series + "." + this.phase;
+    }
+
+    public List<WonderfulPlantsFamily> getSubFamilies() {
+        return this.subFamilies;
+    }
+
+    public void setSubFamilies(List<WonderfulPlantsFamily> subFamilies) {
+        this.subFamilies = subFamilies;
+    }
+
+    public List<WonderfulPlantsRemedy> getRemedies() {
+        return this.remedies;
+    }
+
+    public void setRemedies(List<WonderfulPlantsRemedy> remedies) {
+        this.remedies = remedies;
+    }
+
+    public List<String> getAlternativeNames() {
+        return this.alternativeNames;
+    }
+
+    public void setAlternativeNames(List<String> alternativeNames) {
+        this.alternativeNames = alternativeNames;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSeries() {
+        return this.series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
+    }
+
+    public String getPhase() {
+        return this.phase;
+    }
+
+    public void setPhase(String phase) {
+        this.phase = phase;
+    }
+
+    public WonderfulPlantsFamily name(String name) {
+        this.setName(name);
+        return this;
+    }
+
+    public WonderfulPlantsFamily series(String series) {
+        this.setSeries(series);
+        return this;
+    }
+
+    public WonderfulPlantsFamily phase(String phase) {
+        this.setPhase(phase);
+        return this;
+    }
+
+    public WonderfulPlantsFamily build() {
+        return this;
+    }
+}
+

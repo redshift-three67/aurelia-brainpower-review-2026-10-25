@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Morphic Engine V1</title>
+    <link rel="stylesheet" href="/static/app.css">
+  </head>
+  <body>
+    <header class="topbar" role="banner">
+      <div>
+        <p class="eyebrow">Phase 1 Klienten-Workflow</p>
+        <h1>Morphic Engine V1</h1>
+        <p class="topbar-subtitle">Gefuehrte Klientenaufnahme mit Preflight, Fokussetzung und Scan-Freigabe.</p>
+      </div>
+      <div class="status-strip" aria-label="Systemstatus Kurzfassung" role="status" aria-live="polite">
+        <span id="health-pill" class="pill neutral">Health wird geladen</span>
+        <span id="source-pill" class="pill neutral">Quellen werden geladen</span>
+      </div>
+    </header>
+
+    <nav class="wizard-stepper" id="wizard-stepper" role="navigation" aria-label="Workflow-Navigation">
+      <button class="wizard-step active" type="button" data-step="0" aria-current="step"><span>1</span>Preflight</button>
+      <button class="wizard-step" type="button" data-step="1"><span>2</span>Hinweise</button>
+      <button class="wizard-step" type="button" data-step="2"><span>3</span>Klientenaufnahme</button>
+      <button class="wizard-step" type="button" data-step="3"><span>4</span>Fokus</button>
+      <button class="wizard-step" type="button" data-step="4"><span>5</span>Scan-Profil</button>
+      <button class="wizard-step" type="button" data-step="5"><span>6</span>Analysefreigabe</button>
+      <button class="wizard-step" type="button" data-step="6"><span>7</span>Berichte</button>
+      <button class="wizard-step" type="button" data-step="7"><span>8</span>Harmonisierung</button>
+    </nav>
+
+    <main class="workspace">
+      <div class="wizard-status" role="status" aria-live="polite" aria-label="Workflow-Fortschritt">
+        <span class="op-label">Fortschritt</span>
+        <div class="op-bar"><div class="op-fill" id="wizard-progress-fill"></div></div>
+        <span class="op-pct" id="wizard-progress-label">1 / 8</span>
+      </div>
+
+      <div class="wizard-controls">
+        <button class="secondary-button" id="btn-prev" type="button" disabled>Zurueck</button>
+        <button class="primary-button" id="btn-next" type="button">Weiter</button>
+      </div>
+
+      <section id="system" class="panel wizard-panel active" data-step="0">
+        <div class="section-title">
+          <p class="eyebrow">Step 1</p>
+          <h2>Preflight &amp; Systemcheck</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Lokale Laufzeit und Datenbanken pruefen</li>
+          <li>Bereitschaft fuer die Phase-1-Aufnahme bestaetigen</li>
+          <li>Read-only Datenquellenstatus einsehen</li>
+        </ul>
+        <div class="metric-grid" aria-live="polite">
+          <div class="metric">
+            <span>Python</span>
+            <strong id="python-version">-</strong>
+          </div>
+          <div class="metric">
+            <span>Profile</span>
+            <strong id="profile-count">-</strong>
+          </div>
+          <div class="metric">
+            <span>Datenbanken</span>
+            <strong id="database-count">-</strong>
+          </div>
+          <div class="metric">
+            <span>Status</span>
+            <strong id="health-status">-</strong>
+          </div>
+        </div>
+        <ul id="health-list" class="compact-list"></ul>
+        <div class="section-title section-title-inline">
+          <h3>Datenquellen-Readiness</h3>
+        </div>
+        <div id="source-summary" class="source-summary"></div>
+        <div id="source-list" class="source-list scroll-region" aria-live="polite" tabindex="0"></div>
+      </section>
+
+      <section id="compliance" class="panel wizard-panel" data-step="1">
+        <div class="section-title">
+          <p class="eyebrow">Step 2</p>
+          <h2>Hinweise &amp; Zustimmung</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Wellbeing-Hinweis bestaetigen</li>
+          <li>Lokale Verarbeitung bestaetigen</li>
+          <li>Klientenseitige Erwartung fuer Phase 1 klar setzen</li>
+        </ul>
+        <div class="notice">
+          <strong>Wellbeing- und Forschungszweck.</strong>
+          <span>Keine Diagnose, keine Therapieempfehlung, kein Heilversprechen. Medizinische Entscheidungen bleiben aerztlicher oder therapeutischer Fachverantwortung vorbehalten.</span>
+        </div>
+        <label class="checkline">
+          <input id="consent-local" type="checkbox">
+          <span>Lokale Verarbeitung und Berichtserzeugung bestaetigt</span>
+        </label>
+        <label class="checkline">
+          <input id="consent-safety" type="checkbox">
+          <span>Wellbeing-Hinweis gelesen und akzeptiert</span>
+        </label>
+      </section>
+
+      <section id="client" class="panel wizard-panel" data-step="2">
+        <div class="section-title">
+          <p class="eyebrow">Step 3</p>
+          <h2>Klientenaufnahme</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Personendaten erfassen</li>
+          <li>Geburtskontext setzen</li>
+          <li>Optional ein Referenzbild hinterlegen</li>
+        </ul>
+        <form id="scan-form" class="form-grid">
+          <label>
+            <span>Nachname</span>
+            <input name="last_name" autocomplete="family-name" value="Deisenhofer" required>
+          </label>
+          <label>
+            <span>Vorname</span>
+            <input name="first_name" autocomplete="given-name" value="Klaus" required>
+          </label>
+          <label>
+            <span>Geburtsdatum</span>
+            <input name="birth_date" inputmode="numeric" value="09041966" required>
+          </label>
+          <label>
+            <span>Geburtsort</span>
+            <input name="birth_place" value="Augsburg" required>
+          </label>
+        </form>
+      </section>
+
+      <section id="focus" class="panel wizard-panel" data-step="3">
+        <div class="section-title">
+          <p class="eyebrow">Step 4</p>
+          <h2>Fokus & Top-N</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Fokus oder Symptom als Freitext festlegen</li>
+          <li>Top-N Zielumfang waehlen</li>
+          <li>Fokuspriorisierung in die Vorschau uebernehmen</li>
+        </ul>
+        <div class="control-row">
+          <label class="focus-input">
+            <span>Fokus</span>
+            <input form="scan-form" name="focus" value="Bronchien" required>
+          </label>
+          <label>
+            <span>Level</span>
+            <select form="scan-form" name="profile_level">
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3" selected>Level 3</option>
+              <option value="4">Level 4</option>
+            </select>
+          </label>
+          <label>
+            <span>Top-N</span>
+            <select form="scan-form" name="top_n">
+              <option value="3">Top-3</option>
+              <option value="5" selected>Top-5</option>
+              <option value="7">Top-7</option>
+              <option value="9">Top-9</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section id="profile" class="panel wizard-panel" data-step="4">
+        <div class="section-title">
+          <p class="eyebrow">Step 5</p>
+          <h2>Scan-Profil</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Phase-1 Profilvorlage festlegen</li>
+          <li>Entropie-Modus fuer die Auswertung bestimmen</li>
+          <li>Adaptive Limits bei Bedarf aktivieren</li>
+        </ul>
+        <div class="notice">
+          <strong>Profilwahl wird fuer den Phase-1 Launcher vorbereitet.</strong>
+          <span>Template, Entropie-Modus, Bildoption und Adaptive Limits werden transparent in der Vorschau angezeigt und an den produktiven CLI-Pfad uebergeben.</span>
+        </div>
+        <div class="control-row">
+          <label>
+            <span>Profilvorlage</span>
+            <select form="scan-form" name="profile_template">
+              <option value="phase1-default" selected>Phase-1 Standard</option>
+              <option value="personal-balanced">Persoenlich ausgewogen</option>
+              <option value="personal-focused">Persoenlich fokussiert</option>
+            </select>
+          </label>
+          <label>
+            <span>Entropie-Modus</span>
+            <select form="scan-form" name="entropy_mode">
+              <option value="legacy" selected>Legacy</option>
+              <option value="enhanced">Enhanced</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>Referenzbild (optional)</span>
+          <input form="scan-form" name="image_path" placeholder="C:/bilder/klient-reference.png">
+        </label>
+        <label class="checkline">
+          <input form="scan-form" name="adaptive_limits" type="checkbox" checked>
+          <span>Adaptive Limits fuer Vorschau und Bericht aktivieren</span>
+        </label>
+      </section>
+
+      <section id="preview" class="panel wizard-panel" data-step="5">
+        <div class="section-title">
+          <p class="eyebrow">Step 6</p>
+          <h2>Analysefreigabe</h2>
+        </div>
+        <ul class="substep-list">
+          <li>Phase-1 Aufruf als Vorschau erzeugen</li>
+          <li>Klientendaten und Scan-Profil final pruefen</li>
+          <li>Scan kontrolliert starten und Laufstatus verfolgen</li>
+        </ul>
+        <div class="action-row">
+          <button id="preview-button" class="secondary-button" type="button">Vorschau erzeugen</button>
+          <button id="start-analysis-button" class="primary-button" type="button">Analyse starten</button>
+          <span id="preview-state" class="inline-state">bereit</span>
+        </div>
+        <pre id="command-preview" class="command-box scroll-region" role="status" aria-live="polite" tabindex="0">Noch keine Vorschau erzeugt.</pre>
+        <div id="job-status-panel" class="job-status-panel" aria-live="polite" hidden>
+          <div class="job-status-header">
+            <span class="op-label">Analyse-Lauf</span>
+            <strong id="job-status-label">nicht gestartet</strong>
+          </div>
+          <div class="job-progress-track"><div id="job-progress-fill"></div></div>
+          <div class="job-progress-meta">
+            <span class="op-label">Fortschritt aus CLI-Markern</span>
+            <strong id="job-progress-label">wird aus Ausgabe abgeleitet</strong>
+          </div>
+          <dl class="job-meta">
+            <div>
+              <dt>Job</dt>
+              <dd id="job-id-label">-</dd>
+            </div>
+            <div>
+              <dt>Rueckgabe</dt>
+              <dd id="job-returncode">-</dd>
+            </div>
+          </dl>
+          <div class="job-substeps">
+            <div>
+              <span class="op-label">Aktuelle Phase</span>
+              <strong id="job-phase-label">-</strong>
+            </div>
+            <div>
+              <span class="op-label">Aktueller Substep</span>
+              <strong id="job-substep-label">Warte auf Ausgabe...</strong>
+            </div>
+          </div>
+          <ul id="job-substep-list" class="job-checklist"></ul>
+          <pre id="job-log-tail" class="command-box compact-log scroll-region" tabindex="0">Noch keine Logausgabe.</pre>
+        </div>
+      </section>
+
+      <section id="reports" class="panel wizard-panel reports-panel" data-step="6" aria-labelledby="reports-heading">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Phase 1 Reports</p>
+            <h2 id="reports-heading">Berichtskatalog &amp; Vorschau</h2>
+          </div>
+          <div class="report-toolbar">
+            <span id="reports-state" class="inline-state">lade Berichte</span>
+            <button id="refresh-reports-button" class="secondary-button" type="button">Berichte aktualisieren</button>
+          </div>
+        </div>
+        <div class="reports-layout">
+          <aside id="report-catalog-panel" class="reports-column report-catalog-panel" aria-labelledby="reports-heading" aria-label="Berichtskatalog">
+            <div id="report-list" class="report-list scroll-region" aria-live="polite" tabindex="0"></div>
+          </aside>
+          <div id="report-preview-panel" class="reports-column report-preview-column report-preview-panel" aria-label="Berichtsvorschau">
+            <div class="report-preview-card">
+              <div class="report-preview-header">
+                <div>
+                  <span class="op-label">Inline-Vorschau</span>
+                  <strong id="report-preview-title">Noch kein Bericht gewaehlt</strong>
+                </div>
+                <a id="report-open-link" class="secondary-button report-open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Datei oeffnen</a>
+              </div>
+              <p id="report-preview-meta" class="report-preview-meta">HTML, JSON und TXT erscheinen direkt hier. PDF bleibt als Datei-Link verfuegbar.</p>
+              <iframe id="report-preview-frame" class="report-preview-frame" sandbox hidden title="Berichtsvorschau"></iframe>
+              <pre id="report-preview-text" class="command-box report-preview-text scroll-region" role="status" aria-live="polite" tabindex="0">Waehle links einen Bericht fuer die Vorschau.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="harmonization" class="panel wizard-panel harmonization-panel" data-step="7" aria-labelledby="harmonization-heading">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Step 8</p>
+            <h2 id="harmonization-heading">Workflowabschluss &amp; Harmonisierung</h2>
+          </div>
+          <span id="harmonization-preview-state" class="inline-state">Waehle nach dem Scan einen Bericht fuer den Abschluss.</span>
+        </div>
+        <ul class="substep-list">
+          <li>Aktiven Bericht als Abschlussgrundlage bestaetigen</li>
+          <li>Harmonisierungsparameter und Hardware-Auswahl pruefen</li>
+          <li>Start, Refresh und Stop kontrolliert ausfuehren</li>
+        </ul>
+        <div class="report-preview-card harmonization-card">
+          <p class="report-preview-meta">Die Web-Shell bleibt beim produktiven `Run-Harmonization.ps1`-Ablauf: Modus, Frequenz, Dauer und Hardware-Auswahl werden transparent als letzter Workflow-Schritt gestartet.</p>
+          <form id="harmonization-form" class="form-grid">
+            <label>
+              <span>Intention</span>
+              <select name="intention">
+                <option value="healing">Healing</option>
+                <option value="clearing">Clearing</option>
+                <option value="protection">Protection</option>
+                <option value="transformation">Transformation</option>
+                <option value="harmonization" selected>Harmonization</option>
+                <option value="activation">Activation</option>
+              </select>
+            </label>
+            <label>
+              <span>Frequenz (Hz)</span>
+              <input name="target_frequency" type="number" min="0.1" step="0.1" value="432.0" required>
+            </label>
+            <label>
+              <span>Dauer (Minuten)</span>
+              <input name="duration_minutes" type="number" min="1" step="1" value="5" required>
+            </label>
+          </form>
+          <div class="control-row hardware-options">
+            <label class="checkline compact">
+              <input form="harmonization-form" name="use_cpu" type="checkbox" checked>
+              <span>CPU</span>
+            </label>
+            <label class="checkline compact">
+              <input form="harmonization-form" name="use_gpu" type="checkbox">
+              <span>GPU</span>
+            </label>
+            <label class="checkline compact">
+              <input form="harmonization-form" name="use_ram" type="checkbox">
+              <span>RAM</span>
+            </label>
+            <label class="checkline compact">
+              <input form="harmonization-form" name="use_websocket" type="checkbox">
+              <span>WebSocket</span>
+            </label>
+            <label class="checkline compact">
+              <input form="harmonization-form" name="use_driver_layer" type="checkbox">
+              <span>Driver Layer</span>
+            </label>
+          </div>
+          <div class="action-row">
+            <button id="harmonization-start-button" class="primary-button" type="button" disabled>Harmonisierung starten</button>
+            <button id="harmonization-refresh-button" class="secondary-button" type="button" disabled>Status aktualisieren</button>
+            <button id="harmonization-stop-button" class="secondary-button" type="button" disabled>Harmonisierung stoppen</button>
+          </div>
+          <div id="harmonization-status-panel" class="job-status-panel" aria-live="polite" hidden>
+            <div class="job-status-header">
+              <span class="op-label">Harmonisierung</span>
+              <strong id="harmonization-status-label">nicht gestartet</strong>
+            </div>
+            <div class="job-progress-track"><div id="harmonization-progress-fill"></div></div>
+            <div class="job-progress-meta">
+              <div>
+                <span class="op-label">Phase</span>
+                <strong id="harmonization-phase-label">-</strong>
+              </div>
+              <div>
+                <span class="op-label">Fortschritt</span>
+                <strong id="harmonization-progress-label">-</strong>
+              </div>
+            </div>
+            <dl class="job-meta">
+              <div>
+                <dt>Job</dt>
+                <dd id="harmonization-job-id-label">-</dd>
+              </div>
+              <div>
+                <dt>Modus</dt>
+                <dd id="harmonization-mode-label">-</dd>
+              </div>
+            </dl>
+            <div class="job-substeps">
+              <div>
+                <span class="op-label">Zyklen</span>
+                <strong id="harmonization-cycles-label">-</strong>
+              </div>
+              <div>
+                <span class="op-label">Fehler</span>
+                <strong id="harmonization-error-label">kein Fehler</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

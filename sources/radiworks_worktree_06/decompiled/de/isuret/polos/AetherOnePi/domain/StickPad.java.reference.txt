@@ -1,0 +1,127 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.Rate;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.service.DataService;
+import de.isuret.polos.AetherOnePi.utils.RateUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+
+public class StickPad {
+    private DataService dataService = new DataService();
+    private List<StickPadPosition> positions = new ArrayList<StickPadPosition>();
+    private Boolean generalVitalityChecking = false;
+
+    public void addStickPadPosition(long x, long y) {
+        this.positions.add(new StickPadPosition(this, x, y));
+    }
+
+    public AnalysisResult analyze(String databaseName) {
+        AnalysisResult analysisResult = new AnalysisResult();
+        HashMap<String, Integer> ratesValues = new HashMap<String, Integer>();
+        try {
+            this.dataService.refreshDatabaseList();
+            List<Rate> rates = this.dataService.findAllBySourceName(databaseName);
+            for (StickPadPosition stickPadPosition : this.positions) {
+                Random randomRate = new Random(stickPadPosition.x);
+                Integer randomRatePosition = randomRate.nextInt(rates.size());
+                Rate rate = rates.get(randomRatePosition);
+                Random randomValue = new Random(stickPadPosition.y);
+                Integer randomEnergeticValue = randomValue.nextInt(10) + 1;
+                if (ratesValues.get(rate.getName()) == null) {
+                    ratesValues.put(rate.getName(), randomEnergeticValue);
+                    continue;
+                }
+                Integer energeticValue = (Integer)ratesValues.get(rate.getName()) + randomEnergeticValue;
+                ratesValues.put(rate.getName(), energeticValue);
+            }
+            this.positions.clear();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (String rate : ratesValues.keySet()) {
+            RateUtils.insertRate(analysisResult, ratesValues, rate);
+        }
+        return analysisResult.sort();
+    }
+
+    public void checkGeneralVitality(AetherOneUI p) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (StickPadPosition stickPadPosition : this.positions) {
+            Random randomValue = new Random(stickPadPosition.x);
+            Integer randomEnergeticValue = randomValue.nextInt(1000) + 1;
+            list.add(randomEnergeticValue);
+        }
+        Collections.sort(list, Collections.reverseOrder());
+        Integer gv = (Integer)list.get(0);
+        if (gv > 950) {
+            int randomDice = new Random(this.positions.remove((int)0).y).nextInt(100);
+            while (randomDice >= 50 && this.positions.size() > 0) {
+                gv = gv + randomDice;
+                randomDice = new Random(this.positions.remove((int)0).y).nextInt(100);
+            }
+        }
+        if (p.getGvCounter() == 0) {
+            p.setGeneralVitality(gv);
+            this.positions.clear();
+            p.setGvCounter(p.getGvCounter() + 1);
+            return;
+        }
+        if (p.getGvCounter() > 21) {
+            p.setStickPadMode(false);
+            this.setGeneralVitalityChecking(false);
+            p.setStickPadGeneralVitalityMode(false);
+            p.setGvCounter(0);
+        } else {
+            p.getAetherOneEventHandler().setRateGeneralVitality(gv);
+        }
+        p.setGvCounter(p.getGvCounter() + 1);
+        this.positions.clear();
+    }
+
+    public DataService getDataService() {
+        return this.dataService;
+    }
+
+    public void setDataService(DataService dataService) {
+        this.dataService = dataService;
+    }
+
+    public List<StickPadPosition> getPositions() {
+        return this.positions;
+    }
+
+    public void setPositions(List<StickPadPosition> positions) {
+        this.positions = positions;
+    }
+
+    public Boolean getGeneralVitalityChecking() {
+        return this.generalVitalityChecking;
+    }
+
+    public void setGeneralVitalityChecking(Boolean generalVitalityChecking) {
+        this.generalVitalityChecking = generalVitalityChecking;
+    }
+
+    private class StickPadPosition {
+        Long x;
+        Long y;
+
+        public StickPadPosition(StickPad stickPad, long x, long y) {
+            Long timeInMillis = Calendar.getInstance().getTimeInMillis();
+            this.x = x + timeInMillis;
+            this.y = y + timeInMillis;
+        }
+    }
+}
+

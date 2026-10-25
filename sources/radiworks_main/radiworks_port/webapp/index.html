@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="de" data-module-theme="radiworks" data-accent="wellenreiter">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RadiWorks Werkbank — digitale Radionik als dokumentierte Wellbeing-Praxis. Kein Medizinprodukt.">
+  <title>RadiWorks — Werkbank</title>
+  <link rel="icon" type="image/png" href="favicon-32.png">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/module-theme.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1 class="brand-title">RadiWorks <span class="brand-sub">Werkbank</span></h1>
+      <span id="case-badge" class="case-badge" title="Aktiver Fall">kein Fall geladen</span>
+    </div>
+    <div class="header-controls">
+      <label class="control">
+        <span class="control-label">Akzent</span>
+        <select id="accent-select" aria-label="Modul-Akzent wählen">
+          <option value="sage">Sage (Plattform)</option>
+          <option value="wellenreiter">Wellenreiter</option>
+          <option value="sunrise">Sonnenaufgang</option>
+        </select>
+      </label>
+      <button id="mode-toggle" class="btn btn-ghost" type="button" aria-pressed="false">Dunkel</button>
+      <span id="ws-status" class="status-led" role="status" aria-label="Verbindungsstatus">
+        <span class="led" aria-hidden="true"></span><span class="led-text">verbinde …</span>
+      </span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-orientation="horizontal" aria-label="Modulbereiche">
+    <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="view-start" tabindex="0" data-tab="start" id="tab-start">Start</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-analyse" tabindex="-1" data-tab="analyse" id="tab-analyse">Analyse</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-rates" tabindex="-1" data-tab="rates" id="tab-rates">Raten · Stick-Pad</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-broadcast" tabindex="-1" data-tab="broadcast" id="tab-broadcast">Broadcast</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-images" tabindex="-1" data-tab="images" id="tab-images">Bild &amp; Area</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-peggotty" tabindex="-1" data-tab="peggotty" id="tab-peggotty">Peggotty</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-entropy" tabindex="-1" data-tab="entropy" id="tab-entropy">Entropie</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-cases" tabindex="-1" data-tab="cases" id="tab-cases">Fälle</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-settings" tabindex="-1" data-tab="settings" id="tab-settings">Einstellungen</button>
+    <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="view-info" tabindex="-1" data-tab="info" id="tab-info">Über &amp; Quellen</button>
+  </nav>
+
+  <main id="main" class="app-main">
+    <p id="catalog-environment" class="environment-banner" role="status">Katalogstand wird geprüft …</p>
+    <!-- ============ START (Radiquant5-Designsprache) ============ -->
+    <section class="view" id="view-start" role="tabpanel" aria-labelledby="tab-start">
+      <div class="hero">
+        <p class="hero-kicker">Eine ruhige Werkbank für achtsame Resonanzarbeit</p>
+        <h2 class="hero-title">Resonanz verstehen.<span class="hero-title-accent">Klar analysieren.</span></h2>
+        <p class="hero-sub">RadiWorks ist eine lokale Werkbank für dokumentierte Wellbeing-Abläufe. Die Zusammenarbeit mit weiteren Aurelia-Modulen ist geplant; eine Plattformintegration ist noch nicht freigegeben.</p>
+        <div id="recent-cases" class="chips" hidden aria-label="Zuletzt geladene Fälle"></div>
+      </div>
+
+      <section class="panel workflow-guide" aria-labelledby="workflow-guide-title">
+        <h3 id="workflow-guide-title">Ihr Ablauf in sechs Schritten</h3>
+        <ol class="workflow-steps">
+          <li><strong>Fall speichern oder laden.</strong> Der gespeicherte Kontext gehört zu Ihren neuen Aufträgen.</li>
+          <li><strong>Datenbank bewusst wählen.</strong> Suche und Fokusvorschläge helfen bei der Auswahl.</li>
+          <li><strong>Verfahren und Zufall wählen.</strong> Original oder Persönliche Heuristik; reproduzierbar oder stochastisch.</li>
+          <li><strong>Analyse starten.</strong> Erst die Abschlussmeldung abwarten, dann Ergebnisse prüfen.</li>
+          <li><strong>Ergebnis prüfen.</strong> Original-GV und persönliche Scores sind getrennte Softwarewerte.</li>
+          <li><strong>Virtuellen Broadcast vorbereiten.</strong> Ziel und Raten prüfen, bewusst starten, Verlauf verfolgen.</li>
+        </ol>
+        <div class="workflow-actions">
+          <button type="button" class="btn" data-open-tab="tab-cases">1 · Zu den Fällen</button>
+          <button type="button" class="btn" data-open-tab="tab-analyse">2–5 · Zur Analyse</button>
+          <button type="button" class="btn" data-open-tab="tab-broadcast">6 · Zum Broadcast</button>
+        </div>
+        <p class="hint">Diese Reihenfolge ist eine Orientierung. Die vorhandenen Einzelabläufe bleiben frei erreichbar; ein Ansichtswechsel verändert keine laufenden Aufträge.</p>
+      </section>
+      <h3 class="section-title">Geplante Aurelia-Zusammenarbeit</h3>
+      <div class="phase-grid">
+        <article class="phase-card" style="--phase: var(--phase-erfassung)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Geplant · Erfassung</p>
+          <h4>Radi144</h4>
+          <p class="phase-role">144-Felder-Resonanz-Baseline — Erfassung der Ausgangs-Resonanz.</p>
+        </article>
+        <article class="phase-card phase-active" style="--phase: var(--phase-analyse)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Dieses lokale Modul · Analyse</p>
+          <h4>RadiWorks <span class="badge">dieses Modul</span></h4>
+          <p class="phase-role">Korrelations-Engine — Mustererkennung und Korrelations-Matrix der Felder.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-analyse)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Geplant · Analyse</p>
+          <h4>RadiMorphic · RadiBlohm</h4>
+          <p class="phase-role">Morphische Resonanzanalyse und Frequenz-Spektrum.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-harmonisierung)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Geplant · Harmonisierung</p>
+          <h4>RadiThoms</h4>
+          <p class="phase-role">Meridian-Profil — TCM-Meridiane und HRV-Integration.</p>
+        </article>
+        <article class="phase-card" style="--phase: var(--phase-reflexion)">
+          <span class="phase-dot" aria-hidden="true"></span>
+          <p class="phase-num">Geplant · Reflexion</p>
+          <h4>RadiCopen</h4>
+          <p class="phase-role">Copen-Rate auf Fibonacci-Basis und finaler Synergy-Score.</p>
+        </article>
+      </div>
+
+      <h3 class="section-title">Drei Prinzipien</h3>
+      <div class="principle-grid">
+        <div class="principle">
+          <h4>Lokale Datenhoheit</h4>
+          <p>Analysen laufen lokal; jeder Lauf trägt einen Computation Passport mit Quelle und Seed.</p>
+        </div>
+        <div class="principle">
+          <h4>Ruhiges Design</h4>
+          <p>Ruhige Farben, klare Sprache und Bedienung ohne Zeitdruck; die Prüfung gegen WCAG 2.2 AA ist noch offen.</p>
+        </div>
+        <div class="principle">
+          <h4>Innovation mit Bedacht</h4>
+          <p>Java-Orakelparität belegt für drei versionierte seeded REST-Fixtures mit 300 synthetischen Raten; keine allgemeine Bitidentitätsbehauptung.</p>
+        </div>
+      </div>
+
+      <div class="notice" role="note">
+        <strong>Hinweis:</strong> Analysen erzeugen einen Prüfentwurf; erst „Freigeben“ übernimmt dessen Raten
+        in die virtuelle Queue. Direkter Broadcast und Auto-Modus sind getrennte lokale Wege zur
+        virtuellen Queue. Keine Hardwareausgabe. Wellbeing-Dokumentation, kein Medizinprodukt.
+      </div>
+    </section>
+
+    <!-- ============ ANALYSE ============ -->
+    <section class="view" id="view-analyse" role="tabpanel" aria-labelledby="tab-analyse" hidden>
+      <form id="analyze-form" class="panel form-grid" aria-label="Analyse starten">
+        <label class="control"><span class="control-label">Analyseverfahren</span>
+          <select id="analysis-procedure" aria-describedby="procedure-help"><option value="original" selected>Original AetherOne</option><option value="personal">Persönliche Heuristik</option></select>
+        </label>
+        <label class="control" id="personal-weight-control" hidden><span class="control-label">Ratengewichtung (persönlich)</span>
+          <select id="personal-weight"><option>Deaktiviert</option><option>Sanft</option><option selected>Normal</option><option>Stark</option></select>
+        </label>
+        <label class="control grow">
+          <span class="control-label">Raten-Datenbank</span>
+          <select id="db-select" required aria-describedby="db-help"></select>
+        </label>
+        <label class="control">
+          <span class="control-label">Seed (optional)</span>
+          <input id="seed-input" type="number" inputmode="numeric" placeholder="—" min="0">
+        </label>
+        <label class="control">
+          <span class="control-label">Zufallsmodus</span>
+          <select id="mode-select" required aria-describedby="random-mode-help random-mode-status">
+            <option value="seeded">Reproduzierbar (seeded)</option>
+            <option value="stochastic">Stochastisch (Hotbits / Fallback)</option>
+          </select>
+        </label>
+        <label class="control">
+          <span class="control-label">EW-Grenze (Original)</span>
+          <select id="maxhits-select" aria-describedby="ew-cutoff-help">
+            <option value="100">100</option>
+            <option value="1000">1000</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">Analyse starten</button>
+        <button class="btn" id="grounding-btn" type="button" title="Broadcast: GROUNDING TO THE EARTH CORE (10 s)">Grounding · virtuell</button>
+        <button class="btn" id="clear-btn" type="button" title="UV-Reinigungs-Overlay (visual)">Clear · virtuell</button>
+        <button class="btn" id="training-start-btn" type="button">Training starten</button>
+        <button class="btn" id="training-uncover-btn" type="button">Training aufdecken</button>
+      </form>
+      <p id="procedure-help" class="hint"><strong>Analyseverfahren – wie wird gerechnet?</strong> „Original AetherOne“ nutzt den bestätigten Originalablauf mit EW/GV. „Persönliche Heuristik“ nutzt zusätzlich ausgewählte persönliche Angaben nach dem freigegebenen Verfahren und zeigt eigene Matrixscores. Diese Scores sind keine Original-EW/GV. Der Original-GV-/Auto-Bereich bleibt weiter unten sichtbar; „Auto AUS“ ist auch im persönlichen Verfahren erreichbar.</p>
+      <p id="random-mode-help" class="hint"><strong>Zufallsmodus – wie entstehen die Zufallszahlen?</strong> „Reproduzierbar“ erlaubt bei gleichem Seed und unveränderten Eingaben einen wiederholbaren Lauf. „Stochastisch“ nutzt eine nicht vorab festgelegte Zufallsfolge; die tatsächlich verwendete Quelle wird im Auftrag dokumentiert. Beim Öffnen wird die gespeicherte Servervorgabe sichtbar vorbelegt. Ihre manuelle Auswahl bleibt danach erhalten. Beide Analyseverfahren erlauben beide Zufallsmodi. Jeder neue Auftrag hält seine Auswahl fest; Umschalten verändert keine laufenden Aufträge.</p>
+      <p id="random-mode-status" class="hint" role="status"></p>
+      <p id="ew-cutoff-help" class="hint">EW-Grenze: Der Original-Analyselauf endet, sobald eine Rate den gewählten energetischen Wert 100 oder 1000 erreicht. Das ist keine Anzahl der Ergebnisraten. Die gespeicherte Einstellung belegt die Auswahl nur beim Öffnen vor; Ihre manuelle Wahl bleibt erhalten.</p>
+      <div id="personal-analysis-panel" class="panel" hidden aria-labelledby="personal-analysis-title">
+        <h2 id="personal-analysis-title" class="panel-title">Persönliche Heuristik · Analyse</h2>
+        <p class="hint">Berechnet die vollständige gewählte Einzeldatenbank (höchstens 4096 Raten), keine still verkürzte Auswahl. Vorname und Geburtsdatum gehen in die vorhandene Radi144-Formel ein; ausdrücklich gewählter Geburtsort und wörtliche Fokustreffer folgen dem bestätigten EXP1-Vertrag. Nachname, Wohnort und Fokusbild bleiben im unveränderlichen Auftragsbezug, ohne neue Zahlenformel. Score ist rechnerische Musterähnlichkeit, Intensität die Streuung der Matrixzahlen; beides ist weder Original-EW/GV noch eine gemessene Klientenreaktion.</p>
+        <p class="hint">Reproduzierbar mit Seed 0 bewahrt die bestehende EXP1-Berechnung. Andere Seeds und Stochastik verwenden eigene protokollierte Zufallsfolgen. Kamera, random.org oder Betriebssystemquelle werden nach tatsächlicher Nutzung angezeigt.</p>
+        <p id="personal-analysis-status" role="status" aria-live="polite">Noch kein persönlicher Auftrag.</p>
+        <p id="personal-analysis-proof" class="hint"></p>
+        <div class="draft-actions"><button id="personal-refresh" class="btn" type="button">Aufträge / Status aktualisieren</button><button id="personal-cancel" class="btn" type="button" hidden>Persönlichen Auftrag abbrechen</button></div>
+        <div class="table-wrap"><table class="data-table"><caption>Persönliche Matrixscores · nach vollständiger Berechnung sortiert</caption><thead><tr><th scope="col">Rang</th><th scope="col">Rate</th><th scope="col">Matrixscore</th><th scope="col">Intensität</th><th scope="col">Aktion</th></tr></thead><tbody id="personal-result-body"></tbody></table></div>
+        <nav id="personal-pager" class="pager" aria-label="Persönliche Ergebnisseiten"></nav>
+        <h3>Persönliche Aufträge dieses Falls</h3><div id="personal-history" class="draft-actions"></div>
+      </div>
+      <div class="panel db-search-panel">
+        <div class="form-grid">
+          <label class="control grow"><span class="control-label">Datenbanksuche</span>
+            <input id="db-search" type="search" autocomplete="off" placeholder="Name oder Gruppe suchen" aria-describedby="db-search-status"></label>
+          <button class="btn" id="db-search-clear" type="button">Suche löschen</button>
+          <button class="btn" id="db-focus-search" type="button" disabled>Fokus in Suche übernehmen</button>
+        </div>
+        <p class="hint" id="db-search-status" role="status">Datenbanken werden geladen.</p>
+        <p class="hint" id="case-focus-hint">Kein Fallfokus geladen. Die Suche ist eine Namenshilfe und ändert keine Analysewerte.</p>
+        <div class="db-suggestions">
+          <h3>Begründete Katalogvorschläge</h3>
+          <p class="hint" id="db-suggestion-help">Worttreffer in Datenbankname, Gruppe und Rateninhalt. Nur gespeicherter Fokus und eingegebene Themen werden genutzt; Name, Geburtsdatum, Ort und Bild bleiben außen vor. Die Reihenfolge zeigt Wortübereinstimmungen, keine Wirksamkeit oder Diagnose. Sie wählen die Datenbank selbst; Analysewerte bleiben unverändert.</p>
+          <div class="form-grid">
+            <label class="control grow"><span class="control-label">Zusätzliche Themen (optional)</span>
+              <input id="db-suggestion-topics" type="text" maxlength="240" autocomplete="off" placeholder="Zum Beispiel Pflanzen Ruhe" aria-describedby="db-suggestion-help"></label>
+            <label class="db-suggestion-check"><input id="db-suggestion-use-focus" type="checkbox" checked>Gespeicherten Fallfokus verwenden</label>
+            <button class="btn" id="db-suggest-btn" type="button">Vorschläge aus Fokus/Themen</button>
+          </div>
+          <p class="hint" id="db-suggestion-status" role="status" aria-live="polite">Vorschläge werden nur auf ausdrückliche Anforderung erstellt.</p>
+          <ol id="db-suggestion-list" class="db-suggestion-list" aria-label="Begründete Datenbankvorschläge" hidden></ol>
+        </div>
+      </div>
+      <details class="panel compact-help">
+        <summary>Analyseablauf und Zusatzaktionen kurz erklärt</summary>
+        <p>Datenbank wählen, Verfahren und Zufall festlegen, dann „Analyse starten“. Im Originalverfahren können Sie anschließend den Fall-GV oder die Raten der gewählten Ergebnisseite prüfen. Die Persönliche Heuristik zeigt eigene Scores; Original-GV wird dadurch nicht ersetzt.</p>
+        <p>Grounding und Clear starten die jeweiligen virtuellen Original-Broadcast-Aktionen. Training startet eine verdeckte Übungsanalyse; „Training aufdecken“ zeigt deren gespeichertes Ergebnis. Diese Aktionen aktivieren keine externe Hardware.</p>
+        <p>Ein Prüfentwurf ist ein Zwischenergebnis: zuerst prüfen, anschließend bewusst für die virtuelle Broadcast-Queue freigeben. „Zwischenablage“ kopiert nur eine Textvorlage auf diesem PC; es findet kein automatischer Versand an eine KI statt.</p>
+      </details>
+      <p class="hint" id="analysis-request-status" role="status"></p>
+      <div class="notice" id="stickpad-followup" hidden>
+        <p>Stick-Pad-Treffer sind als eigene Sitzung gespeichert. „Analyse starten“ oben startet eine neue Analyse der ausgewählten Datenbank. Für eine zweite Analyse ausschließlich dieser Treffer den folgenden Knopf verwenden; die erste Sitzung bleibt erhalten.</p>
+        <button class="btn btn-primary" id="stickpad-followup-btn" type="button">Stick-Pad-Treffer erneut analysieren</button>
+      </div>
+      <div class="category-row" id="category-row" aria-label="Kategorie-Schnellwahl">
+        <button class="btn cat-btn" type="button" data-cat="HOMEOPATHY">Homeopathie</button>
+        <button class="btn cat-btn" type="button" data-cat="BIOLOGICAL">Biologisch</button>
+        <button class="btn cat-btn" type="button" data-cat="SYMBOLISM">Symbolik</button>
+        <button class="btn cat-btn" type="button" data-cat="ESSENCES">Essenzen</button>
+        <button class="btn cat-btn" type="button" data-cat="CHEMICAL">Chemie</button>
+        <button class="btn cat-btn" type="button" data-cat="ENERGY">Energie</button>
+        <button class="btn cat-btn" type="button" data-cat="AGRICULTURE">Agriculture</button>
+        <button class="btn cat-btn" type="button" data-cat="ANALYSIS">Analyse-Raten</button>
+      </div>
+      <p class="hint" id="selected-db-hint">Keine Datenbank gewählt.</p>
+      <p class="hint" id="stochastic-recovery-note" role="status" hidden></p>
+      <div id="training-bar" class="training-bar" hidden>
+        <strong>TRAINING MODE</strong> — Signatur verdeckt gewählt. Decke sie erst auf, wenn Du geübt hast.
+        <span id="training-signature"></span>
+      </div>
+      <div id="uv-flash" class="uv-flash" aria-hidden="true" hidden></div>
+      <div id="db-help" class="notice" role="note">
+        <strong>Entropie-Auswahl:</strong> Die Auswahl bietet zwei Zufallsmodi. Die Servervorgabe dient nur der Vorbelegung;
+        „seeded“ erlaubt mit gleichem Seed und unverändertem Katalog reproduzierbare Läufe;
+        „stochastic (Hotbits)“ nutzt zuerst verfügbare Webcam-Werte, sonst random.org oder den OS-Zufallsgenerator. Bei aktivem Fall benötigt Stochastic
+        einen dauerhaft gesicherten Wiederherstellungsschlüssel und bleibt ohne ihn gesperrt.
+      </div>
+
+      <div class="notice" id="original-tools-hint" hidden>
+        <p>Der GV-Bereich und die Freigabe unten gehören zur <strong>Originalanalyse</strong>, nicht zu den persönlichen Matrixscores. Ein bereits laufender Original-Auto-Modus läuft unabhängig weiter; „Auto AUS“ bleibt hier erreichbar. Neue GV-Prüfungen, Auto AN und die Original-Freigabe sind erst im Originalverfahren bedienbar. Ihre persönlichen Ergebnisse bleiben erhalten.</p>
+        <button class="btn" id="original-tools-btn" type="button">Zu den Original-Bedienelementen wechseln</button>
+        <p class="hint">Wechselt nur die Ansicht und das Verfahren für den nächsten Auftrag. Startet keine Analyse und verändert keine laufenden Aufträge.</p>
+      </div>
+      <div class="panel-row">
+        <div id="gv-panel" class="panel panel-gv">
+          <h2 class="panel-title" id="gv-title">General Vitality</h2>
+          <div class="gv-value" id="gv-value">—</div>
+          <p class="hint" id="gv-meta">Letzter Fall-GV: —</p>
+          <p class="hint" id="gv-analysis-trials">Analyseversuche: —</p>
+          <p class="hint" id="gv-manual-steps">Manuelle GV-Züge dieser Runde: 0</p>
+          <p class="hint" id="gv-auto-summary">Auto-Modus: AUS · noch keine Auto-GV-Züge.</p>
+          <div class="draft-actions" style="justify-content:center">
+            <fieldset id="original-gv-controls" class="procedure-actions" aria-label="Original-GV starten" aria-describedby="original-tools-hint">
+            <button class="btn btn-primary" id="gv-btn" type="button">GV-Runde</button>
+            <button class="btn" id="gv-page-btn" type="button">Erste 21 Raten-GV prüfen</button>
+            <button class="btn" id="gv-later-page-btn" type="button" hidden>Diese Seite: Raten-GV prüfen</button>
+            <button class="btn" id="auto-on-btn" type="button" title="Automatischer Fall-GV-Regler; untersucht nicht alle 21 sichtbaren Raten-GV-Werte">Auto AN</button>
+            </fieldset>
+            <button class="btn" id="auto-off-btn" type="button">Auto AUS</button>
+          </div>
+          <p class="hint">GV-Runde: erster Zug für den Fall, weitere Züge nacheinander für die Raten. Auto AN regelt unabhängig davon den aktuellen Fall-GV und wählt bei Bedarf eine Broadcast-Rate; es füllt die 21 Raten-GV-Werte nicht automatisch.</p>
+          <p class="hint" id="gv-page-status" role="status">21er-Runde: nach einer Analyse für die erste Seite verfügbar; weitere Seiten ausdrücklich auswählen.</p>
+          <canvas id="gv-graph" width="280" height="110" aria-label="General-Vitality-Verlauf" role="img"></canvas>
+        </div>
+
+        <div id="draft-panel" class="panel panel-draft" aria-live="polite">
+          <fieldset id="original-draft-controls" class="procedure-controls" aria-label="Originalanalyse prüfen und freigeben" aria-describedby="original-tools-hint">
+          <h2 class="panel-title" id="draft-title">Analyse prüfen und freigeben</h2>
+          <p class="hint">Hier liegt der Analysevorschlag zur Kontrolle. „Prüfen“ markiert ihn als bereit; erst „Freigeben“ reiht daraus Raten in die virtuelle Broadcast-Queue ein. Einzelne Broadcast-Schaltflächen und Auto-Modus sind eigene Abläufe. Die Zwischenablage kopiert nur Text.</p>
+          <p class="hint" id="draft-empty">Noch kein Draft — starten Sie eine Analyse.</p>
+          <div id="draft-body" hidden>
+            <dl class="draft-meta">
+              <dt>Status</dt><dd id="draft-status">draft</dd>
+              <dt>CopyGuard</dt><dd id="draft-copyguard">allow</dd>
+              <dt>Kernel</dt><dd id="draft-kernel">—</dd>
+            </dl>
+            <p class="hint">CopyGuard prüft hier erkennbare Heil-, Diagnose- und Erfolgsversprechen in sichtbaren Ratentexten und sperrt problematische Formulierungen vor der Freigabe. Die Kennung daneben belegt den geprüften Textstand; sie ist keine fachliche Bewertung. Die zusätzliche lokale KI-Prüfstufe gehört erst zur geplanten Aurelia-Plattform.</p>
+            <div class="draft-actions">
+              <button class="btn" id="draft-ready-btn" type="button">Prüfung bestätigen</button>
+              <button class="btn btn-primary" id="draft-promote-btn" type="button" disabled>Für Broadcast freigeben</button>
+            </div>
+            <p class="hint" id="draft-hint">Zuerst den Vorschlag prüfen, danach bei Bedarf bewusst freigeben.</p>
+          </div>
+          <hr class="soft-rule">
+          <div class="draft-actions">
+            <button class="btn" id="eq-btn" type="button">Essenzielle Fragen</button>
+            <button class="btn" id="clipboard-btn" type="button" title="Top-21-Raten und Textvorlage nur in die lokale Betriebssystem-Zwischenablage kopieren; kein Modellaufruf">Analyse → Zwischenablage</button>
+          </div>
+          <p class="hint">Kopiert eine Textvorlage mit den ersten 21 angezeigten Raten lokal. Es wird nichts automatisch an eine KI gesendet; vor einer externen Weitergabe Inhalt und Datenschutz prüfen.</p>
+          <pre id="eq-report" class="eq-report" hidden></pre>
+          </fieldset>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Analyseergebnis <span id="result-count" class="badge"></span></h2>
+        <p id="result-database" class="hint" role="status">Datenbank des Ergebnisses: noch keine Analyse.</p>
+        <p id="result-recurrence-hint" class="hint" hidden><strong>W = Wiederholung:</strong> Mindestens ein Wort oder Zahlenblock ab drei Zeichen kommt in den Ratenbezeichnungen dieses Analyseergebnisses mehrfach vor, auch über Seitengrenzen hinweg. Die Markierung ist eine Texthilfe; sie bewertet weder GV/HIT noch Wirksamkeit oder Diagnosen.</p>
+        <p id="result-gv-hint" class="hint" hidden><strong>Messwert und Vergleich:</strong> Die GV-Zahl jeder Rate stammt aus ihrer letzten ausdrücklich gestarteten Ratenprüfung und bleibt bis zu einer neuen Prüfung dieser Rate gespeichert. Nur Farbe und Zeichen an dieser Zahl vergleichen sie mit dem aktuell angezeigten Fall-GV: Grün/↑ = darüber, Blau/= = gleich, Grau/↓ = darunter. Die Zeichen zeigen keine zeitliche Entwicklung und keine Wirksamkeit oder Diagnose. <strong>GV-RE:</strong> Anzahl der Raten im gesamten Ergebnis mit exakt demselben Raten-GV-Wert; erst ab zwei Treffern sichtbar. Das ist ein Gleichstand, kein zeitlicher Trend.</p>
+        <p class="hint" id="result-empty">Kein Ergebnis vorhanden.</p>
+        <div class="draft-actions" id="session-nav" hidden style="margin-bottom:8px">
+          <button class="btn" id="session-prev" type="button" aria-label="Ältere Session">←</button>
+          <span class="hint" id="session-indicator">Session —/—</span>
+          <button class="btn" id="session-next" type="button" aria-label="Neuere Session">→</button>
+          <button class="btn" id="edit-case-btn" type="button">Fall bearbeiten</button>
+        </div>
+        <div class="table-wrap" id="result-wrap" hidden>
+          <table class="data-table" id="result-table">
+            <thead>
+              <tr>
+                <th scope="col">Nr</th><th scope="col">EW</th><th scope="col">Rate / Signatur</th>
+                <th scope="col">Potenz</th><th scope="col">Lvl</th><th scope="col">HIT</th>
+                <th scope="col">GV</th><th scope="col">GV-RE</th><th scope="col">REC</th><th scope="col">Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="result-body"></tbody>
+          </table>
+          <nav class="pager" id="pager" aria-label="Ergebnisseiten"></nav>
+        </div>
+      </div>
+      <section class="panel" id="watchlist-panel" aria-labelledby="watchlist-title">
+        <h2 class="panel-title" id="watchlist-title">Watchlist · ausgewählte Raten dieses Falls</h2>
+        <p class="hint">Ein ausdrücklich gestarteter, getrennter GV-Prüfauftrag für 1 bis 100 gewählte Raten einer gespeicherten Original-Analysesitzung. Zufallsmodus und Seed kommen aus der Auswahl oben. Die bisherige Analyse und 21er-Runde bleiben unverändert; es startet kein Broadcast. Persönliche Matrixscores werden nicht als GV interpretiert.</p>
+        <div class="draft-actions"><button class="btn" id="watchlist-load" type="button">Raten der angezeigten Sitzung wählen</button><button class="btn" id="watchlist-prev" type="button">Vorige Auswahlseite</button><button class="btn" id="watchlist-next" type="button">Nächste Auswahlseite</button><button class="btn" id="watchlist-clear" type="button">Auswahl leeren</button></div>
+        <fieldset id="watchlist-choices"><legend>Ergebnisraten wählen · Auswahl bleibt über Seiten erhalten</legend><div id="watchlist-rate-choices"></div></fieldset>
+        <p class="hint" id="watchlist-count">Noch keine Rate gewählt.</p>
+        <div class="draft-actions"><button class="btn" id="watchlist-preview" type="button">Auswahl prüfen</button><button class="btn btn-primary" id="watchlist-start" type="button" disabled>Watchlist starten</button><button class="btn" id="watchlist-cancel" type="button" disabled>Watchlist abbrechen</button><button class="btn" id="watchlist-refresh" type="button">Historie aktualisieren</button></div>
+        <p id="watchlist-status" role="status" aria-live="polite">Noch kein Watchlist-Auftrag.</p>
+        <div id="watchlist-history" class="draft-actions"></div>
+        <div class="table-wrap"><table class="data-table"><caption>Getrennte Watchlist-GV · Softwarewerte, keine gemessene Klientenreaktion</caption><thead><tr><th scope="col">Ergebnisposition</th><th scope="col">Rate</th><th scope="col">Prüf-GV</th><th scope="col">Vergleich zum eingefrorenen Fall-GV</th></tr></thead><tbody id="watchlist-results"></tbody></table></div>
+      </section>
+    </section>
+
+    <!-- ============ RATEN / STICK-PAD ============ -->
+    <section class="view" id="view-rates" role="tabpanel" aria-labelledby="tab-rates" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Stick-Pad — „Leertaste halten, Intention fokussieren"</h2>
+        <p class="hint">Der reproduzierbare Modus nutzt X/Y direkt. Der Original-Zeitmodus addiert beim Servereingang denselben Millisekundenwert zu X und Y. Netzwerkverzögerung verhindert eine Behauptung identischer Live-Zeitpunkte. Ein Moduswechsel ist erst nach Auswertung oder Leeren möglich.</p>
+        <div id="pad-area" class="pad-area" tabindex="0" role="application"
+             aria-label="Stick-Pad-Feld: Zeiger bewegen oder Taste halten und Positionen sammeln">
+          <p id="pad-hint" class="hint">Hier Zeiger führen oder gedrückt halten — jede Position zählt.</p>
+        </div>
+        <p class="hint" id="pad-count">0 Positionen gesammelt.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Positionsmodus</span>
+            <select id="pad-mode">
+              <option value="reproducible">Reproduzierbar (bisheriger Port)</option>
+              <option value="original">Original-Zeitmodus (Serverzeit)</option>
+            </select>
+          </label>
+          <label class="control">
+            <span class="control-label">Datenbank</span>
+            <select id="pad-db"></select>
+          </label>
+          <button class="btn btn-primary" id="pad-analyze-btn" type="button">Analysieren</button>
+          <button class="btn" id="pad-gv-btn" type="button">Stick-Pad-GV</button>
+          <button class="btn btn-danger" id="pad-clear-btn" type="button">Leeren</button>
+        </div>
+        <p class="hint" id="pad-gv-out"></p>
+        <p class="hint" id="pad-capture-out" aria-live="polite"></p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Stick-Pad-Ergebnis</h2>
+        <p class="hint" id="pad-result-empty">Noch kein Ergebnis.</p>
+        <div class="table-wrap" id="pad-result-wrap" hidden>
+          <table class="data-table">
+            <thead><tr><th scope="col">Rate</th><th scope="col">Energetischer Wert</th></tr></thead>
+            <tbody id="pad-result-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <p id="broadcast-completion-notice" class="hint" role="status" aria-live="polite" hidden></p>
+
+    <!-- ============ BROADCAST ============ -->
+    <section class="view" id="view-broadcast" role="tabpanel" aria-labelledby="tab-broadcast" hidden>
+      <form id="broadcast-form" class="panel form-grid" aria-label="Broadcast senden">
+        <label class="control grow">
+          <span class="control-label">Signatur</span>
+          <input id="sig-input" type="text" required placeholder="z. B. GROUNDING TO THE EARTH CORE">
+        </label>
+        <label class="control">
+          <span class="control-label">Sekunden</span>
+          <input id="sec-input" type="number" value="60" min="1" max="86400">
+        </label>
+        <label class="control">
+          <span class="control-label">Multiplikator</span>
+          <input id="mul-input" type="number" value="1" min="1" max="1000">
+        </label>
+        <label class="control control-check">
+          <input id="clear-input" type="checkbox">
+          <span class="control-label">Clear-Modus</span>
+        </label>
+        <label class="control control-check">
+          <input id="binaural-toggle" type="checkbox">
+          <span class="control-label">Original-Ereignistöne (bei Resonanz)</span>
+        </label>
+        <button class="btn btn-primary" type="submit">Senden</button>
+        <button class="btn btn-danger" id="stop-current-btn" type="button">Aktuellen stoppen</button>
+        <button class="btn btn-danger" id="stop-all-btn" type="button" aria-describedby="broadcast-stop-help">Broadcasts leeren</button>
+      </form>
+      <section class="panel" aria-labelledby="broadcast-audio-heading">
+        <h2 class="panel-title" id="broadcast-audio-heading">Audio dieses Browsers</h2>
+        <p>Das gespeicherte Fallprofil wird beim Start eines neuen Broadcasts festgehalten. Zuerst mit geringer Lautstärke aktivieren. Schließen oder Audio stoppen beendet die Wiedergabe dieses Browsers; der Server-Broadcast läuft weiter.</p>
+        <button class="btn" id="broadcast-audio-enable" type="button">Audio bewusst aktivieren</button>
+        <button class="btn" id="broadcast-audio-stop" type="button">Audio stoppen</button>
+        <button class="btn" id="broadcast-audio-test" type="button" aria-describedby="broadcast-audio-test-help">Testton · 432 Hz · 2 Sekunden</button>
+        <label class="control"><span class="control-label">Audiostärke (0–20 %)</span><input id="broadcast-audio-level" type="range" min="0" max="20" value="10" aria-describedby="broadcast-audio-status"></label>
+        <p id="broadcast-audio-status" class="hint" role="status" aria-live="polite">Audio aus. Maximal acht Stimmen; tatsächliche Geräte-Samplerate wird bei Aktivierung angezeigt.</p>
+        <p id="broadcast-audio-test-help" class="hint">Der Testton startet nur nach Ihrem Klick, unabhängig vom Fall und vom Broadcast. Wenn er stumm bleibt, prüfen Sie die Browser-/Windows-Lautstärke und das ausgewählte Ausgabegerät. „Audio aktiviert“ bestätigt das Audiogerät, nicht ein hörbares Signal.</p>
+        <p id="broadcast-audio-assignment" class="hint" role="status" aria-live="polite">Profilzuordnung wird geprüft …</p>
+      </section>
+      <p id="broadcast-stop-help" class="hint">Stoppt aktive und wartende Broadcasts dieser Instanz, auch bei anderem geladenem Fall. Belege bleiben erhalten. Auto wird nicht ausgeschaltet; läuft es weiter, können neue Broadcasts entstehen.</p>
+      <p id="broadcast-controls-status" class="hint" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+      <p id="broadcast-resonance-status" class="hint" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+
+      <div class="panel">
+        <h2 class="panel-title">Aktive Broadcasts <span id="queue-count" class="badge">0</span></h2>
+        <div id="broadcast-stage" class="broadcast-stage"></div>
+        <p class="hint" id="broadcast-hint">Panels: Fibonacci-Ästhetik des Originals (13 · 21 · 33 · 54 · 89 · 144 … 987), Resonanz ab 6765 + Multiplikator. Bei „Bewegung reduzieren" gilt ein statischer Rahmen mit Textstatus.</p>
+      </div>
+
+      <div class="panel-row">
+        <div class="panel">
+          <h2 class="panel-title">LED-Choreografie (VirtualEmitter)</h2>
+          <p class="hint">Signatur → Ziffern → LED-Gruppen des Originals (weiß 0/9 · infrarot 1/6 · rot 2/5 · grün 3/7 · blau 4/8 · Clear: UV via 1/6).</p>
+          <div id="led-strip" class="led-strip" aria-live="polite"><p class="hint">Noch keine Sequenz.</p></div>
+        </div>
+        <div class="panel">
+          <h2 class="panel-title">Resonanzliste</h2>
+          <button class="btn" id="clear-resonance-display-btn" type="button" aria-describedby="broadcast-resonance-help">Resonanzanzeige leeren</button>
+          <p id="broadcast-resonance-help" class="hint">Setzt nur die Anzeige in diesem Browser zurück. Neue Resonanzen können wieder erscheinen; GV-Sitzungshistorie bleibt erhalten.</p>
+          <ul id="resonance-list" class="resonance-list" aria-live="polite"><li class="hint">Noch keine Resonanz.</li></ul>
+        </div>
+      </div>
+      <section class="panel gv-observations" id="gv-observations-panel" aria-labelledby="gv-observation-heading">
+        <h2 class="panel-title" id="gv-observation-heading" tabindex="-1">GV-Beobachtungen · 21-Minuten-Verlauf</h2>
+        <p>Hier entstehen zusätzliche Beobachtungszahlen je freigegebenem Broadcast. Die Werte der Analyse und der 21er-Runde bleiben unverändert.</p>
+        <p class="hint">Quelle: eigene Betriebssystem-Entropie. Dies sind abgeleitete Zahlen, keine körperliche oder klinische Messung. Bewusst aktivieren; die erste Basis entsteht nach 21 Minuten. Nach einem Neustart bleibt die Historie erhalten, die Beobachtung ist aus. Für die Aktivierung ist der gesicherte Journalschlüssel erforderlich.</p>
+        <p id="gv-observation-status" role="status">Noch nicht abgeglichen · Beobachtung standardmäßig aus.</p>
+        <p id="gv-observation-status-error" class="gv-error" role="alert"></p>
+        <p id="gv-observation-poll-error" class="gv-error" role="alert"></p>
+        <p id="gv-observation-excluded" class="hint"></p>
+        <div id="gv-observation-controls" class="gv-observation-controls"></div>
+        <h3>Sitzungshistorie</h3>
+        <label class="control gv-session-control"><span class="control-label">Beobachtungen nach Sitzung</span>
+          <select id="gv-observation-session"><option value="">Alle Sitzungen dieser Instanz</option></select>
+        </label>
+        <p class="hint">Grün/↑: Zahl steigt; Rot/↓: Zahl sinkt; =: unverändert. „Stark“ bedeutet eine Differenz von mindestens 200 zur letzten Beobachtung desselben Broadcasts. Das ist eine Anzeigeregel, keine Bewertung von Gesundheit oder Wirkung.</p>
+        <p id="gv-observation-history-error" class="gv-error" role="alert"></p>
+        <p id="gv-observation-history-summary" class="hint"></p>
+        <p class="hint">Getrennte Fall- und Raten-GV-Beobachtungen pro Sitzung und Broadcast.</p>
+        <div class="gv-history-scroll" tabindex="0" role="region" aria-label="GV-Sitzungshistorie, horizontal scrollbar">
+          <table class="data-table gv-history-table">
+            <caption class="sr-only">Getrennte Fall- und Raten-GV-Beobachtungen pro Sitzung und Broadcast</caption>
+            <thead><tr><th scope="col">Zeit</th><th scope="col">Sitzung</th><th scope="col" class="num">Rate Nr.</th><th scope="col">Broadcast</th><th scope="col" class="num">Fall-GV</th><th scope="col">Tendenz Fall-GV</th><th scope="col" class="num">Raten-GV</th><th scope="col">Tendenz Raten-GV</th></tr></thead>
+            <tbody id="gv-observation-history-body"></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="adjustment-history-title"><h2 class="panel-title" id="adjustment-history-title">Begrenzte Anpassungen · Auftragshistorie</h2>
+        <p class="hint">Nur ausdrücklich aktivierte und belegte Original-Aufträge. Nach Abschluss wird ein eigener Software-GV gezogen und mit dem eingefrorenen Fall-GV verglichen. Eine Entscheidung ist noch keine Annahme eines Folgeauftrags. Persönliche Matrixscores bleiben getrennt. Umschalten verändert keine bereits angenommenen Aufträge.</p>
+        <button class="btn" id="adjustments-refresh" type="button">Anpassungshistorie aktualisieren</button><p class="hint" id="adjustments-status" role="status"></p>
+        <div class="table-wrap"><table class="data-table"><caption>Entscheidung und tatsächliche Folgeannahme</caption><thead><tr><th scope="col">Auftrag</th><th scope="col">Stufe</th><th scope="col">Fall-GV</th><th scope="col">Neuer GV</th><th scope="col">Folgedauer</th><th scope="col">Annahme / Status</th></tr></thead><tbody id="adjustments-body"></tbody></table></div></section>
+    </section>
+
+    <!-- ============ BILD & AREA ============ -->
+    <section class="view" id="view-images" role="tabpanel" aria-labelledby="tab-images" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Bildschichten (Aether_5)</h2>
+        <p class="hint">Bilder bleiben im Browser — die Engine erhält nur die Anzahl der Schichten
+        und zieht je Schicht 256 Entropiewerte (Runden bis max ≥ 162, wie im Original).
+        SHA-256 dient lokal als Zeugen-Hash (Passport-<code>input_hash</code>).</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Schichten (ausgewählte Bilder)</span>
+            <input id="img-count" type="number" value="1" min="1" max="50">
+          </label>
+          <input id="img-files" type="file" accept="image/*" multiple class="control" aria-label="Bilddateien für Schichten auswählen">
+          <span id="img-selection" class="hint" role="status" aria-live="polite">0 Bilder ausgewählt</span>
+          <button class="btn btn-primary" id="img-analyze-btn" type="button">Bilder analysieren</button>
+        </div>
+        <table class="data-table" id="img-table" hidden>
+          <thead><tr><th scope="col">Schicht</th><th scope="col">Bild</th><th scope="col">Hash</th><th scope="col">GV</th><th scope="col">Aktion</th></tr></thead>
+          <tbody id="img-body"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Area-Scan (Aether_7 — „SCAN FOR TARGET")</h2>
+        <div class="draft-actions">
+          <input id="area-file" type="file" accept="image/*" class="control" aria-label="Bild für Area-Scan auswählen">
+          <label class="control"><span class="control-label">Rasterbreite</span>
+            <input id="area-w" type="number" value="16" min="2" max="64"></label>
+          <label class="control"><span class="control-label">Rasterhöhe</span>
+            <input id="area-h" type="number" value="10" min="2" max="64"></label>
+          <button class="btn btn-primary" id="area-scan-btn" type="button">Fläche scannen</button>
+        </div>
+        <div class="area-wrap"><canvas id="area-canvas" width="480" height="300" role="img" aria-label="Area-Scan-Heatmap"></canvas></div>
+        <p class="hint" id="area-out"></p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Farb-Overlay zum Area-Bild</h2>
+        <p class="hint">Diese ergänzende Ansicht zeigt das 31 × 12-Farbraster des Originals über dem lokal ausgewählten Bild. Die Farben stammen hier aus der Browser-Zufallsquelle, nicht aus Hotbits. Das Raster ist eine visuelle Darstellung und ändert den Zahlen-Scan, Fall-GV und Broadcast nicht.</p>
+        <div class="draft-actions">
+          <button class="btn" id="area-overlay-step" type="button">Farb-Overlay erzeugen</button>
+          <button class="btn" id="area-overlay-clear" type="button">Overlay zurücksetzen</button>
+        </div>
+        <div class="area-wrap area-overlay-wrap"><canvas id="area-overlay-canvas" width="930" height="360" role="img" aria-label="Farb-Overlay über dem Area-Bild"></canvas></div>
+        <p class="hint" id="area-overlay-out" role="status">Bitte zuerst ein Bild für Area auswählen. Das Bild bleibt im Browser.</p>
+      </div>
+    </section>
+
+    <!-- ============ PEGGOTTY (RadionicScript) ============ -->
+    <section class="view" id="view-peggotty" role="tabpanel" aria-labelledby="tab-peggotty" hidden>
+      <div class="panel">
+        <h2 class="panel-title">RadionicScript — Interpreter</h2>
+        <p class="hint">Befehle wie im Original: <code>var = ANALYZE datenbank</code> ·
+        <code>PRINT name|text</code> · <code>GOTO label</code> · <code>label:</code> ·
+        <code>## Kommentar</code>. Analyseziehungen folgen dem Entropie-Modus.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Gespeicherte Skripte</span>
+            <select id="pg-name"></select>
+          </label>
+          <button class="btn" id="pg-load-btn" type="button">Skript laden</button>
+        </div>
+        <textarea id="pg-text" class="script-editor" rows="8" spellcheck="false"
+          aria-label="Skript-Editor">## RadiWorks Skript
+ziel = ANALYZE HOMEOPATHY_Clarke
+PRINT Ziel-Analyse abgeschlossen.
+PRINT ziel</textarea>
+        <div class="draft-actions">
+          <button class="btn btn-primary" id="pg-run-btn" type="button">Ausführen</button>
+        </div>
+        <pre id="pg-output" class="eq-report" hidden></pre>
+      </div>
+    </section>
+
+    <!-- ============ ENTROPIE (HOTBITS) ============ -->
+    <section class="view" id="view-entropy" role="tabpanel" aria-labelledby="tab-entropy" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Webcam-Entropie (Aether_8 — „GET HOTBITS")</h2>
+        <p class="hint"><strong>Freiwillig &amp; transparent:</strong> Die Kamera läuft nur,
+        solange Du sie aktiviert hast. Es werden <strong>keine Bilddaten gespeichert oder
+        übertragen</strong> — nur aus einem verkleinerten Bildraster abgeleitete Ganzzahlen.
+        Der Pixel-Vergleich ist an das Original angelehnt, aber nicht bitgleich und nicht als physikalische Zufallsquelle geprüft.</p>
+        <div class="draft-actions">
+          <label class="control">
+            <span class="control-label">Kamera (nach Aktivierung wählbar)</span>
+            <select id="cam-select" aria-label="Kamera wählen"><option value="">—</option></select>
+          </label>
+          <button class="btn btn-primary" id="cam-start-btn" type="button">Kamera aktivieren</button>
+          <button class="btn" id="cam-stop-btn" type="button">Stoppen</button>
+          <span class="hint" id="cam-status">Aus.</span>
+        </div>
+        <video id="cam-preview" class="cam-preview" autoplay playsinline muted hidden></video>
+        <p class="hint" id="feed-status">Feed: 0 Werte.</p>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Hinweis</h2>
+        <p class="hint">Im stochastischen Modus hat der Webcam-Feed Vorrang vor random.org
+        (Original-Verhalten: hotbits-Dateien werden zuerst geleert). Der Seed-Modus bleibt
+        unberührt — Reproduzierbarkeit geht immer vor.</p>
+      </div>
+    </section>
+
+    <!-- ============ FÄLLE ============ -->
+    <section class="view" id="view-cases" role="tabpanel" aria-labelledby="tab-cases" hidden>
+      <div class="panel">
+        <h2 class="panel-title">Fall anlegen / speichern (Aether_2)</h2>
+        <button class="btn" id="case-new-btn" type="button">Neuen Fall vorbereiten</button>
+        <p class="hint" id="case-editor-status" role="status"></p>
+        <div class="form-grid">
+          <label class="control"><span class="control-label">Falltitel</span>
+            <select id="case-title-mode" aria-describedby="case-title-help"><option value="context" selected>Aus Kontext und Fokus</option><option value="manual">Manuell / bisheriger Titel</option></select></label>
+          <label class="control grow"><span class="control-label">Fallbezeichnung</span>
+            <input id="case-name" type="text" placeholder="z. B. Demo-Fall (synthetisch)" aria-describedby="case-title-help"></label>
+          <label class="control grow"><span class="control-label">Beschreibung</span>
+            <input id="case-desc" type="text" placeholder="optional"></label>
+          <label class="control grow"><span class="control-label">Fokus für die Datenbanksuche (optional)</span>
+            <input id="case-focus" type="text" maxlength="240" autocomplete="off" placeholder="Fragestellung, keine Personendaten" aria-describedby="case-focus-help"></label>
+          <button class="btn btn-primary" id="case-save-btn" type="button">Fall anlegen / speichern</button>
+        </div>
+        <p class="hint" id="case-title-help" role="status">Der Titel wird aus dem persönlichen Kontext und dem Fokus gebildet. Ältere Fälle behalten zunächst ihren bisherigen Titel.</p>
+        <fieldset class="case-personal">
+          <legend>Persönlicher Kontext (optional)</legend>
+          <p class="hint" id="case-personal-help">Diese Angaben gehören zum Fall und werden für neue Aufträge festgehalten. Sie verändern im Originalmodus keine Analysewerte. Der automatische Falltitel verbindet diese Angaben mit dem Fokus; die feste Fall-ID bleibt davon unabhängig.</p>
+          <p class="hint" id="case-place-help" role="status" aria-live="polite">Es ist genau ein Ortstyp aktiv. Beim Wechsel den Ort neu eingeben und speichern. Nur ein ausdrücklich gewählter Geburtsort kann zusammen mit dem Geburtsdatum in die persönliche Heuristik und den separaten EXP1-Vergleich eingehen; der Originalmodus bleibt unverändert.</p>
+          <div class="case-personal-grid">
+            <label class="control"><span class="control-label">Vorname</span><input id="case-first-name" type="text" maxlength="160" autocomplete="off" aria-describedby="case-personal-help"></label>
+            <label class="control"><span class="control-label">Nachname</span><input id="case-last-name" type="text" maxlength="160" autocomplete="off" aria-describedby="case-personal-help"></label>
+            <label class="control"><span class="control-label">Geburtsdatum</span><input id="case-birth-date" type="date" aria-describedby="case-personal-help"></label>
+            <label class="control"><span class="control-label">Bedeutung des Orts</span><select id="case-place-kind" aria-describedby="case-place-help"><option value="" disabled>Bisheriger Ort: Typ nicht festgelegt</option><option value="residence">Wohn-/Aufenthaltsort</option><option value="birth">Geburtsort</option></select></label>
+            <label class="control"><span class="control-label" id="case-place-label">Ort</span><input id="case-place" type="text" maxlength="240" autocomplete="off" aria-describedby="case-place-help"></label>
+          </div>
+          <p class="hint" id="case-context-status" role="status">Noch kein Fallkontext gespeichert.</p>
+          <div class="case-image-controls">
+            <input id="case-image-file" class="sr-only" tabindex="-1" type="file" accept="image/png,image/jpeg,image/webp" aria-label="Optionales Fokusbild auswählen" aria-describedby="case-image-help">
+            <button class="btn" id="case-image-select" type="button">Fokusbild auswählen</button>
+            <button class="btn" id="case-image-remove" type="button" disabled>Fokusbild entfernen</button>
+          </div>
+          <p class="hint" id="case-image-help">Optional: PNG, JPEG oder WebP bis 5 MB. Das Bild wird lokal geprüft und als verkleinertes PNG ohne Dateinamen oder eingebettete Metadaten abgelegt, erst wenn Sie den Fall speichern. Entfernen betrifft neue Aufträge; frühere Sitzungen behalten ihre Bildreferenz.</p>
+          <img id="case-image-preview" class="case-image-preview" alt="Vorschau des optionalen Fokusbilds" hidden>
+          <p class="hint" id="case-image-status" role="status">Kein Fokusbild gewählt.</p>
+        </fieldset>
+        <p class="hint" id="case-focus-help">Der Fokus hilft bei der bewussten Katalogauswahl. Im Originalmodus verändert er keine EW-/GV-Werte. Im persönlichen Verfahren wird er im unveränderlichen Auftragskontext festgehalten; eine zusätzliche freie Fokusformel wird nicht eingesetzt. Bitte keine sensiblen Personendaten eintragen.</p>
+        <p class="hint" id="case-save-status" role="status"></p>
+        <p class="hint">Neue Fälle mit automatischem Titel erhalten einen neutralen Datei-Identifier. Bestehende Fall-Dateien behalten ihren Pfad. Der angezeigte Titel kann persönliche Angaben enthalten; verwenden Sie für Tests künstliche Daten.</p>
+      </div>
+      <section class="panel" id="case-media-panel" aria-labelledby="case-media-heading">
+        <h2 class="panel-title" id="case-media-heading">Audio und Animationsbilder für neue Broadcasts</h2>
+        <p>1. Fall speichern oder laden. 2. Profil und bis zu fünf Bilder wählen. 3. Medienprofil speichern. Neue Broadcasts übernehmen diesen Stand; laufende Aufträge und Analysewerte bleiben unverändert.</p>
+        <div class="form-grid">
+          <label class="control"><span class="control-label">Audioprofil</span><select id="case-audio-profile" disabled>
+            <option value="original">Original: Ereignistöne bei Resonanz</option><option value="off">Ohne Audio</option>
+            <option value="fixed-432">Einzelton: 432 Hz</option><option value="fixed-528">Einzelton: 528 Hz</option><option value="fixed-42962">Einzelton: 429,62 Hz</option><option value="solfeggio-9">Solfeggio: neun feste Frequenzen</option>
+            <option value="pink">Rosa Rauschen: kontinuierlich, ungepulst</option>
+            <option value="pink-pulse-v1">Rosa Rauschen: gleichmäßiger Puls</option>
+            <option value="pink-phi-v1">Rosa Rauschen: Phi-Pulsfolge</option>
+            <option value="pink-fibonacci-v1">Rosa Rauschen: Fibonacci-Pulsfolge</option>
+          </select></label>
+          <label class="control"><span class="control-label" id="case-audio-duration-label">Sekunden je Frequenz / Rauschdauer</span><input aria-describedby="case-pulse-preview" id="case-audio-duration" type="number" required min="1" max="600" step="1" value="60" disabled></label>
+          <label class="control" id="case-pulse-depth-control" hidden><span class="control-label">Modulationstiefe (%)</span><input id="case-pulse-depth" type="number" required min="0" max="100" step="1" value="50" disabled aria-describedby="case-pulse-preview"></label>
+          <label class="control control-check"><input id="case-audio-repeat" type="checkbox" disabled><span class="control-label">Folge bis zum Broadcast-Ende wiederholen</span></label>
+        </div>
+        <div id="case-pulse-preview" class="hint"></div>
+        <p class="hint">Bei Phi und Fibonacci wachsen sowohl die Pulsrate als auch die Dauer jedes Abschnitts mit demselben Faktor. Die Basisdauer bestimmt die ganze Folge. Die Modulationstiefe regelt die Lautstärkeschwankung: 0 % ohne Puls, 50 % sanfter Wechsel zwischen halber und voller Signalstärke, 100 % bis zur Stille. Dies sind technische Audioprofile, keine Aussage über eine Klientenreaktion.</p>
+        <p class="hint">Solfeggio-Folge: 174 · 285 · 396 · 417 · 528 · 639 · 741 · 852 · 963 Hz. Dies sind technische Audiosignale. Audio bleibt im Browser aus, bis Sie es unter „Broadcast“ bewusst aktivieren. Einzelton und Folge enden spätestens mit dem Broadcast. Rosa Rauschen nutzt den geprüften FFT-/Hann-Kern mit eigenem Audioseed, höchstens zwei Rauschsignale gleichzeitig. Ein fester niedriger Livepegel verhindert Übersteuerung ohne Clipping; deshalb ist es leiser als der Datei-Generator. Es verändert keine Analysewerte. Bei verborgenem Browser-Tab oder Verbindungsunterbrechung stoppt Audio und muss bewusst neu aktiviert werden.</p>
+        <p class="hint">Animationsbilder sind reine Darstellung und vom analytischen Fokusbild getrennt. PNG, JPEG oder WebP bis 5 MB je Bild; lokal verkleinert und ohne Dateinamen oder eingebettete Metadaten gespeichert. Alte Aufträge behalten ihre Bildreferenzen.</p>
+        <input id="case-layers-file" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+        <button class="btn" id="case-layers-add" type="button" disabled>Animationsbilder auswählen</button>
+        <ol id="case-layers-list" class="case-layers-list"></ol>
+        <button class="btn btn-primary" id="case-media-save" type="button" disabled>Medienprofil speichern</button>
+        <button class="btn" id="case-media-reload" type="button">Medienprofil neu laden</button>
+        <p class="hint" id="case-media-status" role="status" aria-live="polite">Bitte Fall speichern oder laden.</p>
+      </section>
+      <div class="panel">
+        <h2 class="panel-title">Gespeicherte Fälle</h2>
+        <p class="hint" id="case-list-empty" role="status">Noch keine Fälle.</p>
+        <button class="btn" id="case-refresh-btn" type="button" hidden>Liste erneut laden</button>
+        <p class="hint" id="case-load-status" role="status"></p>
+        <ul id="case-list" class="case-list" hidden></ul>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Fall-Statistik (StatisticsGenerator)</h2>
+        <p class="hint" id="stat-empty">Fall laden, dann Statistik anzeigen.</p>
+        <div class="table-wrap" id="stat-wrap" hidden>
+          <table class="data-table">
+            <thead><tr><th scope="col">Häufigkeit</th><th scope="col">GV-Summe</th><th scope="col">EV-Summe</th><th scope="col">Rate</th></tr></thead>
+            <tbody id="stat-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="clarke-dialog" class="edit-dialog" aria-labelledby="clarke-title" style="max-width:720px">
+      <h2 class="panel-title" id="clarke-title">Materia-Medica-Quellenvergleich</h2>
+      <div id="clarke-content" class="clarke-content"></div>
+      <div class="draft-actions" style="margin-top:12px">
+        <button class="btn" id="clarke-close-btn" type="button">Schließen</button>
+      </div>
+    </dialog>
+
+    <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-title">
+      <h2 class="panel-title" id="edit-title">Fall bearbeiten</h2>
+      <label class="control"><span class="control-label">Name</span>
+        <input id="edit-name" type="text"></label>
+      <label class="control"><span class="control-label">Beschreibung</span>
+        <input id="edit-desc" type="text"></label>
+      <label class="control"><span class="control-label">Fallfokus für die Datenbanksuche</span>
+        <input id="edit-focus" type="text" maxlength="240" autocomplete="off" aria-describedby="edit-focus-help"></label>
+      <p class="hint" id="edit-focus-help">Lokale Katalogauswahlhilfe und Kontext für neue Aufträge. Bereits gespeicherte Analysen und laufende Broadcasts behalten ihren bisherigen Kontext.</p>
+      <label class="control"><span class="control-label">Absicht (letzte Session)</span>
+        <input id="edit-intention" type="text" placeholder="optional"></label>
+      <div class="draft-actions" style="margin-top:12px">
+        <button class="btn btn-primary" id="edit-save-btn" type="button">Speichern</button>
+        <button class="btn" id="edit-cancel-btn" type="button">Abbrechen</button>
+      </div>
+    </dialog>
+
+    <!-- ============ EINSTELLUNGEN ============ -->
+    <section class="view" id="view-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+      <p class="notice" role="note">„Wirkt im Prototyp“ kennzeichnet eine derzeit genutzte Einstellung. „Derzeit nur gespeichert“ verändert hier noch keinen Ablauf. Änderungen gelten erst nach „Einstellungen speichern“ und berechnen bestehende Ergebnisse nicht neu.</p>
+      <div class="panel">
+        <h2 class="panel-title">Schalter</h2>
+        <div id="settings-booleans" class="settings-list"></div>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Zahlenwerte</h2>
+        <div id="settings-integers" class="settings-list"></div>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Textwerte</h2>
+        <div id="settings-strings" class="settings-list"></div>
+      </div>
+      <div class="draft-actions">
+        <button class="btn btn-primary" id="settings-save-btn" type="button">Einstellungen speichern</button>
+        <span class="hint" id="settings-out" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <!-- ============ INFO ============ -->
+    <section class="view" id="view-info" role="tabpanel" aria-labelledby="tab-info" hidden>
+      <section class="panel">
+        <h2 class="panel-title">Verfahren, Herkunft und Grenzen</h2>
+        <p>RadiWorks verwendet einen portierten AetherOne-Originalweg und eine getrennte Persönliche Heuristik. Verfahren, Zufallsmodus und gespeicherter Fallkontext gehören zum jeweiligen Auftrag. Die Zufallswahl ist kein eigenständiges Analyseverfahren.</p>
+        <p>GV, EW, Resonanzzähler und persönliche Scores sind berechnete Softwarewerte. Farben und Pfeile erläutern Veränderungen dieser Werte; sie messen keine Klientenreaktion und belegen keine Diagnose, Therapie oder Wirksamkeit.</p>
+        <p>Die Kameraauswertung bleibt im Browser; an den lokalen Server gehen abgeleitete Ganzzahlen. Stochastische Ziehungen können random.org verwenden. Der Wiederherstellungsschlüssel schützt das Entropie-Journal, nicht sämtliche Fallakten und Bilder.</p>
+        <p>Technischer Reviewstand: 6. Oktober 2026. Vollständige Barrierefreiheits-, Datenschutz- und Aurelia-Integrationsabnahme sind noch offen. Betreiberinformationen und Nutzungsbedingungen werden vor einer zentralen Bereitstellung ergänzt.</p>
+      </section>
+      <div class="panel">
+        <h2 class="panel-title">Kernel-Ausweis (Kernel-ABI v1)</h2>
+        <dl class="manifest-list" id="manifest-list"><dt>Lädt …</dt></dl>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Entropie</h2>
+        <dl class="manifest-list" id="entropy-list"><dt>Lädt …</dt></dl>
+      </div>
+      <div class="panel">
+        <h2 class="panel-title">Datenquellen &amp; Herkunft</h2>
+        <ul class="source-list">
+          <li>Raten-Datenbank: radionics-rates (isuretpolos) + Clarke-Korpus, 1008 Remedies</li>
+          <li>Kernlogik: Java-Orakelparität belegt für drei versionierte seeded REST-Fixtures mit 300 synthetischen Raten; keine allgemeine Bitidentitätsbehauptung.</li>
+          <li>Entscheidungshistorie: Modul_Templates/modules/radiworks/FESTLEGUNGEN.md (2026-08-29)</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ PERMANENTE STATUSLEISTE (wie Original-Dashboard) ============ -->
+  <aside class="statusbar" aria-label="Dauerstatus: Broadcast-Queue, Resonated Rates, General Vitality">
+    <div class="dock-toolbar">
+      <button class="btn" id="dock-toggle" type="button" aria-controls="dock-content" aria-expanded="false">Broadcast öffnen</button>
+      <span id="dock-summary" role="status">0 aktiv · 0 wartend</span>
+    </div>
+    <div id="dock-content" class="statusbar-content">
+      <div class="statusbar-col statusbar-leds">
+      <span class="sled" id="sled-pi">PI</span>
+      <span class="sled" id="sled-broadcasting">BROADCASTING</span>
+      <span class="sled" id="sled-clearing">CLEARING</span>
+      <span class="sled" id="sled-grounding">GROUNDING</span>
+      <span class="sled" id="sled-copying">COPYING</span>
+      <div class="meter-grid">
+        <span class="meter" id="meter-packages">PACKAGES 0</span>
+        <span class="meter" id="meter-cache">CACHE 0</span>
+        <span class="meter" id="meter-progress">PROGRESS 0 %</span>
+        <span class="meter" id="meter-queue">QUEUE 0</span>
+      </div>
+      </div>
+      <div class="statusbar-col statusbar-queue">
+      <h3>Broadcast-Queue</h3>
+      <div id="queue-bars" class="queue-bars"><p class="hint">Leer.</p></div>
+      <button class="btn btn-danger" id="dock-stop-all-btn" type="button" aria-describedby="dock-stop-help">Broadcasts leeren</button>
+      <p id="dock-stop-help" class="hint">Stoppt aktive und wartende Broadcasts dieser Instanz, auch bei anderem geladenem Fall. Belege bleiben erhalten. Auto wird nicht ausgeschaltet; läuft es weiter, können neue Broadcasts entstehen.</p>
+      <p id="dock-controls-status" class="hint" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+      </div>      <div class="statusbar-col statusbar-resonance">
+      <h3>Resonated Rates <small>seit Datenbankwechsel oder neuer Analyse</small></h3>
+      <button class="btn" id="dock-clear-resonance-display-btn" type="button" aria-describedby="dock-resonance-help">Resonanzanzeige leeren</button>
+      <p id="dock-resonance-help" class="hint">Setzt nur die Anzeige in diesem Browser zurück. Neue Resonanzen können wieder erscheinen; GV-Sitzungshistorie bleibt erhalten.</p>
+      <p id="dock-resonance-status" class="hint" role="status" aria-live="polite" aria-atomic="true" hidden></p>      <ol id="resonated-mini" class="resonated-mini"><li class="hint">Noch keine Resonanz.</li></ol>
+      <p class="hint">GV-Beobachtungen je Broadcast: siehe Sitzungshistorie im Broadcast-Reiter.</p>
+      <div class="statusbar-gv">
+      <h3>General Vitality</h3>
+      <canvas id="gv-mini" width="200" height="80" role="img" aria-label="GV-Verlauf (Miniatur)"></canvas>
+      <p class="hint" id="gv-mini-text">GV — (noch keine GV-Züge)</p>
+      </div>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="app-footer">
+    <p><strong>Hinweis:</strong> Wellbeing-Dokumentationssoftware. Kein Medizinprodukt, keine Diagnose, keine Therapie, kein Ersatz ärztlicher Leistung.</p>
+    <p id="footer-build" class="footer-build">RadiWorks Engine</p>
+  </footer>
+
+  <script type="module" src="js/boot.js"></script>
+</body>
+</html>

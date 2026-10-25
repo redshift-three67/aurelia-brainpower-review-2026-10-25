@@ -1,0 +1,60 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain.osm;
+
+import de.isuret.polos.AetherOnePi.domain.osm.Feature;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.dizitart.no2.objects.Id;
+
+public class MapDesign {
+    @Id
+    private UUID uuid;
+    private String coordinatesX;
+    private String coordinatesY;
+    private Integer zoom;
+    private List<Feature> featureList = new ArrayList<Feature>();
+
+    public List<Feature> getFeatureList() {
+        return this.featureList;
+    }
+
+    public void setFeatureList(List<Feature> featureList) {
+        this.featureList = featureList;
+    }
+
+    public String getCoordinatesX() {
+        return this.coordinatesX;
+    }
+
+    public void setCoordinatesX(String coordinatesX) {
+        this.coordinatesX = coordinatesX;
+    }
+
+    public String getCoordinatesY() {
+        return this.coordinatesY;
+    }
+
+    public void setCoordinatesY(String coordinatesY) {
+        this.coordinatesY = coordinatesY;
+    }
+
+    public UUID getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public Integer getZoom() {
+        return this.zoom;
+    }
+
+    public void setZoom(Integer zoom) {
+        this.zoom = zoom;
+    }
+}
+

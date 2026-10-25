@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12x12 Resonance Matrix Engine – Workflow Stepping</title>
+<link rel="stylesheet" href="workflow_stepping.css">
+</head>
+<body>
+<div class="header">
+  <div class="header-badge">TIEFENANALYSE &middot; WORKFLOW STEPPING</div>
+  <h1>12x12 Resonance Matrix Engine</h1>
+  <p>Interaktive Schritt-f&uuml;r-Schritt Darstellung des vollst&auml;ndigen Applikations-Workflows</p>
+  <span class="version-tag">v1.5.0 &middot; EMF Compensation &amp; Environmental Intelligence</span>
+</div>
+
+<nav class="stepper-nav" id="stepperNav"><div class="stepper-nav-inner" id="navInner"></div></nav>
+
+<main class="main">
+<div class="overall-progress">
+  <span class="op-label">Fortschritt</span>
+  <div class="op-bar"><div class="op-fill" id="overallFill" style="width:8.3%"></div></div>
+  <span class="op-pct" id="overallPct">1 / 12</span>
+</div>
+
+<!-- STEP 1 -->
+<section class="step-panel active" data-step="0">
+<div class="step-header"><div class="step-icon si-cyan">&#9881;</div><div><h2>System-Initialisierung</h2><span class="step-sub">Hardware-Erkennung, CUDA/CPU-Adaption &amp; Engine-Bootstrap</span></div></div>
+<div class="card"><div class="ct"><span>&#128268;</span> Schichtenmodell</div>
+<pre class="arch">┌─────────────────────────────────────────────────────────┐
+│              USER / ADMIN UI                            │
+│  PowerShell CLI + Group Entry + EMF Toggle              │
+└──────────────────────┬──────────────────────────────────┘
+              ┌────────┴────────┐
+              ▼                 ▼
+┌─────────────────────┐ ┌───────────────────────────────┐
+│  EMF COMPENSATION   │ │   CORE COMPUTATION LAYER      │
+│  CPU Jitter / RNG   │◄│   ResonanceMatrixEngine       │
+│  GPU Noise / Load   │ │   80k – 1M Kandidaten         │
+│  [RTL-SDR Plugin]   │ └───────────┬───────────────────┘
+└──────────┬──────────┘             ▼
+           └──────────► ┌───────────────────────────────┐
+  Counter-Frequencies   │  EXPORT + AUDIO + REPORTING   │
+  + Timing Advice       │  PDF / XLSX / Logs / Audio    │
+                        └───────────────────────────────┘</pre></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128187;</span> Hardware-Erkennung <b class="badge bg">Auto</b></div>
+<div class="mr"><span class="ml">Modul</span><span class="mv tc">ResonanceMatrixEngine.__init__</span></div>
+<div class="mr"><span class="ml">GPU</span><span class="mv">torch.cuda.is_available()</span></div>
+<div class="mr"><span class="ml">RAM</span><span class="mv">psutil.virtual_memory()</span></div>
+<div class="mr"><span class="ml">CPU Threads</span><span class="mv">cpu_count() &times; 0.8</span></div>
+<div class="mr"><span class="ml">TF32</span><span class="mv tg">Aktiviert (CUDA)</span></div></div>
+<div class="card"><div class="ct"><span>&#128200;</span> Adaptive Skalierung</div>
+<table class="dt"><tr><th>Modus</th><th>Bedingung</th><th>Kandidaten</th></tr>
+<tr><td><b class="badge br">Extreme</b></td><td>VRAM≥20GB</td><td class="tc mono">1.000.000</td></tr>
+<tr><td><b class="badge ba">High</b></td><td>VRAM≥8GB</td><td class="tc mono">500.000</td></tr>
+<tr><td><b class="badge bc">Standard</b></td><td>CUDA</td><td class="tc mono">200.000</td></tr>
+<tr><td><b class="badge bg">CPU 32GB</b></td><td>RAM≥31GB</td><td class="tc mono">250.000</td></tr>
+<tr><td><b class="badge bp">CPU 16GB</b></td><td>RAM≥15GB</td><td class="tc mono">150.000</td></tr>
+<tr><td><b class="badge bk">CPU Min</b></td><td>RAM&lt;15GB</td><td class="tc mono">80.000</td></tr></table></div>
+</div>
+<div class="card"><div class="ct"><span>&#128230;</span> Init-Module</div>
+<div class="fr"><div class="fb hl">ClientSignatureGen</div><span class="fa">→</span><div class="fb hl">EMFCompensator <b class="badge ba">Lazy</b></div><span class="fa">→</span><div class="fb hl">AmplifierVectorGen</div><span class="fa">→</span><div class="fb">bio_knowledge.json</div><span class="fa">→</span><div class="fb">D-Wave <b class="badge bp">Opt.</b></div></div></div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step-panel" data-step="1">
+<div class="step-header"><div class="step-icon si-purple">&#128100;</div><div><h2>Benutzer-Eingabe</h2><span class="step-sub">Klienten-Daten, Fokus, Modus &amp; Parameter</span></div></div>
+<div class="card"><div class="ct"><span>&#128221;</span> Eingabe-Kan&auml;le</div>
+<div class="fr"><div class="fb hl">PowerShell CLI<br><small class="dim">generate_matrix.ps1</small></div><span class="fa">→</span><div class="fb hl">Python CLI<br><small class="dim">dev_cli.py</small></div><span class="fa">→</span><div class="fb hl">REST API<br><small class="dim">POST /api/v1/analyze-matrix</small></div></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128101;</span> Klienten-Daten (ClientBase)</div>
+<div class="mr"><span class="ml">Vorname</span><span class="mv tg">Pflicht</span></div>
+<div class="mr"><span class="ml">Nachname(n)</span><span class="mv tg">Liste, min 1</span></div>
+<div class="mr"><span class="ml">Geburtsdatum</span><span class="mv tg">YYYY-MM-DD</span></div>
+<div class="mr"><span class="ml">Geburtsort</span><span class="mv tg">Pflicht</span></div>
+<div class="mr"><span class="ml">Geburtszeit</span><span class="mv dim">Optional HH:MM</span></div>
+<div class="mr"><span class="ml">Geolocation</span><span class="mv dim">Optional lat,lon</span></div></div>
+<div class="card"><div class="ct"><span>&#127919;</span> Analyse-Parameter</div>
+<div class="mr"><span class="ml">Fokus</span><span class="mv tc">Freitext-Intention</span></div>
+<div class="mr"><span class="ml">Matrix</span><span class="mv">12 · 24 · 36</span></div>
+<div class="mr"><span class="ml">Modus</span><span class="mv">quantum | precision</span></div>
+<div class="mr"><span class="ml">Gewicht</span><span class="mv">Deakt.|Sanft|Normal|Stark</span></div>
+<div class="mr"><span class="ml">EMF</span><span class="mv ta">Boolean</span></div>
+<div class="mr"><span class="ml">HRV-Sim</span><span class="mv ta">Boolean</span></div>
+<div class="mr"><span class="ml">Symmetrie</span><span class="mv">none|horizontal|quadrant</span></div>
+<div class="mr"><span class="ml">Palette</span><span class="mv dim">6 Strategien</span></div></div>
+</div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step-panel" data-step="2">
+<div class="step-header"><div class="step-icon si-green">&#128273;</div><div><h2>Klienten-Signatur</h2><span class="step-sub">Multi-parametrische Frequenz-Signatur aus bio-grafischen Daten</span></div></div>
+<div class="card"><div class="ct"><span>&#127912;</span> Signatur-Pipeline (6 Schichten)</div>
+<div class="ls">
+<div class="li"><div class="ln" style="background:hsl(340 60% 65% / 0.12);color:var(--pink)">1</div><div class="lt"><strong>Name→Frequenz <b class="badge bk">15%</b></strong><span>Garjajev: Numerologie + Phonetik → Modulo 1000 Hz</span></div></div>
+<div class="li"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">2</div><div class="lt"><strong>Geburt→Frequenz <b class="badge bc">20%</b></strong><span>Julian Day (60%) + Ort-Hash (30%) + Zeit (10%)</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">3</div><div class="lt"><strong>Bild-Signatur <b class="badge bp">25%</b></strong><span>SHA-256 + RGB→HSV + Shannon-Entropie + Dateiname</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">4</div><div class="lt"><strong>Organuhr TCM <b class="badge ba">10%</b></strong><span>Uhrzeit → Organ → Frequenz (194–587 Hz)</span></div></div>
+<div class="li"><div class="ln" style="background:var(--gg);color:var(--green)">5</div><div class="lt"><strong>Planetarisch <b class="badge bg">15%</b></strong><span>sin(Tag/365.25) Zyklus-Modulation</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(0 65% 50% / 0.12);color:var(--red)">6</div><div class="lt"><strong>EMF-Korrektur <b class="badge br">5%</b></strong><span>Schumann-Harmonische × EMF-Index × (1−Entropy×0.5)</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#128290;</span> Ausgabe-Objekt</div>
+<pre class="code">{ "frequency": 437.82, "components": {"name":312.5, "birth":567.1, "organ_clock":440.0}, "emf_corrected": true }</pre></div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step-panel" data-step="3">
+<div class="step-header"><div class="step-icon si-amber">&#127919;</div><div><h2>Fokus-Vektorisierung &amp; Bio-Knowledge</h2><span class="step-sub">Semantisches Embedding + Chakra/Meridian-Matching</span></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128301;</span> Fokus→Vektor</div>
+<pre class="code">_embed_focus("Harmonische Regulation")
+  → MD5 → Seed → torch.randn(256)
+  // Deterministisch: Gleicher Fokus = Gleicher Vektor</pre></div>
+<div class="card"><div class="ct"><span>&#128156;</span> Bio-Matching Pipeline</div>
+<div class="fr"><div class="fb">Fokus</div><span class="fa">→</span><div class="fb hl">Chakra-Scan</div><span class="fa">→</span><div class="fb hl">Meridian-Scan</div><span class="fa">→</span><div class="fb">50/50 Mix</div></div></div>
+</div>
+<div class="card"><div class="ct"><span>&#127752;</span> 7 Chakren</div>
+<div class="chakra-list">
+<div class="cr"><div class="cd" style="background:#FF0000"></div><span class="cn">Muladhara (Wurzel)</span><span class="cf">194.18 Hz · Erde · LAM</span></div>
+<div class="cr"><div class="cd" style="background:#FF7F00"></div><span class="cn">Svadhisthana (Sakral)</span><span class="cf">210.42 Hz · Wasser · VAM</span></div>
+<div class="cr"><div class="cd" style="background:#FFFF00"></div><span class="cn">Manipura (Solar)</span><span class="cf">126.22 Hz · Feuer · RAM</span></div>
+<div class="cr"><div class="cd" style="background:#00FF00"></div><span class="cn">Anahata (Herz)</span><span class="cf">341.30 Hz · Luft · YAM</span></div>
+<div class="cr"><div class="cd" style="background:#0000FF"></div><span class="cn">Vishuddha (Hals)</span><span class="cf">384.00 Hz · Äther · HAM</span></div>
+<div class="cr"><div class="cd" style="background:#4B0082"></div><span class="cn">Ajna (Stirn)</span><span class="cf">432.00 Hz · Licht · OM</span></div>
+<div class="cr"><div class="cd" style="background:#8B00FF"></div><span class="cn">Sahasrara (Krone)</span><span class="cf">963.00 Hz · Bewusstsein</span></div>
+</div></div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step-panel" data-step="4">
+<div class="step-header"><div class="step-icon si-red">&#128225;</div><div><h2>EMF-Kompensation</h2><span class="step-sub">Echtzeit-Messung &amp; Neutralisierung elektromagn. St&ouml;rungen</span></div></div>
+<div class="card"><div class="ct"><span>&#128752;</span> 3-Schichten-Architektur</div>
+<div class="ls">
+<div class="li" style="border-color:hsl(0 65% 50% / 0.35)"><div class="ln" style="background:hsl(0 65% 50% / 0.12);color:var(--red)">S</div><div class="lt"><strong>SENSING — 4 Software-Sensoren</strong><span>CPU Timing Jitter · RNG Entropy (Chi²+Shannon) · GPU Thermal Noise · System Load</span></div></div>
+<div class="li" style="border-color:hsl(35 85% 55% / 0.35)"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">P</div><div class="lt"><strong>PROFILING — Umfeld-Fingerprint</strong><span>composite_emf_index (0–1) · entropy_score · low_noise_windows · timing_recommendation</span></div></div>
+<div class="li" style="border-color:hsl(145 50% 40% / 0.35)"><div class="ln" style="background:var(--gg);color:var(--green)">C</div><div class="lt"><strong>COMPENSATE — Aktive Neutralisierung</strong><span>Inverser Vektor auf Client+Fokus · Solfeggio Counter-Freq · Seed-Verbesserung</span></div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#127925;</span> Solfeggio Counter-Frequencies</div>
+<div class="sg">
+<div class="si"><div class="sh">174</div><div class="sl">Schmerzlinderung</div></div>
+<div class="si"><div class="sh">285</div><div class="sl">Regeneration</div></div>
+<div class="si"><div class="sh">396</div><div class="sl">Angstbefreiung</div></div>
+<div class="si"><div class="sh">417</div><div class="sl">Wandel</div></div>
+<div class="si"><div class="sh">528</div><div class="sl">DNA-Reparatur</div></div>
+<div class="si"><div class="sh">639</div><div class="sl">Harmonie</div></div>
+<div class="si"><div class="sh">741</div><div class="sl">Reinigung</div></div>
+<div class="si"><div class="sh">852</div><div class="sl">Intuition</div></div>
+<div class="si"><div class="sh">963</div><div class="sl">Einheit</div></div>
+</div></div>
+<div class="card"><div class="ct"><span>&#128225;</span> Bekannte EMF-Quellen</div>
+<table class="dt"><tr><th>Quelle</th><th>MHz</th><th>Severity</th></tr>
+<tr><td>WiFi 2.4G</td><td class="mono">2437</td><td><div class="pb"><div class="pf" style="width:70%;background:var(--amber)"></div></div></td></tr>
+<tr><td>5G Sub-6</td><td class="mono">3500</td><td><div class="pb"><div class="pf" style="width:80%;background:var(--red)"></div></div></td></tr>
+<tr><td>5G mmWave</td><td class="mono">28000</td><td><div class="pb"><div class="pf" style="width:90%;background:var(--red)"></div></div></td></tr>
+<tr><td>Bluetooth</td><td class="mono">2442</td><td><div class="pb"><div class="pf" style="width:50%;background:var(--green)"></div></div></td></tr>
+<tr><td>Powerline</td><td class="mono">0.05</td><td><div class="pb"><div class="pf" style="width:40%;background:var(--green)"></div></div></td></tr>
+</table></div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step-panel" data-step="5">
+<div class="step-header"><div class="step-icon si-pink">&#128142;</div><div><h2>Amplifier-System</h2><span class="step-sub">Heilsteine, Orgonite, Kristalle als physische Verst&auml;rker</span></div></div>
+<div class="card"><div class="ct"><span>&#9878;</span> Pipeline</div>
+<div class="fr"><div class="fb">amplifiers.json</div><span class="fa">→</span><div class="fb hl">12-Dim Vektor</div><span class="fa">→</span><div class="fb hl">Cosinus-Match</div><span class="fa">→</span><div class="fb">Top-3 Empfehlung</div></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#127756;</span> 5-Elemente Frequenzen</div>
+<div class="mr"><span class="ml">Holz</span><span class="mv" style="color:#66bb6a">294.0 Hz</span></div>
+<div class="mr"><span class="ml">Feuer</span><span class="mv" style="color:#ef5350">440.0 Hz</span></div>
+<div class="mr"><span class="ml">Erde</span><span class="mv" style="color:#ffa726">264.0 Hz</span></div>
+<div class="mr"><span class="ml">Metall</span><span class="mv" style="color:#bdbdbd">352.0 Hz</span></div>
+<div class="mr"><span class="ml">Wasser</span><span class="mv" style="color:#42a5f5">308.0 Hz</span></div></div>
+<div class="card"><div class="ct"><span>&#128302;</span> Amplifier-Effekte</div>
+<div class="mr"><span class="ml">Palette-Modulation</span><span class="mv tc">15% Farbshift</span></div>
+<div class="mr"><span class="ml">Audio-Frequenzen</span><span class="mv tp">Basis + Harmonische</span></div>
+<div class="mr"><span class="ml">Chakra-Zuordnung</span><span class="mv tg">Auto</span></div>
+<div class="mr"><span class="ml">Faktor</span><span class="mv ta">0.0 – 1.0</span></div></div>
+</div></section>
+
+<!-- STEP 7 -->
+<section class="step-panel" data-step="6">
+<div class="step-header"><div class="step-icon si-amber">&#127912;</div><div><h2>Farbpaletten-Generierung</h2><span class="step-sub">6 Strategien: Client-Koh&auml;rent bis Natur-Heilsam</span></div></div>
+<div class="card"><div class="ct"><span>&#127752;</span> Palette-Strategien</div>
+<table class="dt"><tr><th>Strategie</th><th>Quelle</th><th>Stil</th></tr>
+<tr><td><b class="badge bc">client_focus</b></td><td>Client+Fokus</td><td>Analog 30°</td></tr>
+<tr><td><b class="badge bg">focus_only</b></td><td>Fokus-Hash</td><td>Monochrom</td></tr>
+<tr><td><b class="badge ba">nature_healing</b></td><td>Foggy Forest</td><td>12 Naturtöne</td></tr>
+<tr><td><b class="badge bp">focus_emf</b></td><td>Fokus+EMF+Bio</td><td>Multi-Layer HSV</td></tr>
+<tr><td><b class="badge bk">generate</b></td><td>Client-Freq</td><td>Hue-Shift</td></tr>
+<tr><td><b class="badge br">unified</b></td><td>⅔Client+⅓Fokus</td><td>Golden-Ratio</td></tr>
+</table></div>
+<div class="card"><div class="ct"><span>&#128396;</span> Unified Coherent — 4-Schichten-Fusion</div>
+<div class="ls">
+<div class="li"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">1</div><div class="lt"><strong>Client-Anker (⅔)</strong><span>Freq × Φ (0.618) → Golden-Ratio Hue</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">2</div><div class="lt"><strong>Fokus-Feld (⅓)</strong><span>Circular Mean → Fokus-Zentroid</span></div></div>
+<div class="li"><div class="ln" style="background:hsl(35 85% 55% / 0.12);color:var(--amber)">3</div><div class="lt"><strong>EMF-Micro-Offset</strong><span>Counter-Freq → Hue-Shift (1/100k)</span></div></div>
+<div class="li"><div class="ln" style="background:var(--gg);color:var(--green)">4</div><div class="lt"><strong>Monochrom-Design</strong><span>S:0.04→0.18 · V:0.97→0.35 · 10 Stufen</span></div></div>
+</div></div>
+</section>
+
+<!-- STEP 8 -->
+<section class="step-panel" data-step="7">
+<div class="step-header"><div class="step-icon si-cyan">&#9889;</div><div><h2>Matrix-Suche (Kernalgorithmus)</h2><span class="step-sub">Monte-Carlo im 10<sup>144</sup> Raum mit Cosinus-&Auml;hnlichkeit</span></div></div>
+<div class="card"><div class="ct"><span>&#9881;</span> _find_optimal_matrix_cuda</div>
+<pre class="code"><span class="cm">// 1. Kandidaten</span>
+candidates = torch.randint(0, 10, (N, size*size))  <span class="cm">// 500k × 144</span>
+<span class="cm">// 2. Zielvektor</span>
+target = client_vec + (focus_vec × weight)          <span class="cm">// + HRV-Noise</span>
+<span class="cm">// 3. Projektion</span>
+proj = candidates @ rand_matrix                     <span class="cm">// → (N, 256)</span>
+<span class="cm">// 4. Cosinus-Similarity</span>
+sim = cosine_similarity(proj, target)               <span class="cm">// N Scores</span>
+<span class="cm">// 5. Top-K</span>
+top = torch.topk(sim, 10)                           <span class="cm">// Beste 10</span></pre></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128202;</span> Modi</div>
+<div class="mr"><span class="ml"><b class="badge bp">Quantum</b></span><span class="mv tp">Entropie-Seed (einzigartig)</span></div>
+<div class="mr"><span class="ml"><b class="badge bc">Precision</b></span><span class="mv tc">MD5(Client+Fokus) → Seed</span></div>
+<div class="mr"><span class="ml">Gewichte</span><span class="mv">0.0 | 0.4 | 1.0 | 1.5</span></div></div>
+<div class="card"><div class="ct"><span>&#128200;</span> Matrix-Skalierung</div>
+<div class="mr"><span class="ml">12×12</span><span class="mv">144 Zellen · 256-dim</span></div>
+<div class="mr"><span class="ml">24×24</span><span class="mv">576 Zellen · 384-dim · 1.5×</span></div>
+<div class="mr"><span class="ml">36×36</span><span class="mv">1296 Zellen · 512-dim · 2.5×</span></div></div>
+</div>
+<div class="card"><div class="ct"><span>&#128202;</span> Beispiel 12×12 Matrix</div>
+<div class="mini-matrix" id="demoMatrix"></div></div>
+</section>
+
+<!-- STEP 9 -->
+<section class="step-panel" data-step="8">
+<div class="step-header"><div class="step-icon si-purple">&#9883;</div><div><h2>Quantum Refinement (D-Wave)</h2><span class="step-sub">Optionales Quanten-Annealing auf QPU</span></div></div>
+<div class="card"><div class="ct"><span>&#128300;</span> 2-Stufen Quantum-Prozess</div>
+<div class="ls">
+<div class="li" style="border-color:var(--bd2)"><div class="ln" style="background:var(--primary-bg);color:var(--primary)">1</div><div class="lt"><strong>Coarse Search (GPU)</strong><span>Monte-Carlo findet Top 0.001% → 10 Kandidaten</span></div></div>
+<div class="li" style="border-color:hsl(270 40% 60% / 0.35)"><div class="ln" style="background:hsl(270 40% 60% / 0.12);color:var(--purple)">2</div><div class="lt"><strong>Quantum Annealing (QPU)</strong><span>QUBO-Formulierung → D-Wave Sampler → Tunneling → Globales Optimum</span></div></div>
+</div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128274;</span> Voraussetzungen</div>
+<div class="mr"><span class="ml">Token</span><span class="mv ta">DWAVE_API_TOKEN</span></div>
+<div class="mr"><span class="ml">SDK</span><span class="mv">dwave-ocean-sdk</span></div>
+<div class="mr"><span class="ml">Status</span><span class="mv tp">Interface bereit (Mock)</span></div></div>
+<div class="card"><div class="ct"><span>&#128640;</span> Roadmap</div>
+<div class="mr"><span class="ml">v1.5.1</span><span class="mv dim">RTL-SDR Hardware</span></div>
+<div class="mr"><span class="ml">v1.6.0</span><span class="mv dim">HRV-HW + D-Wave Live</span></div></div>
+</div></section>
+
+<!-- STEP 10 -->
+<section class="step-panel" data-step="9">
+<div class="step-header"><div class="step-icon si-green">&#128736;</div><div><h2>Post-Processing</h2><span class="step-sub">Symmetrisierung, Validierung, Amplifier-Modulation, Farbmapping</span></div></div>
+<div class="card"><div class="ct"><span>&#128260;</span> Pipeline</div>
+<div class="fr"><div class="fb">Best Matrix</div><span class="fa">→</span><div class="fb hl">5-Elemente</div><span class="fa">→</span><div class="fb hl">Symmetrie</div><span class="fa">→</span><div class="fb hl">Amplifier</div><span class="fa">→</span><div class="fb">Farb-Map</div></div></div>
+<div class="cg2">
+<div class="card"><div class="ct"><span>&#128302;</span> Symmetrie-Modi</div>
+<div class="mr"><span class="ml"><b class="badge bc">horizontal</b></span><span class="mv">L-R Spiegel (72 Zellen)</span></div>
+<div class="mr"><span class="ml"><b class="badge bp">quadrant</b></span><span class="mv">4-Quadrant Mandala (36)</span></div>
+<div class="mr"><span class="ml">Retention</span><span class="mv tg">88–95%</span></div></div>
+<div class="card"><div class="ct"><span>&#127752;</span> Farb-Mapping</div>
+<div class="mr"><span class="ml">Input</span><span class="mv">Matrix int[0-9] + Palette</span></div>
+<div class="mr"><span class="ml">Output</span><span class="mv">NxN Hex Grid</span></div>
+<div class="mr"><span class="ml">Fallback</span><span class="mv">#FFFFFF</span></div></div>
+</div></section>
+
+<!-- STEP 11 -->
+<section class="step-panel" data-step="10">
+<div class="step-header"><div class="step-icon si-amber">&#128196;</div><div><h2>Ausgabe &amp; Export</h2><span class="step-sub">PDF, Excel, JSON, Audio, 144-stelliger Raten-String</span></div></div>
+<div class="card"><div class="ct"><span>&#128230;</span> JSON Response</div>
+<pre class="code">{ "resonance_score": 0.8742, "intensity": 2.891,
+  "matrix_data": [[3,7,1,...], ...],
+  "matrix_colors": [["#FF0000",...], ...],
+  "top_10": [...], "processing_time_ms": 1247.3,
+  "hardware": "CUDA (RTX 4000 Ada) [Extreme: 1M]",
+  "emf_compensation": {"active":true, "emf_index":0.23},
+  "amplifier": {"name":"Rosenquarz"},
+  "symmetry": "horizontal" }</pre></div>
+<div class="cg3">
+<div class="card"><div class="ct"><span>&#128196;</span> PDF</div><p class="small dim">ReportLab · A4 · Farbmatrix · Arial+Umlaute · Archiv: Analysen/DATUM_Name/</p></div>
+<div class="card"><div class="ct"><span>&#128202;</span> Excel</div><p class="small dim">OpenPyXL · PatternFill · Kontrast-Text (BT.709) · Im selben Ordner</p></div>
+<div class="card"><div class="ct"><span>&#127925;</span> Audio</div><p class="small dim">Solfeggio via winsound · 30s Buffer · Harmonizer · Counter-Freq</p></div>
+</div></section>
+
+<!-- STEP 12 -->
+<section class="step-panel" data-step="11">
+<div class="step-header"><div class="step-icon si-cyan">&#127760;</div><div><h2>REST API &amp; Live-Monitoring</h2><span class="step-sub">FastAPI, WebSocket Dashboard, Client-Sensor</span></div></div>
+<div class="card"><div class="ct"><span>&#128268;</span> API Endpoints v1.5.0</div>
+<table class="dt"><tr><th>Methode</th><th>Endpoint</th><th>Beschreibung</th></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tc">/api/v1/analyze-matrix</td><td>Einzelklient-Analyse</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tc">/api/v1/analyze-group</td><td>Gruppen-Centroid</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tc">/api/v1/analyze-geo</td><td>Geo-Resonanz</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tg">/api/v1/emf/enable</td><td>EMF aktivieren</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tr">/api/v1/emf/disable</td><td>EMF deaktivieren</td></tr>
+<tr><td><b class="em mg">GET</b></td><td class="mono tc">/api/v1/emf/status</td><td>EMF-Status</td></tr>
+<tr><td><b class="em mg">GET</b></td><td class="mono tc">/api/v1/emf/profile</td><td>Echtzeit-Messung</td></tr>
+<tr><td><b class="em mg">GET</b></td><td class="mono tc">/api/v1/emf/monitor</td><td>Live-Dashboard HTML</td></tr>
+<tr><td><b class="em mw">WS</b></td><td class="mono tp">/api/v1/emf/ws</td><td>Live-Stream (5s)</td></tr>
+<tr><td><b class="em mw">WS</b></td><td class="mono tp">/api/v1/emf/client-sensor</td><td>Remote Sensor-Input</td></tr>
+<tr><td><b class="em mg">GET</b></td><td class="mono tc">/api/v1/amplifier/list</td><td>Alle Amplifier</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tc">/api/v1/amplifier/set/{n}</td><td>Amplifier setzen</td></tr>
+<tr><td><b class="em mp">POST</b></td><td class="mono tc">/api/v1/amplifier/match</td><td>Client-Matching</td></tr>
+</table></div>
+<div class="card"><div class="ct"><span>&#128225;</span> WebSocket-Datenfluss</div>
+<div class="fr"><div class="fb">Browser</div><span class="fa">↔</span><div class="fb hl">WebSocket /emf/ws</div><span class="fa">↔</span><div class="fb hl">EMFCompensator</div><span class="fa">→</span><div class="fb">JSON (5s Interval)</div></div>
+<p class="small dim" style="margin-top:10px">Payload: emf_index, entropy_score, timing_jitter_ms, gpu_noise, low_noise_window, recommendation, counter_frequencies</p>
+</div></section>
+
+<!-- BUTTONS (alle Steps) -->
+<div class="btn-group">
+  <button class="btn" id="btnPrev" onclick="navigate(-1)" disabled>← Zurück</button>
+  <button class="btn btn-primary" id="btnNext" onclick="navigate(1)">Weiter →</button>
+</div>
+</main>
+
+<script src="workflow_stepping.js"></script>
+</body>
+</html>

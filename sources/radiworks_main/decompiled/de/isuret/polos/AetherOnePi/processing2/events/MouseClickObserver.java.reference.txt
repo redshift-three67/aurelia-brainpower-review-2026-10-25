@@ -1,0 +1,9 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.events;
+
+public interface MouseClickObserver {
+    public void mouseClicked();
+}
+

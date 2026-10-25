@@ -1,0 +1,150 @@
+/**
+ * HERZMERIDIAN (HT) - 9 Punkte
+ * Element: Feuer (Yin), Maximalzeit: 11-13 Uhr
+ * WHO Standard Acupuncture Point Locations (2008)
+ */
+
+import { AcupuncturePoint, calculateHarmonics } from '../meridianPointsDatabase';
+
+export const HEART_MERIDIAN: AcupuncturePoint[] = [
+  {
+    id: 'HT1',
+    nameChinese: 'Jiquan',
+    nameEnglish: 'Highest Spring',
+    nameGerman: 'Höchste Quelle',
+    meridian: 'HT',
+    element: 'fire',
+    location: 'In der Achselhöhle, medial der A. axillaris',
+    depth: '0.5-1 cun',
+    frequency: 341.3,
+    harmonicFrequencies: calculateHarmonics(341.3),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Herz-Qi', 'Öffnet Brust', 'Belebt Arme'],
+    indications: ['Herzschmerzen', 'Armschmerzen', 'Depression', 'Schulterschmerzen'],
+    precautions: ['Vorsicht - A. axillaris'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'HT2',
+    nameChinese: 'Qingling',
+    nameEnglish: 'Cyan Spirit',
+    nameGerman: 'Blaugrüner Geist',
+    meridian: 'HT',
+    element: 'fire',
+    location: '3 cun über dem medialen Epikondylus, in der Furche des M. biceps',
+    depth: '0.5-1 cun',
+    frequency: 349.9,
+    harmonicFrequencies: calculateHarmonics(349.9),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Herz-Qi'],
+    indications: ['Herzschmerzen', 'Schulterschmerzen', 'Rippenschmerzen']
+  },
+  {
+    id: 'HT3',
+    nameChinese: 'Shaohai',
+    nameEnglish: 'Lesser Sea',
+    nameGerman: 'Kleines Meer',
+    meridian: 'HT',
+    element: 'fire',
+    location: 'Bei gebeugtem Ellenbogen, zwischen medialem Epikondylus und Ulnarer Flexorensehne',
+    depth: '0.5-1 cun',
+    frequency: 358.4,
+    harmonicFrequencies: calculateHarmonics(358.4),
+    pointTypes: ['he_sea'],
+    functions: ['Beruhigt Herz', 'Transformiert Schleim', 'Aktiviert Kanal'],
+    indications: ['Herzschmerzen', 'Ellenbogenschmerzen', 'Angst', 'Gedächtnisprobleme'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'HT4',
+    nameChinese: 'Lingdao',
+    nameEnglish: 'Spirit Pathway',
+    nameGerman: 'Geistespfad',
+    meridian: 'HT',
+    element: 'fire',
+    location: '1.5 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris',
+    depth: '0.3-0.5 cun',
+    frequency: 367,
+    harmonicFrequencies: calculateHarmonics(367),
+    pointTypes: ['jing_river'],
+    functions: ['Beruhigt Herz', 'Reguliert Qi'],
+    indications: ['Herzschmerzen', 'Stimmverlust', 'Handgelenkschmerzen']
+  },
+  {
+    id: 'HT5',
+    nameChinese: 'Tongli',
+    nameEnglish: 'Connecting Li',
+    nameGerman: 'Verbindung zum Inneren',
+    meridian: 'HT',
+    element: 'fire',
+    location: '1 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris',
+    depth: '0.3-0.5 cun',
+    frequency: 375.5,
+    harmonicFrequencies: calculateHarmonics(375.5),
+    pointTypes: ['luo_connecting'],
+    functions: ['Beruhigt Herz', 'Stärkt Zunge', 'Reguliert Rhythmus'],
+    indications: ['Herzrhythmusstörungen', 'Sprachstörungen', 'Handgelenkschmerzen'],
+    chakraCorrespondence: 'vishuddha'
+  },
+  {
+    id: 'HT6',
+    nameChinese: 'Yinxi',
+    nameEnglish: 'Yin Cleft',
+    nameGerman: 'Yin-Spalt',
+    meridian: 'HT',
+    element: 'fire',
+    location: '0.5 cun proximal der Handgelenksfalte, radial der Sehne des M. flexor carpi ulnaris',
+    depth: '0.3-0.5 cun',
+    frequency: 384.1,
+    harmonicFrequencies: calculateHarmonics(384.1),
+    pointTypes: ['xi_cleft'],
+    functions: ['Nährt Herz-Yin', 'Stoppt Nachtschweiß', 'Beruhigt Geist'],
+    indications: ['Nachtschweiß', 'Herzschmerzen', 'Angst', 'Schlaflosigkeit']
+  },
+  {
+    id: 'HT7',
+    nameChinese: 'Shenmen',
+    nameEnglish: 'Spirit Gate',
+    nameGerman: 'Tor des Geistes',
+    meridian: 'HT',
+    element: 'fire',
+    location: 'In der Handgelenksfalte, ulnar der Sehne des M. flexor carpi ulnaris',
+    depth: '0.3-0.5 cun',
+    frequency: 392.6,
+    harmonicFrequencies: calculateHarmonics(392.6),
+    pointTypes: ['shu_stream', 'yuan_source'],
+    functions: ['Beruhigt Herz und Geist', 'Nährt Herz-Blut', 'Öffnet Sinne'],
+    indications: ['Schlaflosigkeit', 'Angst', 'Depression', 'Herzrhythmusstörungen', 'Gedächtnisprobleme'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'HT8',
+    nameChinese: 'Shaofu',
+    nameEnglish: 'Lesser Mansion',
+    nameGerman: 'Kleiner Palast',
+    meridian: 'HT',
+    element: 'fire',
+    location: 'In der Handfläche, zwischen 4. und 5. Metakarpale, wo der kleine Finger beim Faustschluss zeigt',
+    depth: '0.3-0.5 cun',
+    frequency: 401.2,
+    harmonicFrequencies: calculateHarmonics(401.2),
+    pointTypes: ['ying_spring'],
+    functions: ['Klärt Herz-Hitze', 'Beruhigt Geist'],
+    indications: ['Herzklopfen', 'Brustschmerzen', 'Juckreiz', 'Harnbeschwerden']
+  },
+  {
+    id: 'HT9',
+    nameChinese: 'Shaochong',
+    nameEnglish: 'Lesser Rushing',
+    nameGerman: 'Kleines Drängen',
+    meridian: 'HT',
+    element: 'fire',
+    location: 'Am kleinen Finger, 0.1 cun proximal des radialen Nagelwinkels',
+    depth: '0.1 cun oder Blutenlassen',
+    frequency: 409.7,
+    harmonicFrequencies: calculateHarmonics(409.7),
+    pointTypes: ['jing_well'],
+    functions: ['Belebt Bewusstsein', 'Klärt Hitze', 'Öffnet Sinne'],
+    indications: ['Bewusstlosigkeit', 'Fieber', 'Herzschmerzen', 'Zungengeschwür']
+  }
+];

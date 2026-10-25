@@ -1,0 +1,688 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import controlP5.Button;
+import controlP5.CColor;
+import controlP5.ControlP5;
+import controlP5.Slider;
+import controlP5.Tab;
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.Rate;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.Settings;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.AnalyseScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.AreaScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.BroadcastElement;
+import de.isuret.polos.AetherOnePi.processing2.elements.BroadcastScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.CardScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.DashboardScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.HotbitsScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.processing2.elements.ImageLayerScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.Label;
+import de.isuret.polos.AetherOnePi.processing2.elements.RatesScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.SessionScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.SettingsScreen;
+import de.isuret.polos.AetherOnePi.processing2.elements.StatusLED;
+import de.isuret.polos.AetherOnePi.utils.AetherOnePiProcessingConfiguration;
+import java.awt.TrayIcon;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import processing.core.PFont;
+import processing.core.PImage;
+
+public class GuiElements {
+    private final int border = 30;
+    private AetherOneUI p;
+    public ControlP5 cp5;
+    private CColor whiteStyleColor = new CColor();
+    private CColor greenStyleColor = new CColor();
+    private CColor textFieldStyleColor = new CColor();
+    private Settings guiConf;
+    private Map<String, PImage> backgroundImages = new HashMap<String, PImage>();
+    private Map<String, PFont> fonts = new HashMap<String, PFont>();
+    private Map<String, StatusLED> statusLEDMap = new HashMap<String, StatusLED>();
+    private List<IDrawableElement> drawableElementList = new ArrayList<IDrawableElement>();
+    private List<BroadcastElement> broadcastQueueList = new ArrayList<BroadcastElement>();
+    private Float x;
+    private Float y;
+    private Float width;
+    private Float height;
+    private String currentTab = "default";
+    private boolean verticalAlignment;
+    private int backgroundOverlayAlpha = 120;
+    private int foregroundOverlayAlpha = 80;
+    private IDrawableElement newDrawableElement;
+    private Boolean stopAll = false;
+    private Boolean analysing = false;
+    private Boolean stopCurrentBroadcast = false;
+    private Calendar lastAnalysis = null;
+    private List<Integer> automodeGvAverage = new ArrayList<Integer>();
+    private String javaVersion = System.getProperty("java.version");
+
+    public GuiElements(AetherOneUI p) {
+        this.p = p;
+        this.cp5 = new ControlP5(p);
+        this.guiConf = AetherOnePiProcessingConfiguration.loadSettings("Gui");
+        try {
+            InputStream input = GuiElements.class.getResourceAsStream("/fonts/ProcessingSansPro-Semibold-14.vlw");
+            PFont defaultFont = new PFont(input);
+            this.fonts.put("default", defaultFont);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.whiteStyleColor.setBackground(p.color(0, 84, 173)).setForeground(p.color(0)).setCaptionLabel(p.color(255)).setValueLabel(p.color(255)).setActive(p.color(0));
+        this.textFieldStyleColor.setBackground(p.color(255)).setForeground(p.color(0)).setCaptionLabel(p.color(0)).setValueLabel(p.color(0));
+        this.greenStyleColor.setBackground(p.color(100)).setForeground(p.color(0, 150, 20)).setCaptionLabel(p.color(255)).setValueLabel(p.color(255));
+    }
+
+    public GuiElements initTabs() {
+        PFont font = this.fonts.get("default");
+        this.loadBackgroundImageForTab("default");
+        ((Tab)((Tab)((Tab)((Tab)((Tab)this.cp5.getTab("default").activateEvent(true).setColorBackground(this.p.color(29, 0, 61))).setColorLabel(this.p.color(255))).setColorActive(this.p.color(56, 0, 117))).setColorForeground(this.p.color(0))).setLabel("DASHBOARD").setId(1)).getCaptionLabel().setFont(font);
+        this.cp5.getWindow().setPositionOfTabs(35, 33);
+        return this;
+    }
+
+    public GuiElements addBroadcastElement(String signature, int seconds, Integer multiplier) {
+        BroadcastElement broadcastElement = new BroadcastElement(this.p, "BROADCAST", seconds, signature, multiplier);
+        this.broadcastQueueList.add(broadcastElement);
+        return this;
+    }
+
+    public GuiElements addBroadcastElement(String signature, int seconds, Boolean counterCheck, Integer counterCheckGV, Integer multiplier) {
+        BroadcastElement broadcastElement = new BroadcastElement(this.p, "BROADCAST", seconds, signature, multiplier);
+        broadcastElement.setCounterCheck(counterCheck);
+        broadcastElement.setCounterCheckGV(counterCheckGV);
+        this.broadcastQueueList.add(broadcastElement);
+        return this;
+    }
+
+    public GuiElements addStatusLED(String name) {
+        StatusLED statusLED = new StatusLED(this.p, "global", name, this.x.floatValue(), this.y.floatValue());
+        this.drawableElementList.add(statusLED);
+        this.statusLEDMap.put(name, statusLED);
+        if (this.verticalAlignment) {
+            this.y = Float.valueOf(this.y.floatValue() + 15.0f);
+        } else {
+            this.x = Float.valueOf(this.x.floatValue() + 43.0f);
+        }
+        return this;
+    }
+
+    public GuiElements addTab(String name) {
+        PFont font = this.fonts.get("default");
+        ((Tab)((Tab)((Tab)((Tab)((Tab)this.cp5.addTab(name).setColorBackground(this.p.color(61, 0, 47))).setColorLabel(this.p.color(255))).setColorActive(this.p.color(118, 0, 161))).setColorForeground(this.p.color(0))).setId(2)).activateEvent(true).getCaptionLabel().setFont(font);
+        this.loadBackgroundImageForTab(name);
+        return this;
+    }
+
+    public void loadBackgroundImageForTab(String tabName) {
+        String backgroundImageUrl = this.guiConf.getString("window.background.image." + tabName, "backgrounds/aetherOneBackground001.jpg");
+        if (backgroundImageUrl.startsWith("http")) {
+            this.backgroundImages.put(tabName, this.p.loadImage(backgroundImageUrl));
+        } else {
+            this.backgroundImages.put(tabName, this.p.loadImage(new File(backgroundImageUrl).getAbsolutePath()));
+        }
+    }
+
+    public GuiElements selectCurrentTab(String tabName) {
+        this.currentTab = tabName;
+        return this;
+    }
+
+    public GuiElements setInitialBounds(Float x, Float y, Float w, Float h, boolean verticalAlignment) {
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.verticalAlignment = verticalAlignment;
+        return this;
+    }
+
+    public GuiElements addButton(String text) {
+        return this.addButton(text, text, this.x, this.y, this.width, this.height);
+    }
+
+    private GuiElements addButton(String text, String id, Float x, Float y, Float w, Float h) {
+        ((Button)((Button)((Button)((Button)((Button)this.cp5.addButton(text).setFont(this.fonts.get("default"))).setHeight(h.intValue())).setWidth(w.intValue())).setPosition(x.floatValue(), y.floatValue())).setColor(this.whiteStyleColor)).moveTo(this.currentTab);
+        if (this.verticalAlignment) {
+            this.y = Float.valueOf(this.y.floatValue() + (h.floatValue() + 3.0f));
+        } else {
+            this.x = Float.valueOf(this.x.floatValue() + (w.floatValue() + 4.0f));
+        }
+        return this;
+    }
+
+    public GuiElements addTextfield(String text) {
+        return this.addTextfield(text, text, this.x, this.y, Float.valueOf(this.width.floatValue() * 3.0f), this.height);
+    }
+
+    private GuiElements addTextfield(String text, String id, Float x, Float y, Float w, Float h) {
+        ((Textfield)((Textfield)((Textfield)((Textfield)this.cp5.addTextfield(id).setFont(this.fonts.get("default"))).setHeight(h.intValue()).setWidth(w.intValue()).setPosition(x.floatValue() + 100.0f, y.floatValue())).setColor(this.textFieldStyleColor)).setCaptionLabel("")).moveTo(this.currentTab);
+        Label label = new Label(this.p, this.currentTab, text, Float.valueOf(x.floatValue() + 5.0f), Float.valueOf(y.floatValue() + 12.0f));
+        this.drawableElementList.add(label);
+        if (this.verticalAlignment) {
+            this.y = Float.valueOf(this.y.floatValue() + (h.floatValue() + 3.0f));
+        } else {
+            this.x = Float.valueOf(this.x.floatValue() + (w.floatValue() + 4.0f));
+        }
+        return this;
+    }
+
+    public GuiElements addSlider(String text, int w, int h, int range) {
+        ((Slider)((Slider)((Slider)((Slider)this.cp5.addSlider(text).setPosition(this.x.floatValue(), this.y.floatValue())).setSize(w, h).setFont(this.getFonts().get("default"))).setColor(this.greenStyleColor)).setRange(0.0f, range).moveTo("global")).getCaptionLabel().setPaddingX(10).setPaddingY(-9).setColor(255);
+        if (this.verticalAlignment) {
+            this.y = Float.valueOf(this.y.floatValue() + (float)(h + 3));
+        } else {
+            this.x = Float.valueOf(this.x.floatValue() + (float)(w + 4));
+        }
+        return this;
+    }
+
+    public void draw() {
+        if (this.stopAll.booleanValue()) {
+            this.stopAll = false;
+            this.clearAllBroadcastElements();
+        }
+        if (this.stopCurrentBroadcast.booleanValue()) {
+            this.stopCurrentBroadcast = false;
+            this.removeCurrentBroadcastElement();
+        }
+        this.getCp5().get("QUEUE").setValue(this.broadcastQueueList.size());
+        this.drawBackground();
+        this.drawBorders();
+        this.handleAutoMode();
+        this.p.fill(255);
+        this.p.textFont(this.fonts.get("default"), 14.0f);
+        int drawOrderBroadcastElements = 0;
+        int countOrderBroadcastElements = 0;
+        int activeBroadcastElements = this.countActiveBroadcastElements();
+        ArrayList<BroadcastElement> removeElements = new ArrayList<BroadcastElement>();
+        Settings settings = AetherOnePiProcessingConfiguration.loadSettings("Settings");
+        if (this.newDrawableElement != null) {
+            if (!settings.getBoolean("broadcast.single.rates.only", false).booleanValue() && activeBroadcastElements < 8 || settings.getBoolean("broadcast.single.rates.only", false).booleanValue() && activeBroadcastElements == 0) {
+                this.drawableElementList.add(this.newDrawableElement);
+            } else {
+                this.broadcastQueueList.add((BroadcastElement)this.newDrawableElement);
+            }
+            this.newDrawableElement = null;
+        }
+        if (!settings.getBoolean("broadcast.single.rates.only", false).booleanValue() && activeBroadcastElements < 8 && this.broadcastQueueList.size() > 0 || settings.getBoolean("broadcast.single.rates.only", false).booleanValue() && activeBroadcastElements == 0 && this.broadcastQueueList.size() > 0) {
+            BroadcastElement broadcastElement = this.broadcastQueueList.remove(0);
+            broadcastElement.start();
+            this.drawableElementList.add(broadcastElement);
+        }
+        if (this.p.getSettings().getBoolean("dynamic.adjustments", false).booleanValue()) {
+            this.p.fill(0.0f, 255.0f, 0.0f);
+            this.p.text("DYNAMIC ADJUSTMENTS", 22.0f, 700.0f);
+        } else if (this.p.getSettings().getBoolean("power.switch", false).booleanValue()) {
+            this.p.fill(0.0f, 255.0f, 0.0f);
+            this.p.text("POWER SWITCH ON !!!", 22.0f, 700.0f);
+        }
+        this.p.fill(255);
+        this.p.line(200.0f, 541.0f, 200.0f, 700.0f);
+        this.p.line(670.0f, 541.0f, 670.0f, 700.0f);
+        this.p.line(200.0f, 558.0f, 1240.0f, 558.0f);
+        this.p.text("BROADCAST QUEUE", 205.0f, 555.0f);
+        this.p.text("RESONATED RATES", 675.0f, 555.0f);
+        if (this.p.getAutoMode().booleanValue()) {
+            if (this.automodeGvAverage.size() > 0) {
+                double average = this.automodeGvAverage.stream().mapToInt(v -> v).average().getAsDouble();
+                double dgv = average / 1000.0 * 255.0;
+                int gv = (int)dgv;
+                this.p.fill(gv, 100 + gv, gv);
+                this.p.text("AUTO MODE ON -- GV = " + (int)average, 22.0f, 715.0f);
+            }
+            int startX = 900;
+            int baselineY = 700;
+            this.p.noStroke();
+            for (Integer gv : this.p.getAutoModeGVs()) {
+                float barHeight = (float)gv.intValue() / 10.0f;
+                float color = (float)gv.intValue() / 10.0f;
+                this.p.fill(color, color, 255.0f);
+                if (gv >= 1000) {
+                    this.p.fill(color, 255.0f, color);
+                }
+                if (gv < 500) {
+                    this.p.fill(255.0f, 255.0f, color);
+                }
+                if (gv < 250) {
+                    this.p.fill(255.0f, color, color);
+                }
+                this.p.rect(startX, (float)baselineY - barHeight, 2.0f, barHeight);
+                startX += 2;
+            }
+            this.p.fill(255);
+            this.p.text("GENERAL VITALITY GRAPH", 900.0f, 715.0f);
+        }
+        for (int i = 0; i < this.p.getResonatedList().size(); ++i) {
+            RateObject rateObject = this.p.getResonatedList().get(i);
+            this.p.fill(0.0f, 150 + rateObject.getResonateCounter() * 25, 0.0f);
+            this.p.text(rateObject.getResonateCounter(), 675.0f, (float)(575 + 15 * i));
+            this.p.text(rateObject.getNameOrRate(), 695.0f, (float)(575 + 15 * i));
+            if (i > 9) break;
+        }
+        for (IDrawableElement drawableElement : this.drawableElementList) {
+            BroadcastElement broadcastElement;
+            if (this.currentTab.equals(drawableElement.getAssignedTabName()) || "global".equals(drawableElement.getAssignedTabName()) || drawableElement instanceof BroadcastElement && "ANALYZE".equals(this.currentTab)) {
+                if (drawableElement instanceof BroadcastElement) {
+                    broadcastElement = (BroadcastElement)drawableElement;
+                    if (broadcastElement.isStop()) {
+                        removeElements.add(broadcastElement);
+                    }
+                    drawableElement.setDrawOrderByType(drawOrderBroadcastElements);
+                    ++drawOrderBroadcastElements;
+                }
+                drawableElement.draw();
+            } else if (drawableElement instanceof BroadcastElement) {
+                broadcastElement = (BroadcastElement)drawableElement;
+                this.p.noStroke();
+                this.p.fill(100.0f, 100.0f, 100.0f, 10.0f);
+                this.p.rect(675.0f, 550.0f, 200.0f, 150.0f);
+                broadcastElement.draw(675, 550, 200, 150);
+            }
+            if (!(drawableElement instanceof BroadcastElement)) continue;
+            broadcastElement = (BroadcastElement)drawableElement;
+            if (broadcastElement.getMovingWaveAmount() > 0) {
+                this.p.fill(0.0f, 255.0f, 0.0f);
+            } else {
+                this.p.fill(255);
+            }
+            String text = broadcastElement.getSignature();
+            if (text.length() > 20) {
+                text = text.substring(0, 20);
+            }
+            this.p.text(text, 205.0f, (float)(570 + 15 * countOrderBroadcastElements));
+            if (this.p.mouseX >= 205 && this.p.mouseX < 405 && this.p.mouseY >= 570 + 15 * countOrderBroadcastElements - 12 && this.p.mouseY < 570 + 15 * countOrderBroadcastElements) {
+                this.p.text(broadcastElement.getSignature(), 40.0f, 530.0f);
+            }
+            this.p.fill(255);
+            this.p.rect(340.0f, 550 + 15 * ++countOrderBroadcastElements, 320.0f, 5.0f);
+            this.p.fill(255.0f, 0.0f, 0.0f);
+            float progress = 0.0f;
+            if (broadcastElement.getProgress() != null) {
+                progress = broadcastElement.getProgress().floatValue();
+            }
+            this.p.rect(340.0f, 550 + 15 * countOrderBroadcastElements, progress, 5.0f);
+            broadcastElement.calcuateProgress();
+            if (!broadcastElement.isStop()) continue;
+            removeElements.add(broadcastElement);
+            if (this.counterCheckIsPositive(broadcastElement)) continue;
+            broadcastElement.setStop(false);
+            this.broadcastQueueList.add(broadcastElement);
+        }
+        if (this.broadcastQueueList.size() > 0) {
+            this.p.fill(255);
+            this.p.textFont(this.fonts.get("default"), 14.0f);
+            this.p.text("Queue size: " + this.broadcastQueueList.size(), 205.0f, 705.0f);
+        }
+        if (removeElements.size() == 1 && removeElements.get(0) instanceof BroadcastElement) {
+            BroadcastElement broadcastElement = (BroadcastElement)removeElements.get(0);
+            if (broadcastElement.isStop() && this.p.getSettings().getBoolean("notification.after.broadcast", false).booleanValue()) {
+                this.p.getTrayIcon().displayMessage("AetherOnePi", "Broadcast of \n" + broadcastElement.getSignature().trim() + "\nfinished!", TrayIcon.MessageType.INFO);
+            }
+            if (this.p.getSettings().getBoolean("dynamic.adjustments", false).booleanValue()) {
+                int gvTarget = this.p.getGeneralVitality();
+                int gvRate = this.p.checkGeneralVitalityValue();
+                if (gvRate < gvTarget) {
+                    int seconds = broadcastElement.getSeconds();
+                    if (seconds > 1000) {
+                        seconds -= 200;
+                    } else if (seconds > 500) {
+                        seconds -= 100;
+                    } else if (seconds > 200) {
+                        seconds -= 50;
+                    } else if (seconds > 100) {
+                        seconds -= 25;
+                    }
+                    System.out.println(gvRate + " < " + gvTarget + " --- " + broadcastElement.getSignature());
+                    BroadcastElement reBroadcastElement = new BroadcastElement(this.p, "BROADCAST", seconds, broadcastElement.getSignature(), this.p.getMultiplier());
+                    this.broadcastQueueList.add(reBroadcastElement);
+                } else {
+                    System.out.println(gvRate + " > " + gvTarget + " === " + broadcastElement.getSignature());
+                }
+            } else if (this.p.getSettings().getBoolean("power.switch", false).booleanValue()) {
+                BroadcastElement reBroadcastElement = new BroadcastElement(this.p, "BROADCAST", 100, broadcastElement.getSignature(), this.p.getMultiplier());
+                this.broadcastQueueList.add(reBroadcastElement);
+            }
+        }
+        this.drawableElementList.removeAll(removeElements);
+        if (this.p.getSettings().getBoolean("use.overlay", false).booleanValue()) {
+            this.p.noStroke();
+            this.p.fill(10.0f, 0.0f, 30.0f, this.foregroundOverlayAlpha);
+            this.p.rect(0.0f, 0.0f, this.p.width, this.p.height);
+        }
+    }
+
+    private void handleAutoMode() {
+        if (!this.p.getAutoMode().booleanValue()) {
+            return;
+        }
+        if (this.broadcastQueueList.isEmpty()) {
+            Calendar now = Calendar.getInstance();
+            if (this.lastAnalysis != null && now.before(this.lastAnalysis)) {
+                return;
+            }
+            this.lastAnalysis = Calendar.getInstance();
+            int countActiveBroadcasts = this.countActiveBroadcastElements();
+            this.lastAnalysis.add(14, countActiveBroadcasts * countActiveBroadcasts * 111);
+            this.p.setGeneralVitality(this.p.checkGeneralVitalityValue());
+            this.p.getAutoModeGVs().add(this.p.getGeneralVitality());
+            if (this.p.getAutoModeGVs().size() > 180) {
+                this.p.getAutoModeGVs().remove(0);
+            }
+            this.automodeGvAverage.add(this.p.getGeneralVitality());
+            if (this.automodeGvAverage.size() > 10) {
+                this.automodeGvAverage.remove(0);
+            }
+            if (this.p.getGeneralVitality() > 300) {
+                return;
+            }
+            if (!this.analysing.booleanValue()) {
+                this.analysing = true;
+                new Thread(() -> {
+                    try {
+                        List<Rate> rates = this.p.getDataService().findAllBySourceName(this.p.getSelectedDatabase());
+                        AnalysisResult result = this.p.getAnalyseService().analyseRateList(rates);
+                        for (RateObject rateObject : result.getRateObjects()) {
+                            int gvOfRate = this.p.checkGeneralVitalityValue();
+                            if (gvOfRate <= 1400 && gvOfRate <= this.p.getGeneralVitality() + 700) continue;
+                            int seconds = this.p.getHotbitsHandler().getInteger(10, 1000);
+                            this.addBroadcastElement(rateObject.getNameOrRate(), seconds, this.p.getMultiplier());
+                            break;
+                        }
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    finally {
+                        this.analysing = false;
+                    }
+                }).start();
+            }
+        }
+    }
+
+    private boolean counterCheckIsPositive(BroadcastElement broadcastElement) {
+        if (!broadcastElement.getCounterCheck().booleanValue()) {
+            return true;
+        }
+        Integer gvTarget = this.p.checkGeneralVitalityValue();
+        System.out.println(String.format("CounterCheck target gv is %s and broadcastElement gv is %s", gvTarget, broadcastElement.getCounterCheckGV()));
+        return gvTarget >= broadcastElement.getCounterCheckGV();
+    }
+
+    private void clearAllBroadcastElements() {
+        ArrayList<BroadcastElement> removeElements = new ArrayList<BroadcastElement>();
+        for (IDrawableElement drawableElement : this.drawableElementList) {
+            if (!(drawableElement instanceof BroadcastElement)) continue;
+            removeElements.add((BroadcastElement)drawableElement);
+        }
+        this.drawableElementList.removeAll(removeElements);
+    }
+
+    private void removeCurrentBroadcastElement() {
+        ArrayList<BroadcastElement> removeElements = new ArrayList<BroadcastElement>();
+        for (IDrawableElement drawableElement : this.drawableElementList) {
+            if (!(drawableElement instanceof BroadcastElement)) continue;
+            removeElements.add((BroadcastElement)drawableElement);
+            break;
+        }
+        this.drawableElementList.removeAll(removeElements);
+    }
+
+    public int countActiveBroadcastElements() {
+        int count = 0;
+        for (IDrawableElement drawableElement : this.drawableElementList) {
+            if (!(drawableElement instanceof BroadcastElement)) continue;
+            ++count;
+        }
+        return count;
+    }
+
+    private void drawBorders() {
+        this.p.stroke(255);
+        this.p.noFill();
+        this.p.rect(30.0f, 30.0f, this.p.width - 60, this.p.height - 210, 10.0f);
+        this.p.line(30.0f, 50.0f, this.p.width - 30, 50.0f);
+        this.p.line(30.0f, 70.0f, this.p.width - 30, 70.0f);
+    }
+
+    private void drawBackground() {
+        this.p.noStroke();
+        this.p.noFill();
+        if (this.backgroundImages.get(this.currentTab) != null) {
+            this.p.image(this.backgroundImages.get(this.currentTab), 0.0f, 0.0f, this.p.width, this.p.height);
+        }
+        this.p.fill(0, (float)this.backgroundOverlayAlpha);
+        this.p.rect(0.0f, 0.0f, this.p.width, this.p.height);
+    }
+
+    public void setValue(String name, Float value) {
+        this.cp5.get(name).setValue(value.floatValue());
+    }
+
+    public void addDrawableElement(IDrawableElement drawableElement) {
+        this.drawableElementList.add(drawableElement);
+    }
+
+    public GuiElements addAnalyseScreen() {
+        AnalyseScreen analyseScreen = new AnalyseScreen(this.p);
+        this.p.getMouseClickObserverList().add(analyseScreen);
+        this.drawableElementList.add(analyseScreen);
+        return this;
+    }
+
+    public GuiElements addBroadcastScreen() {
+        BroadcastScreen screen = new BroadcastScreen(this.p);
+        this.p.getMouseClickObserverList().add(screen);
+        this.drawableElementList.add(screen);
+        return this;
+    }
+
+    public GuiElements addRatesScreen() {
+        RatesScreen screen = new RatesScreen(this.p);
+        this.p.getMouseClickObserverList().add(screen);
+        this.p.getKeyPressedObserverList().add(screen);
+        this.drawableElementList.add(screen);
+        return this;
+    }
+
+    public GuiElements addDashboardScreen() {
+        this.drawableElementList.add(new DashboardScreen(this.p));
+        return this;
+    }
+
+    public GuiElements addSettingsScreen() {
+        SettingsScreen settingsScreen = new SettingsScreen(this.p);
+        this.p.getMouseClickObserverList().add(settingsScreen);
+        this.drawableElementList.add(settingsScreen);
+        return this;
+    }
+
+    public GuiElements addImageLayerScreen() {
+        ImageLayerScreen imageLayerScreen = new ImageLayerScreen(this.p);
+        this.p.getMouseClickObserverList().add(imageLayerScreen);
+        this.drawableElementList.add(imageLayerScreen);
+        return this;
+    }
+
+    public void stopAllBroadcasts() {
+        this.stopAll = true;
+    }
+
+    public void stopCurrentBroadcast() {
+        this.stopCurrentBroadcast = true;
+    }
+
+    public GuiElements addSessionScreen() {
+        SessionScreen sessionScreen = new SessionScreen(this.p);
+        this.drawableElementList.add(sessionScreen);
+        return this;
+    }
+
+    public GuiElements addCardScreen() {
+        CardScreen cardScreen = new CardScreen(this.p);
+        this.drawableElementList.add(cardScreen);
+        return this;
+    }
+
+    public GuiElements addAreaScreen() {
+        this.drawableElementList.add(new AreaScreen(this.p));
+        return this;
+    }
+
+    public GuiElements addHotbitsScreen() {
+        this.drawableElementList.add(new HotbitsScreen(this.p));
+        return this;
+    }
+
+    public int getBorder() {
+        return 30;
+    }
+
+    public AetherOneUI getP() {
+        return this.p;
+    }
+
+    public void setP(AetherOneUI p) {
+        this.p = p;
+    }
+
+    public ControlP5 getCp5() {
+        return this.cp5;
+    }
+
+    public void setCp5(ControlP5 cp5) {
+        this.cp5 = cp5;
+    }
+
+    public CColor getWhiteStyleColor() {
+        return this.whiteStyleColor;
+    }
+
+    public void setWhiteStyleColor(CColor whiteStyleColor) {
+        this.whiteStyleColor = whiteStyleColor;
+    }
+
+    public CColor getGreenStyleColor() {
+        return this.greenStyleColor;
+    }
+
+    public void setGreenStyleColor(CColor greenStyleColor) {
+        this.greenStyleColor = greenStyleColor;
+    }
+
+    public CColor getTextFieldStyleColor() {
+        return this.textFieldStyleColor;
+    }
+
+    public void setTextFieldStyleColor(CColor textFieldStyleColor) {
+        this.textFieldStyleColor = textFieldStyleColor;
+    }
+
+    public Settings getGuiConf() {
+        return this.guiConf;
+    }
+
+    public void setGuiConf(Settings guiConf) {
+        this.guiConf = guiConf;
+    }
+
+    public Map<String, PImage> getBackgroundImages() {
+        return this.backgroundImages;
+    }
+
+    public void setBackgroundImages(Map<String, PImage> backgroundImages) {
+        this.backgroundImages = backgroundImages;
+    }
+
+    public Map<String, PFont> getFonts() {
+        return this.fonts;
+    }
+
+    public void setFonts(Map<String, PFont> fonts) {
+        this.fonts = fonts;
+    }
+
+    public Map<String, StatusLED> getStatusLEDMap() {
+        return this.statusLEDMap;
+    }
+
+    public void setStatusLEDMap(Map<String, StatusLED> statusLEDMap) {
+        this.statusLEDMap = statusLEDMap;
+    }
+
+    public List<IDrawableElement> getDrawableElementList() {
+        return this.drawableElementList;
+    }
+
+    public void setDrawableElementList(List<IDrawableElement> drawableElementList) {
+        this.drawableElementList = drawableElementList;
+    }
+
+    public List<BroadcastElement> getBroadcastQueueList() {
+        return this.broadcastQueueList;
+    }
+
+    public void setBroadcastQueueList(List<BroadcastElement> broadcastQueueList) {
+        this.broadcastQueueList = broadcastQueueList;
+    }
+
+    public Float getX() {
+        return this.x;
+    }
+
+    public void setX(Float x) {
+        this.x = x;
+    }
+
+    public Float getY() {
+        return this.y;
+    }
+
+    public void setY(Float y) {
+        this.y = y;
+    }
+
+    public Float getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(Float width) {
+        this.width = width;
+    }
+
+    public Float getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(Float height) {
+        this.height = height;
+    }
+
+    public String getCurrentTab() {
+        return this.currentTab;
+    }
+
+    public void setCurrentTab(String currentTab) {
+        this.currentTab = currentTab;
+    }
+
+    public List<Integer> getAutomodeGvAverage() {
+        return this.automodeGvAverage;
+    }
+}
+

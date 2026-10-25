@@ -1,0 +1,66 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.BroadCastData;
+import java.util.Calendar;
+
+public class Session {
+    private String intention;
+    private String description;
+    private Calendar created;
+    AnalysisResult analysisResult;
+    BroadCastData broadCasted;
+
+    public Session(Session vo) {
+        this.intention = vo.intention;
+        this.description = vo.description;
+        this.created = Calendar.getInstance();
+    }
+
+    public Session() {
+    }
+
+    public String getIntention() {
+        return this.intention;
+    }
+
+    public void setIntention(String intention) {
+        this.intention = intention;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Calendar getCreated() {
+        return this.created;
+    }
+
+    public void setCreated(Calendar created) {
+        this.created = created;
+    }
+
+    public AnalysisResult getAnalysisResult() {
+        return this.analysisResult;
+    }
+
+    public void setAnalysisResult(AnalysisResult analysisResult) {
+        this.analysisResult = analysisResult;
+    }
+
+    public BroadCastData getBroadCasted() {
+        return this.broadCasted;
+    }
+
+    public void setBroadCasted(BroadCastData broadCasted) {
+        this.broadCasted = broadCasted;
+    }
+}
+

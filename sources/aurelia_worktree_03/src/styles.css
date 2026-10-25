@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces/wght.css";
+@import "@fontsource-variable/source-sans-3/wght.css";
+
+@theme {
+  --font-display: "Fraunces Variable", Fraunces, "Iowan Old Style", Palatino, Georgia, serif;
+  --font-sans: "Source Sans 3 Variable", "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --color-bg: #f3efe6;
+  --color-fg: #1c241e;
+  --color-muted: #5c655e;
+  --color-subtle: #7a847c;
+  --color-surface: #e8e2d4;
+  --color-elevated: #faf7f0;
+  --color-primary: #2c4a3e;
+  --color-primary-fg: #f3efe6;
+  --color-accent: #3d5c4e;
+  --color-border: #d4cdbd;
+  --color-ring: #2c4a3e;
+  --color-danger: #7f2d2d;
+  --color-warn: #6b4f1a;
+  --color-ok: #2c4a3e;
+
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  --shadow-soft: 0 1px 0 rgb(28 36 30 / 0.04), 0 12px 32px rgb(28 36 30 / 0.06);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html,
+  body,
+  #app {
+    min-height: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+}

@@ -1,0 +1,40 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.hotbits;
+
+import java.util.Calendar;
+import java.util.Random;
+
+public class RandomString {
+    private static final char[] symbols;
+    private final Random random = new Random(Calendar.getInstance().getTimeInMillis());
+    private final char[] buf;
+
+    public RandomString(int length) {
+        if (length < 1) {
+            throw new IllegalArgumentException("length < 1: " + length);
+        }
+        this.buf = new char[length];
+    }
+
+    public String nextString() {
+        for (int i = 0; i < this.buf.length; ++i) {
+            this.buf[i] = symbols[this.random.nextInt(symbols.length)];
+        }
+        return new String(this.buf);
+    }
+
+    static {
+        char ch;
+        StringBuilder tmp = new StringBuilder();
+        for (ch = '0'; ch <= '9'; ch = (char)(ch + '\u0001')) {
+            tmp.append(ch);
+        }
+        for (ch = 'a'; ch <= 'z'; ch = (char)(ch + '\u0001')) {
+            tmp.append(ch);
+        }
+        symbols = tmp.toString().toCharArray();
+    }
+}
+

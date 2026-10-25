@@ -1,0 +1,64 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain.osm;
+
+import java.util.Calendar;
+
+public class Feature {
+    private String territoryName;
+    private String simpleFeatureData;
+    private String simpleFeatureType;
+    private String note;
+    private String url;
+    private Calendar lastUpdate;
+
+    public String getTerritoryName() {
+        return this.territoryName;
+    }
+
+    public void setTerritoryName(String territoryName) {
+        this.territoryName = territoryName;
+    }
+
+    public String getNote() {
+        return this.note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getSimpleFeatureData() {
+        return this.simpleFeatureData;
+    }
+
+    public void setSimpleFeatureData(String simpleFeatureData) {
+        this.simpleFeatureData = simpleFeatureData;
+    }
+
+    public String getSimpleFeatureType() {
+        return this.simpleFeatureType;
+    }
+
+    public void setSimpleFeatureType(String simpleFeatureType) {
+        this.simpleFeatureType = simpleFeatureType;
+    }
+
+    public Calendar getLastUpdate() {
+        return this.lastUpdate;
+    }
+
+    public void setLastUpdate(Calendar lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+}
+

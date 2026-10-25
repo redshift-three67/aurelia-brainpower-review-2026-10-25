@@ -1,0 +1,21 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain.osm;
+
+import de.isuret.polos.AetherOnePi.domain.osm.OsmElement;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OsmDownload {
+    private List<OsmElement> elements = new ArrayList<OsmElement>();
+
+    public List<OsmElement> getElements() {
+        return this.elements;
+    }
+
+    public void setElements(List<OsmElement> elements) {
+        this.elements = elements;
+    }
+}
+

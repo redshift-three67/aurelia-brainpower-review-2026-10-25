@@ -1,0 +1,151 @@
+/**
+ * PERIKARDMERIDIAN (PC) - 9 Punkte
+ * Element: Feuer (Yin), Maximalzeit: 19-21 Uhr
+ * WHO Standard Acupuncture Point Locations (2008)
+ */
+
+import { AcupuncturePoint, calculateHarmonics } from '../meridianPointsDatabase';
+
+export const PERICARDIUM_MERIDIAN: AcupuncturePoint[] = [
+  {
+    id: 'PC1',
+    nameChinese: 'Tianchi',
+    nameEnglish: 'Celestial Pool',
+    nameGerman: 'Himmlischer Teich',
+    meridian: 'PC',
+    element: 'fire',
+    location: '1 cun lateral der Brustwarze, im 4. ICR',
+    depth: '0.3-0.5 cun schräg',
+    frequency: 341.3,
+    harmonicFrequencies: calculateHarmonics(341.3),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Qi im Brustkorb', 'Zerstreut Schwellung'],
+    indications: ['Brustschmerzen', 'Achselschwellung', 'Mastitis'],
+    precautions: ['Nicht tief stechen - Pneumothorax-Risiko'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'PC2',
+    nameChinese: 'Tianquan',
+    nameEnglish: 'Celestial Spring',
+    nameGerman: 'Himmlische Quelle',
+    meridian: 'PC',
+    element: 'fire',
+    location: '2 cun unter dem vorderen Achselfaltenende, zwischen den Köpfen des M. biceps',
+    depth: '0.5-1 cun',
+    frequency: 349.9,
+    harmonicFrequencies: calculateHarmonics(349.9),
+    pointTypes: ['regular'],
+    functions: ['Reguliert Herz-Qi', 'Belebt Blut'],
+    indications: ['Herzschmerzen', 'Brustschmerzen', 'Husten', 'Armschmerzen']
+  },
+  {
+    id: 'PC3',
+    nameChinese: 'Quze',
+    nameEnglish: 'Marsh at the Bend',
+    nameGerman: 'Sumpf an der Beuge',
+    meridian: 'PC',
+    element: 'fire',
+    location: 'In der Ellenbogenfalte, ulnar der Bizepssehne',
+    depth: '0.5-1 cun oder Blutenlassen',
+    frequency: 358.4,
+    harmonicFrequencies: calculateHarmonics(358.4),
+    pointTypes: ['he_sea'],
+    functions: ['Klärt Herz-Hitze', 'Kühlt Blut', 'Harmonisiert Magen'],
+    indications: ['Herzschmerzen', 'Herzklopfen', 'Erbrechen', 'Fieber'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'PC4',
+    nameChinese: 'Ximen',
+    nameEnglish: 'Xi-Cleft Gate',
+    nameGerman: 'Spalt-Tor',
+    meridian: 'PC',
+    element: 'fire',
+    location: '5 cun proximal der Handgelenksfalte, zwischen den Sehnen',
+    depth: '0.5-1 cun',
+    frequency: 367,
+    harmonicFrequencies: calculateHarmonics(367),
+    pointTypes: ['xi_cleft'],
+    functions: ['Beruhigt Herz', 'Stoppt Blutungen', 'Lindert Schmerzen'],
+    indications: ['Herzschmerzen', 'Herzklopfen', 'Nasenbluten', 'Angst']
+  },
+  {
+    id: 'PC5',
+    nameChinese: 'Jianshi',
+    nameEnglish: 'Intermediary Courier',
+    nameGerman: 'Vermittelnder Bote',
+    meridian: 'PC',
+    element: 'fire',
+    location: '3 cun proximal der Handgelenksfalte, zwischen den Sehnen',
+    depth: '0.5-1 cun',
+    frequency: 375.5,
+    harmonicFrequencies: calculateHarmonics(375.5),
+    pointTypes: ['jing_river'],
+    functions: ['Beruhigt Herz', 'Transformiert Schleim', 'Öffnet Brust'],
+    indications: ['Herzschmerzen', 'Herzklopfen', 'Epilepsie', 'Manie']
+  },
+  {
+    id: 'PC6',
+    nameChinese: 'Neiguan',
+    nameEnglish: 'Inner Pass',
+    nameGerman: 'Innere Grenze',
+    meridian: 'PC',
+    element: 'fire',
+    location: '2 cun proximal der Handgelenksfalte, zwischen den Sehnen',
+    depth: '0.5-1 cun',
+    frequency: 384.1,
+    harmonicFrequencies: calculateHarmonics(384.1),
+    pointTypes: ['luo_connecting', 'confluent'],
+    functions: ['Öffnet Yin Wei Mai', 'Beruhigt Herz', 'Harmonisiert Magen', 'Lindert Schmerzen'],
+    indications: ['Übelkeit', 'Erbrechen', 'Herzschmerzen', 'Schlaflosigkeit', 'Angst'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'PC7',
+    nameChinese: 'Daling',
+    nameEnglish: 'Great Mound',
+    nameGerman: 'Großer Hügel',
+    meridian: 'PC',
+    element: 'fire',
+    location: 'In der Mitte der Handgelenksfalte, zwischen den Sehnen',
+    depth: '0.3-0.5 cun',
+    frequency: 392.6,
+    harmonicFrequencies: calculateHarmonics(392.6),
+    pointTypes: ['shu_stream', 'yuan_source'],
+    functions: ['Beruhigt Herz', 'Klärt Hitze', 'Harmonisiert Magen'],
+    indications: ['Herzschmerzen', 'Herzklopfen', 'Mundgeruch', 'Handgelenkschmerzen'],
+    chakraCorrespondence: 'anahata'
+  },
+  {
+    id: 'PC8',
+    nameChinese: 'Laogong',
+    nameEnglish: 'Palace of Toil',
+    nameGerman: 'Palast der Arbeit',
+    meridian: 'PC',
+    element: 'fire',
+    location: 'In der Handfläche, wo die Fingerspitze des Mittelfingers bei geballter Faust zeigt',
+    depth: '0.3-0.5 cun',
+    frequency: 401.2,
+    harmonicFrequencies: calculateHarmonics(401.2),
+    pointTypes: ['ying_spring'],
+    functions: ['Klärt Herz-Hitze', 'Beruhigt Geist', 'Belebt Bewusstsein'],
+    indications: ['Mundgeschwüre', 'Bewusstlosigkeit', 'Epilepsie', 'Fieber'],
+    chakraCorrespondence: 'manipura'
+  },
+  {
+    id: 'PC9',
+    nameChinese: 'Zhongchong',
+    nameEnglish: 'Central Hub',
+    nameGerman: 'Zentrale Nabe',
+    meridian: 'PC',
+    element: 'fire',
+    location: 'Am Mittelfinger, 0.1 cun proximal des radialen Nagelwinkels',
+    depth: '0.1 cun oder Blutenlassen',
+    frequency: 409.7,
+    harmonicFrequencies: calculateHarmonics(409.7),
+    pointTypes: ['jing_well'],
+    functions: ['Klärt Hitze', 'Belebt Bewusstsein', 'Öffnet Sinne'],
+    indications: ['Bewusstlosigkeit', 'Fieber', 'Hitzschlag', 'Zungengeschwür']
+  }
+];

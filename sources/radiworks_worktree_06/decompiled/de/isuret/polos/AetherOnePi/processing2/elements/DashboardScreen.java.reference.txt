@@ -1,0 +1,118 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import java.io.File;
+
+public class DashboardScreen
+implements IDrawableElement {
+    private static final String DASHBOARD_NEWS_TXT = "https://raw.githubusercontent.com/isuretpolos/AetherOnePi/master/documentation/dashboardNews.txt";
+    private static final String TEMPORARY_DASHBOARD_TEXT_TXT = "temporaryDashboardText.txt";
+    private AetherOneUI p;
+    private String[] dashboardNews;
+    private float blink = 256.0f;
+    private float blinkRate = 0.7f;
+    private int click = 0;
+    private boolean showPatreonSection = false;
+
+    public DashboardScreen(final AetherOneUI p) {
+        this.p = p;
+        new Thread(this){
+            final /* synthetic */ DashboardScreen this$0;
+            {
+                this.this$0 = this$0;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    p.getDataService().init();
+                    this.this$0.dashboardNews = p.loadStrings(DashboardScreen.DASHBOARD_NEWS_TXT);
+                    p.saveStrings(DashboardScreen.TEMPORARY_DASHBOARD_TEXT_TXT, this.this$0.dashboardNews);
+                    if (p.getHotbitsClient().getInteger(0, 1000) >= 777) {
+                        this.this$0.showPatreonSection = true;
+                    }
+                }
+                catch (Exception e) {
+                    this.this$0.dashboardNews = p.loadStrings(DashboardScreen.TEMPORARY_DASHBOARD_TEXT_TXT);
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    public void draw() {
+        int y = 90;
+        this.p.color(255);
+        if (this.dashboardNews != null) {
+            for (String line : this.dashboardNews) {
+                this.p.text(line, 40.0f, (float)y);
+                y += 15;
+            }
+        }
+        if (this.blink > 256.0f || this.blink < 0.0f) {
+            this.blinkRate *= -1.0f;
+        }
+        if (this.click > 0) {
+            --this.click;
+        }
+        if (this.showPatreonSection) {
+            this.blink -= this.blinkRate;
+            this.p.stroke(60.0f, 179.0f, 34.0f, this.blink);
+            this.p.noFill();
+            this.p.rect(40.0f, y - 10, 400.0f, 70.0f);
+            this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 32.0f);
+            this.p.text("Support me on PATREON", 50.0f, (float)(y += 20));
+            this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 16.0f);
+            this.p.text("and get FREE courses on radionics and homeopathy!", 50.0f, (float)(y += 28));
+            this.p.fill(60.0f, 179.0f, 34.0f, this.blink);
+            this.p.text("and get FREE courses on radionics and homeopathy!", 50.0f, (float)y);
+            if (this.p.mouseX >= 40 && this.p.mouseX < 400 && this.p.mouseY < (y += 20) && this.p.mouseY >= y - 70) {
+                this.p.noStroke();
+                this.p.fill(0.0f, 255.0f, 0.0f, 40.0f);
+                this.p.rect(40.0f, y - 78, 400.0f, 70.0f);
+                if (this.p.mousePressed && this.click == 0) {
+                    this.click = 100;
+                    this.p.getAetherOneEventHandler().openWebsiteInDefaultBrowser("https://patreon.com/c/aetherone");
+                }
+            }
+        }
+        int maxCount = 0;
+        this.p.color(255);
+        if (this.p.getDataService().getDashboardInformations().getRecentlyLoadedCases().size() > 0) {
+            this.p.fill(255);
+            this.p.text("-----------------", 50.0f, (float)y);
+            this.p.text("=== LAST CASES ===", 50.0f, (float)(y += 20));
+            y += 20;
+        }
+        for (String dataBaseName : this.p.getDataService().getDashboardInformations().getRecentlyLoadedCases()) {
+            if (dataBaseName.contains("dashboard")) continue;
+            if (this.p.mouseX >= 50 && this.p.mouseX < 300 && this.p.mouseY < y && this.p.mouseY >= y - 20) {
+                this.p.noStroke();
+                this.p.fill(0.0f, 255.0f, 0.0f, 50.0f);
+                this.p.rect(50.0f, y - 13, 300.0f, 18.0f);
+                if (this.p.mousePressed) {
+                    this.p.getAetherOneEventHandler().loadCaseFile(new File("cases/" + dataBaseName + ".json"));
+                }
+            }
+            this.p.fill(255);
+            this.p.text(dataBaseName, 50.0f, (float)y);
+            y += 20;
+            if (++maxCount <= 10) continue;
+            break;
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "default";
+    }
+}
+

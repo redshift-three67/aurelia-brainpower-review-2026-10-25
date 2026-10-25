@@ -1,0 +1,730 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2;
+
+import com.github.sarxos.webcam.Webcam;
+import controlP5.ControlEvent;
+import controlP5.Textfield;
+import de.isuret.polos.AetherOnePi.domain.AetherOnePiStatus;
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.Case;
+import de.isuret.polos.AetherOnePi.domain.Rate;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.ResonanceObject;
+import de.isuret.polos.AetherOnePi.domain.Settings;
+import de.isuret.polos.AetherOnePi.hotbits.IHotbitsClient;
+import de.isuret.polos.AetherOnePi.imagelayers.ImageLayersAnalysis;
+import de.isuret.polos.AetherOnePi.processing2.dialogs.ResonanceViewListDialog;
+import de.isuret.polos.AetherOnePi.processing2.elements.DashboardElement;
+import de.isuret.polos.AetherOnePi.processing2.elements.GuiElements;
+import de.isuret.polos.AetherOnePi.processing2.events.AetherOneEventHandler;
+import de.isuret.polos.AetherOnePi.processing2.events.KeyPressedObserver;
+import de.isuret.polos.AetherOnePi.processing2.events.MouseClickObserver;
+import de.isuret.polos.AetherOnePi.processing2.hotbits.HotbitsHandler;
+import de.isuret.polos.AetherOnePi.server.AetherOneServer;
+import de.isuret.polos.AetherOnePi.service.AnalysisService;
+import de.isuret.polos.AetherOnePi.service.DataService;
+import de.isuret.polos.AetherOnePi.utils.AetherOnePiProcessingConfiguration;
+import de.isuret.polos.AetherOnePi.utils.CaseToHtml;
+import io.javalin.http.staticfiles.Location;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.Point;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
+import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.opengl.PJOGL;
+
+public class AetherOneUI
+extends PApplet {
+    private String titleAffix = "";
+    private Settings settings;
+    private Settings guiConf;
+    private GuiElements guiElements;
+    private AetherOnePiStatus status;
+    private AetherOneEventHandler aetherOneEventHandler;
+    private IHotbitsClient hotbitsClient;
+    private HotbitsHandler hotbitsHandler;
+    private boolean hotbitsFromWebCamAcquiring = false;
+    private Webcam webcam = null;
+    private List<Webcam> webcamList;
+    private BufferedImage webcamImage;
+    private Integer webCamNumber;
+    private Integer countPackages = 0;
+    private AnalysisService analyseService;
+    private DataService dataService = new DataService();
+    private List<MouseClickObserver> mouseClickObserverList = new ArrayList<MouseClickObserver>();
+    private List<KeyPressedObserver> keyPressedObserverList = new ArrayList<KeyPressedObserver>();
+    private Case caseObject = new Case();
+    private String selectedDatabase = "HOMEOPATHY_Clarke_With_MateriaMedicaUrls.txt";
+    private String essentielQuestion;
+    private AnalysisResult analysisResult;
+    private ImageLayersAnalysis imageLayersAnalysis;
+    private Integer analysisPointer;
+    private Integer gvCounter = 0;
+    private Integer generalVitality = 0;
+    private Integer clearUv = 0;
+    private Boolean stickPadMode = false;
+    private Boolean stickPadGeneralVitalityMode = false;
+    private TrayIcon trayIcon;
+    private String trainingSignature = null;
+    private Boolean trainingSignatureCovered = true;
+    private Boolean autoMode = false;
+    private List<Integer> autoModeGVs = new ArrayList<Integer>();
+    private PImage clipBoardImage;
+    private List<PImage> clipBoardImages = new ArrayList<PImage>();
+    private List<RateObject> resonatedList = new ArrayList<RateObject>();
+    private List<ResonanceObject> resonanceList = new ArrayList<ResonanceObject>();
+    private AetherOneServer aetherOneServer;
+    private Logger logger = LoggerFactory.getLogger(AetherOneUI.class);
+    private List<Rate> watchlist = new ArrayList<Rate>();
+    public AnalysisResult watchlistAnalysis;
+    public boolean watchlistRequiresAttention = false;
+    public static AetherOneUI p;
+
+    public static void main(String[] args) {
+        AetherOneUI.main(AetherOneUI.class.getName());
+    }
+
+    @Override
+    public void settings() {
+        p = this;
+        PJOGL.setIcon(this.getClass().getClassLoader().getResource("icons/aetherOnePi.png").getPath());
+        try {
+            this.titleAffix = " " + new File(FilenameUtils.getFullPathNoEndSeparator(new File(".").getAbsolutePath())).getName();
+            if (this.titleAffix.toLowerCase().contains("aether")) {
+                this.logger.info("Seems that the parent folder has no meaningful name ;)");
+                this.titleAffix = "";
+            }
+        }
+        catch (Exception e) {
+            this.logger.error("Error reading the parent folder name", e);
+        }
+        this.guiConf = AetherOnePiProcessingConfiguration.loadSettings("Gui");
+        this.settings = AetherOnePiProcessingConfiguration.loadSettings("Settings");
+        this.size(this.guiConf.getInteger("window.size.width", 1285), this.guiConf.getInteger("window.size.height", 721), "processing.opengl.PGraphics2D");
+        this.pixelDensity(this.displayDensity());
+    }
+
+    public void initWebcamsList() {
+        try {
+            this.logger.info("Get list of Webcams ...");
+            this.webcamList = Webcam.getWebcams();
+        }
+        catch (Exception e) {
+            this.logger.error("Error searching webcam(s)", e);
+        }
+    }
+
+    public Integer checkPercentage() {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int x = 0; x < 3; ++x) {
+            list.add(this.getHotbitsClient().getInteger(100));
+        }
+        Collections.sort(list, Collections.reverseOrder());
+        return (Integer)list.get(0);
+    }
+
+    public Integer checkGeneralVitalityValue() {
+        return this.getAnalyseService().checkGeneralVitality();
+    }
+
+    private void createSurfaceIcon() throws IOException {
+        PImage icon = null;
+        BufferedImage image = ImageIO.read(this.getClass().getClassLoader().getResource("icons/aetherOnePi.png"));
+        if (image == null) {
+            return;
+        }
+        icon = new PImage(image);
+        if (icon == null) {
+            return;
+        }
+        this.surface.setIcon(icon);
+    }
+
+    public void setTitle(String title) {
+        this.surface.setTitle(title);
+    }
+
+    @Override
+    public void setup() {
+        this.background(200);
+        final AetherOneUI ui = this;
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                System.out.println("SHUTDOWN HOOK");
+                ui.stop();
+            }
+        }));
+        SwingUtilities.invokeLater(() -> this.surface.setResizable(false));
+        this.hotbitsHandler = new HotbitsHandler(this);
+        this.hotbitsClient = this.hotbitsHandler;
+        this.analyseService = new AnalysisService();
+        this.analyseService.setHotbitsClient(this.hotbitsClient);
+        this.aetherOneEventHandler = new AetherOneEventHandler(this);
+        this.keyPressedObserverList.add(this.aetherOneEventHandler);
+        this.guiElements = new GuiElements(this);
+        float border = (float)this.guiElements.getBorder() + 5.0f;
+        float posY = this.guiElements.getBorder() * 2 - 7;
+        this.guiElements.initTabs().addTab("SESSION").addTab("SETTINGS").addTab("ANALYZE").addTab("IMAGE").addTab("CARD").addTab("RATES").addTab("PEGGOTTY").addTab("AREA").addTab("HOTBITS").addTab("BROADCAST");
+        this.guiElements.selectCurrentTab("default").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(140.0f), Float.valueOf(14.0f), false).addButton("BROWSER").addButton("PATREON").addButton("DOCUMENTATION").addButton("BOOKS").addButton("GITHUB").addButton("YOUTUBE").addDashboardScreen();
+        this.guiElements.selectCurrentTab("SESSION").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addButton("NEW").addButton("LOAD").addButton("SAVE").addButton("EDIT CASE").addButton("ESSENTIAL QUESTIONS").setInitialBounds(Float.valueOf(border), Float.valueOf(posY + 24.0f), Float.valueOf(150.0f), Float.valueOf(14.0f), true).addTextfield("NAME").addTextfield("DESCRIPTION").addSessionScreen();
+        this.guiElements.selectCurrentTab("SETTINGS").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addSettingsScreen();
+        this.guiElements.selectCurrentTab("ANALYZE").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(120.0f), Float.valueOf(14.0f), false).addButton("SELECT DATA").addButton("ANALYZE").addButton("HOMEOPATHY").addButton("BIOLOGICAL").addButton("SYMBOLISM").addButton("ESSENCES").addButton("CHEMICAL").addButton("ENERGY").addButton("STICKPAD").setInitialBounds(this.getGuiElements().getX(), Float.valueOf(posY), Float.valueOf(100.0f), Float.valueOf(14.0f), false).addButton("GV").setInitialBounds(Float.valueOf(border), Float.valueOf(posY + 465.0f), Float.valueOf(120.0f), Float.valueOf(14.0f), false).addButton("CLEAR").addButton("GROUNDING").addButton("BROADCAST MIX").addButton("AUTO MODE ON").addButton("AUTO MODE OFF").addButton("STATISTICS").addButton("TRAINING[START]").addButton("TRAINING[UNCOVER]").addButton("CLIPBOARD").addAnalyseScreen();
+        this.guiElements.selectCurrentTab("CARD").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(120.0f), Float.valueOf(14.0f), false).addButton("DATA FOR CARD").addButton("PASTE CARD IMAGE").addButton("ANALYZE CARD").addButton("GENERATE CARD").addButton("CLEAR CARD").setInitialBounds(Float.valueOf(this.width / 2), Float.valueOf(85.0f), Float.valueOf(150.0f), Float.valueOf(14.0f), true).addTextfield("INTENTION").addCardScreen();
+        this.guiElements.selectCurrentTab("AREA").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addButton("PASTE AREA").addButton("LOAD AREA").addButton("CLEAR AREA").addButton("SCAN FOR TARGET").addButton("AGRICULTURE").addAreaScreen();
+        this.guiElements.selectCurrentTab("IMAGE").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addButton("PASTE IMAGE").addButton("LOAD IMAGE").addButton("LOAD IMAGE LAYERS").addButton("ANALYZE IMAGE").addButton("CLEAR IMAGE").addButton("BROADCAST IMAGE").addButton("GENERATE MD5").addImageLayerScreen();
+        this.guiElements.selectCurrentTab("RATES").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addRatesScreen();
+        this.guiElements.selectCurrentTab("HOTBITS").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addButton("SHOW WEBCAMS").addButton("SET WEBCAM").addButton("GET HOTBITS").addButton("STOP HOTBITS").addButton("SHOW IMAGE").setInitialBounds(Float.valueOf(border), Float.valueOf(posY + 24.0f), Float.valueOf(150.0f), Float.valueOf(14.0f), true).addTextfield("WEBCAM[n]").addHotbitsScreen();
+        this.guiElements.selectCurrentTab("BROADCAST").setInitialBounds(Float.valueOf(border), Float.valueOf(posY), Float.valueOf(150.0f), Float.valueOf(14.0f), false).addButton("BROADCAST NOW").addButton("BROADCAST LIST").addButton("STOP CURRENT").addButton("STOP ALL").addButton("SHOW RESONANCE LIST").setInitialBounds(Float.valueOf(border), Float.valueOf(posY + 24.0f), Float.valueOf(100.0f), Float.valueOf(14.0f), true).addTextfield("SIGNATURE").setInitialBounds(Float.valueOf(border + 450.0f), Float.valueOf(posY + 24.0f), Float.valueOf(20.0f), Float.valueOf(14.0f), true).addTextfield("SECONDS").setInitialBounds(Float.valueOf(border + 650.0f), Float.valueOf(posY + 24.0f), Float.valueOf(20.0f), Float.valueOf(14.0f), true).addTextfield("MULTIPLIER").addBroadcastScreen();
+        this.guiElements.selectCurrentTab("default").setInitialBounds(Float.valueOf(border - 11.0f), Float.valueOf(550.0f), Float.valueOf(0.0f), Float.valueOf(0.0f), true).addStatusLED("PI").addStatusLED("BROADCASTING").addStatusLED("CLEARING").addStatusLED("GROUNDING").addStatusLED("COPYING").addSlider("PACKAGES", 100, 10, 100).addSlider("CACHE", 100, 10, 20000).addSlider("PROGRESS", 100, 10, 100).addSlider("QUEUE", 100, 10, 20);
+        this.prepareExitHandler();
+        this.guiElements.addDrawableElement(new DashboardElement(this));
+        this.guiElements.setCurrentTab("default");
+        this.setTitle("AetherOnePi" + this.titleAffix + " - New Case ... enter name and description");
+        try {
+            this.createTrayIcon();
+            this.createSurfaceIcon();
+        }
+        catch (Exception e) {
+            this.logger.error("Error while trying to display tray and icon", e);
+        }
+        this.hotbitsHandler.loadHotbits();
+        this.aetherOneServer = new AetherOneServer(Location.CLASSPATH, this);
+        File watchlistFile = new File("watchlist.csv");
+        if (watchlistFile.exists() && this.settings.getBoolean("watchlist.activate", false).booleanValue()) {
+            new Thread(() -> {
+                try {
+                    List<String> lines = FileUtils.readLines(watchlistFile, "UTF-8");
+                    lines.stream().forEach(s -> {
+                        Rate rate = new Rate();
+                        if (s.contains(",")) {
+                            String[] parts = s.split(",");
+                            for (int i = 0; i < parts.length; ++i) {
+                                if (i == 0) {
+                                    rate.setName(parts[i]);
+                                    continue;
+                                }
+                                Rate subRate = new Rate();
+                                subRate.setName(parts[i]);
+                                rate.getSubRates().add(subRate);
+                            }
+                        } else {
+                            rate.setName((String)s);
+                        }
+                        this.watchlist.add(rate);
+                    });
+                    this.logger.info("Reading watchlist.csv successful! " + this.watchlist.size() + " entries read!");
+                    this.watchlistAnalysis = this.analyseService.analyseRateList(this.watchlist);
+                    this.watchlistAnalysis.getRateObjects().forEach(r -> {
+                        r.setGv(this.checkGeneralVitalityValue());
+                        try {
+                            Thread.sleep(10L);
+                        }
+                        catch (InterruptedException interruptedException) {
+                            // empty catch block
+                        }
+                    });
+                    this.watchlistAnalysis.getRateObjects().sort(Comparator.comparing(RateObject::getGv));
+                    for (RateObject rate : this.watchlistAnalysis.getRateObjects()) {
+                        if (rate.getGv() >= 500) continue;
+                        this.watchlistRequiresAttention = true;
+                        break;
+                    }
+                }
+                catch (IOException e) {
+                    this.logger.error("Error reading watchlist CSV file!", e);
+                }
+            }).start();
+        }
+    }
+
+    @Override
+    public void draw() {
+        this.guiElements.draw();
+        if (this.clearUv > 0) {
+            this.clearUv = this.clearUv - 1;
+            if (this.clearUv % 2 == 0) {
+                this.fill(238.0f, 0.0f, 255.0f);
+                this.rect(0.0f, 0.0f, this.width, this.height);
+            }
+        }
+    }
+
+    @Override
+    public void stop() {
+        this.aetherOneEventHandler.saveResonanceProtocol();
+    }
+
+    public void controlEvent(ControlEvent theEvent) {
+        if (this.aetherOneEventHandler != null) {
+            this.aetherOneEventHandler.controlEvent(theEvent);
+        }
+    }
+
+    public String generateRate(String input) {
+        String inputStr = input.trim();
+        double rate = 0.0;
+        for (char c : inputStr.toCharArray()) {
+            rate += (double)c;
+        }
+        rate = Math.sqrt(rate);
+        String rateStr = String.format("%.2f", rate);
+        return rateStr;
+    }
+
+    private void prepareExitHandler() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(this){
+
+            @Override
+            public void run() {
+                AetherOnePiProcessingConfiguration.saveAllSettings();
+            }
+        }));
+    }
+
+    @Override
+    public void keyReleased() {
+        for (KeyPressedObserver observer : this.keyPressedObserverList) {
+            observer.keyPressed(this.key);
+        }
+    }
+
+    public void saveCase() {
+        try {
+            this.dataService.saveCase(this.caseObject);
+            CaseToHtml.transformCaseObjectIntoHtml(this.caseObject);
+        }
+        catch (IOException e1) {
+            this.logger.error("Unable to persist case object", e1);
+        }
+    }
+
+    @Override
+    public void mouseClicked() {
+        for (MouseClickObserver mouseClickObserver : this.mouseClickObserverList) {
+            mouseClickObserver.mouseClicked();
+        }
+    }
+
+    public Point getMousePoint() {
+        return new Point(this.mouseX, this.mouseY);
+    }
+
+    public void createTrayIcon() throws AWTException {
+        SystemTray tray = SystemTray.getSystemTray();
+        Image image = Toolkit.getDefaultToolkit().createImage(this.getClass().getClassLoader().getResource("icons/aetherOnePi.png"));
+        this.trayIcon = new TrayIcon(image, "AetherOnePi");
+        this.trayIcon.setImageAutoSize(true);
+        this.trayIcon.setToolTip("AetherOnePi");
+        PopupMenu popup = this.createPopupMenuForTrayIcon();
+        this.trayIcon.setPopupMenu(popup);
+        tray.add(this.trayIcon);
+    }
+
+    public PopupMenu createPopupMenuForTrayIcon() {
+        PopupMenu popup = new PopupMenu();
+        popup.add(this.createMenuItem("About"));
+        popup.addSeparator();
+        popup.add(this.createMenuItem("STOP ALL"));
+        popup.addSeparator();
+        popup.add(this.createMenuItem("Exit"));
+        return popup;
+    }
+
+    public MenuItem createMenuItem(String label) {
+        MenuItem menuItem = new MenuItem(label);
+        menuItem.addActionListener(e -> p.getAetherOneEventHandler().handleEvent(label.toUpperCase()));
+        return menuItem;
+    }
+
+    public void startWebCamHotbitAcquire() {
+        this.webcam = this.webcamList.get(this.webCamNumber);
+        this.webcam.setViewSize(this.webcam.getViewSizes()[0]);
+        if (this.webcam.open()) {
+            new Thread(){
+
+                @Override
+                public void run() {
+                    File hotbitsFolder = new File("hotbits");
+                    AetherOneUI.this.countPackages = hotbitsFolder.listFiles().length;
+                    int screen_width = AetherOneUI.this.webcam.getViewSize().width;
+                    int screen_height = AetherOneUI.this.webcam.getViewSize().height;
+                    int HOW_MANY_FILES = 20000;
+                    int HOW_MANY_INTEGERS_PER_PACKAGES = 10000;
+                    int pixelArraySize = screen_width * screen_height;
+                    Integer[] lastPixelArray = new Integer[pixelArraySize];
+                    Object bits = "";
+                    Integer countIntegers = 0;
+                    ArrayList<Integer> integerList = new ArrayList<Integer>();
+                    AetherOneUI.this.hotbitsFromWebCamAcquiring = true;
+                    while (AetherOneUI.this.countPackages < 20000 && AetherOneUI.this.hotbitsFromWebCamAcquiring) {
+                        if (AetherOneUI.this.webcam == null) {
+                            return;
+                        }
+                        AetherOneUI.this.webcamImage = AetherOneUI.this.webcam.getImage();
+                        if (AetherOneUI.this.webcamImage == null) {
+                            return;
+                        }
+                        byte[] pixels = ((DataBufferByte)AetherOneUI.this.webcamImage.getRaster().getDataBuffer()).getData();
+                        for (int i = 0; i < pixelArraySize; ++i) {
+                            int lastPixelColor;
+                            byte currentColor = pixels[i];
+                            if (lastPixelArray[i] == null) {
+                                lastPixelArray[i] = currentColor;
+                            }
+                            if (currentColor > (lastPixelColor = lastPixelArray[i].intValue())) {
+                                bits = (String)bits + "1";
+                            } else {
+                                if (currentColor >= lastPixelColor) continue;
+                                bits = (String)bits + "0";
+                            }
+                            if (((String)bits).length() < 24) continue;
+                            Integer randomInt = Integer.parseInt((String)bits, 2);
+                            Random random = new Random(randomInt.intValue());
+                            if (!integerList.contains(randomInt = Integer.valueOf(randomInt + random.nextInt(100000)))) {
+                                integerList.add(randomInt);
+                            }
+                            bits = "";
+                            Integer n = countIntegers;
+                            countIntegers = countIntegers + 1;
+                            if (integerList.size() < 10000) continue;
+                            n = AetherOneUI.this.countPackages;
+                            AetherOneUI.this.countPackages = AetherOneUI.this.countPackages + 1;
+                            countIntegers = 0;
+                            String[] textArray = new String[1];
+                            Object jsonHotbits = "";
+                            for (Integer hotbit : integerList) {
+                                if (((String)jsonHotbits).length() > 1) {
+                                    jsonHotbits = (String)jsonHotbits + ",";
+                                }
+                                jsonHotbits = (String)jsonHotbits + hotbit.toString();
+                            }
+                            textArray[0] = "{\"integerList\":[" + (String)jsonHotbits + "]}";
+                            AetherOneUI.this.saveStrings("hotbits/hotbits_" + Calendar.getInstance().getTimeInMillis() + ".json", textArray);
+                            integerList.clear();
+                        }
+                    }
+                    AetherOneUI.this.webcam.close();
+                    AetherOneUI.this.webcam = null;
+                    AetherOneUI.this.hotbitsFromWebCamAcquiring = false;
+                }
+            }.start();
+        }
+    }
+
+    public void showWebCamImage() {
+        this.webcam = this.webcamList.get(this.webCamNumber);
+        this.webcam.setViewSize(this.webcam.getViewSizes()[0]);
+        if (this.webcam.open()) {
+            new Thread(){
+
+                @Override
+                public void run() {
+                    while (AetherOneUI.this.webcam != null) {
+                        AetherOneUI.this.webcamImage = AetherOneUI.this.webcam.getImage();
+                        if (AetherOneUI.this.webcamImage != null) continue;
+                        return;
+                    }
+                }
+            }.start();
+        }
+    }
+
+    public void showResonanceList() {
+        ResonanceViewListDialog.showList(this.resonanceList);
+    }
+
+    public String getTitleAffix() {
+        return this.titleAffix;
+    }
+
+    public Settings getSettings() {
+        return this.settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
+    public GuiElements getGuiElements() {
+        return this.guiElements;
+    }
+
+    public AetherOnePiStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(AetherOnePiStatus status) {
+        this.status = status;
+    }
+
+    public AetherOneEventHandler getAetherOneEventHandler() {
+        return this.aetherOneEventHandler;
+    }
+
+    public IHotbitsClient getHotbitsClient() {
+        return this.hotbitsClient;
+    }
+
+    public HotbitsHandler getHotbitsHandler() {
+        return this.hotbitsHandler;
+    }
+
+    public boolean isHotbitsFromWebCamAcquiring() {
+        return this.hotbitsFromWebCamAcquiring;
+    }
+
+    public void setHotbitsFromWebCamAcquiring(boolean hotbitsFromWebCamAcquiring) {
+        this.hotbitsFromWebCamAcquiring = hotbitsFromWebCamAcquiring;
+    }
+
+    public Webcam getWebcam() {
+        return this.webcam;
+    }
+
+    public void setWebcam(Webcam webcam) {
+        this.webcam = webcam;
+    }
+
+    public List<Webcam> getWebcamList() {
+        return this.webcamList;
+    }
+
+    public void setWebcamList(List<Webcam> webcamList) {
+        this.webcamList = webcamList;
+    }
+
+    public BufferedImage getWebcamImage() {
+        return this.webcamImage;
+    }
+
+    public Integer getWebCamNumber() {
+        return this.webCamNumber;
+    }
+
+    public void setWebCamNumber(Integer webCamNumber) {
+        this.webCamNumber = webCamNumber;
+    }
+
+    public Integer getCountPackages() {
+        return this.countPackages;
+    }
+
+    public AnalysisService getAnalyseService() {
+        return this.analyseService;
+    }
+
+    public void setAnalyseService(AnalysisService analyseService) {
+        this.analyseService = analyseService;
+    }
+
+    public DataService getDataService() {
+        return this.dataService;
+    }
+
+    public List<MouseClickObserver> getMouseClickObserverList() {
+        return this.mouseClickObserverList;
+    }
+
+    public void setMouseClickObserverList(List<MouseClickObserver> mouseClickObserverList) {
+        this.mouseClickObserverList = mouseClickObserverList;
+    }
+
+    public List<KeyPressedObserver> getKeyPressedObserverList() {
+        return this.keyPressedObserverList;
+    }
+
+    public Case getCaseObject() {
+        return this.caseObject;
+    }
+
+    public void setCaseObject(Case caseObject) {
+        this.caseObject = caseObject;
+    }
+
+    public String getSelectedDatabase() {
+        return this.selectedDatabase;
+    }
+
+    public void setSelectedDatabase(String selectedDatabase) {
+        this.selectedDatabase = selectedDatabase;
+    }
+
+    public String getEssentielQuestion() {
+        return this.essentielQuestion;
+    }
+
+    public void setEssentielQuestion(String essentielQuestion) {
+        this.essentielQuestion = essentielQuestion;
+    }
+
+    public AnalysisResult getAnalysisResult() {
+        if (this.analysisResult == null) {
+            return new AnalysisResult();
+        }
+        return this.analysisResult;
+    }
+
+    public void setAnalysisResult(AnalysisResult analysisResult) {
+        this.analysisResult = analysisResult;
+    }
+
+    public ImageLayersAnalysis getImageLayersAnalysis() {
+        return this.imageLayersAnalysis;
+    }
+
+    public void setImageLayersAnalysis(ImageLayersAnalysis imageLayersAnalysis) {
+        this.imageLayersAnalysis = imageLayersAnalysis;
+    }
+
+    public Integer getAnalysisPointer() {
+        return this.analysisPointer;
+    }
+
+    public void setAnalysisPointer(Integer analysisPointer) {
+        this.analysisPointer = analysisPointer;
+    }
+
+    public Integer getGvCounter() {
+        return this.gvCounter;
+    }
+
+    public void setGvCounter(Integer gvCounter) {
+        this.gvCounter = gvCounter;
+    }
+
+    public Integer getGeneralVitality() {
+        return this.generalVitality;
+    }
+
+    public void setGeneralVitality(Integer generalVitality) {
+        this.generalVitality = generalVitality;
+    }
+
+    public Boolean getStickPadMode() {
+        return this.stickPadMode;
+    }
+
+    public void setStickPadMode(Boolean stickPadMode) {
+        this.stickPadMode = stickPadMode;
+    }
+
+    public Boolean getStickPadGeneralVitalityMode() {
+        return this.stickPadGeneralVitalityMode;
+    }
+
+    public void setStickPadGeneralVitalityMode(Boolean stickPadGeneralVitalityMode) {
+        this.stickPadGeneralVitalityMode = stickPadGeneralVitalityMode;
+    }
+
+    public TrayIcon getTrayIcon() {
+        return this.trayIcon;
+    }
+
+    public String getTrainingSignature() {
+        return this.trainingSignature;
+    }
+
+    public void setTrainingSignature(String trainingSignature) {
+        this.trainingSignature = trainingSignature;
+    }
+
+    public Boolean getTrainingSignatureCovered() {
+        return this.trainingSignatureCovered;
+    }
+
+    public void setTrainingSignatureCovered(Boolean trainingSignatureCovered) {
+        this.trainingSignatureCovered = trainingSignatureCovered;
+    }
+
+    public Boolean getAutoMode() {
+        return this.autoMode;
+    }
+
+    public void setAutoMode(Boolean autoMode) {
+        this.autoMode = autoMode;
+        this.autoModeGVs.clear();
+    }
+
+    public List<Integer> getAutoModeGVs() {
+        return this.autoModeGVs;
+    }
+
+    public PImage getClipBoardImage() {
+        return this.clipBoardImage;
+    }
+
+    public void setClipBoardImage(PImage clipBoardImage) {
+        this.clipBoardImage = clipBoardImage;
+    }
+
+    public List<RateObject> getResonatedList() {
+        return this.resonatedList;
+    }
+
+    public void setResonatedList(List<RateObject> resonatedList) {
+        this.resonatedList = resonatedList;
+    }
+
+    public List<ResonanceObject> getResonanceList() {
+        return this.resonanceList;
+    }
+
+    public void setResonanceList(List<ResonanceObject> resonanceList) {
+        this.resonanceList = resonanceList;
+    }
+
+    public AetherOneServer getAetherOneServer() {
+        return this.aetherOneServer;
+    }
+
+    public void setAetherOneServer(AetherOneServer aetherOneServer) {
+        this.aetherOneServer = aetherOneServer;
+    }
+
+    public List<PImage> getClipBoardImages() {
+        return this.clipBoardImages;
+    }
+
+    public Integer getMultiplier() {
+        try {
+            return Integer.parseInt(((Textfield)this.getGuiElements().getCp5().get("MULTIPLIER")).getText());
+        }
+        catch (Exception e) {
+            return 1;
+        }
+    }
+
+    public Integer getClearUv() {
+        return this.clearUv;
+    }
+
+    public void setClearUv(Integer clearUv) {
+        this.clearUv = clearUv;
+    }
+}
+

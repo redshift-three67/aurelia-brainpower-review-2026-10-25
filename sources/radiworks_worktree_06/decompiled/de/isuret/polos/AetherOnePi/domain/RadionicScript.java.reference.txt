@@ -1,0 +1,87 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.exceptions.RadionicsScriptException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class RadionicScript {
+    private List<String> errorMessages = new ArrayList<String>();
+    private List<String> output = new ArrayList<String>();
+    private Map<String, Object> variables = new HashMap<String, Object>();
+    private List<String> lines = new ArrayList<String>();
+    private Map<Integer, String> lineLabels = new HashMap<Integer, String>();
+
+    public RadionicScript(List<String> lines) {
+        this.lines = lines;
+        this.init();
+    }
+
+    public List<String> getOutput() {
+        return this.output;
+    }
+
+    public void setOutput(List<String> output) {
+        this.output = output;
+    }
+
+    public List<String> getErrorMessages() {
+        return this.errorMessages;
+    }
+
+    public void setErrorMessages(List<String> errorMessages) {
+        this.errorMessages = errorMessages;
+    }
+
+    public List<String> getLines() {
+        return this.lines;
+    }
+
+    public void setLines(List<String> lines) {
+        this.lines = lines;
+    }
+
+    public Map<Integer, String> getLineLabels() {
+        return this.lineLabels;
+    }
+
+    public void setLineLabels(Map<Integer, String> lineLabels) {
+        this.lineLabels = lineLabels;
+    }
+
+    public Map<String, Object> getVariables() {
+        return this.variables;
+    }
+
+    public void setVariables(Map<String, Object> variables) {
+        this.variables = variables;
+    }
+
+    private void init() {
+        for (int i = 0; i < this.lines.size(); ++i) {
+            String line = this.lines.get(i);
+            if (!line.contains(":")) continue;
+            String label = line.replace(":", "").trim();
+            if (this.lineLabels.containsValue(label)) {
+                throw new RadionicsScriptException("Label " + label + " already exist at line " + this.getLabelPosition(label));
+            }
+            this.lineLabels.put(i, label);
+        }
+    }
+
+    public Integer getLabelPosition(String value) {
+        AtomicReference result = new AtomicReference();
+        this.lineLabels.entrySet().forEach(integerStringEntry -> {
+            if (((String)integerStringEntry.getValue()).equals(value)) {
+                result.set((Integer)integerStringEntry.getKey());
+            }
+        });
+        return (Integer)result.get();
+    }
+}
+

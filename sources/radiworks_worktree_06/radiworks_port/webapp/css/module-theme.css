@@ -1,0 +1,49 @@
+/* Layer 2/3 — Modul-Akzente für RadiWorks (adaptiv, siehe UI_DESIGN_STANDARD §1).
+   Layer 2 setzt den Standardakzent des Moduls; Layer 3 definiert wählbare
+   Nuancen. ALLE Ableitungen laufen über die Aurelia-Basis-Tokens. */
+
+/* Layer 2: Modul-Standard */
+:root[data-module-theme="radiworks"] {
+  --mod-accent: var(--aur-sage);
+  --mod-accent-contrast: var(--aur-parchment);
+}
+
+/* Layer 3: wählbare Nuancen — jeweils aus der Basisfarbfamilie abgeleitet */
+
+/* Standard: Plattform-Sage unverändert */
+:root[data-module-theme="radiworks"][data-accent="sage"] {
+  --mod-accent: var(--aur-sage);
+}
+
+/* „Wellenreiter" — Entwurf #2C5E7A: Tinte trifft Tiefsee, über color-mix
+   an die Basis gekoppelt (bleibt im hellen wie dunklen Modus lesbar) */
+:root[data-module-theme="radiworks"][data-accent="wellenreiter"] {
+  --mod-accent: color-mix(in srgb, #2C5E7A 78%, var(--aur-sage));
+}
+
+/* „Sonnenaufgang" — warme Nuance aus Pergament × warn-Ton */
+:root[data-module-theme="radiworks"][data-accent="sunrise"] {
+  --mod-accent: color-mix(in srgb, var(--aur-warn) 62%, var(--aur-sage));
+}
+
+/* Abgeleitete Flächen — NUR über --mod-accent definiert, damit ein Wechsel
+   des Akzents das gesamte Modul umfärbt */
+:root[data-module-theme="radiworks"] {
+  --mod-accent-soft:  color-mix(in srgb, var(--mod-accent) 14%, var(--aur-parchment));
+  --mod-accent-line:  color-mix(in srgb, var(--mod-accent) 45%, var(--aur-line));
+  --mod-led-white:    color-mix(in srgb, white 85%, var(--aur-parchment));
+  --mod-led-infrared: color-mix(in srgb, var(--aur-stop) 60%, #6b2b26);
+  --mod-led-red:      var(--aur-stop);
+  --mod-led-green:    var(--aur-ok);
+  --mod-led-blue:     color-mix(in srgb, #2C5E7A 55%, var(--aur-sage));
+  --mod-led-uv:       color-mix(in srgb, var(--aur-warn) 30%, #6d5aa8);
+}
+
+/* Pipeline-Phasen (Radiquant5-Designsprache, regelkonform abgeleitet):
+   die Lila-/Gold-Vorlage wird in Basis-Ableitungen übersetzt. */
+:root[data-module-theme="radiworks"] {
+  --phase-erfassung:      color-mix(in srgb, #2C5E7A 55%, var(--aur-sage));  /* Petrol */
+  --phase-analyse:        var(--mod-accent);                                  /* Modul-Akzent */
+  --phase-harmonisierung: var(--aur-ok);                                      /* Grün */
+  --phase-reflexion:      color-mix(in srgb, var(--aur-warn) 34%, var(--aur-sage)); /* Salbei-warm */
+}

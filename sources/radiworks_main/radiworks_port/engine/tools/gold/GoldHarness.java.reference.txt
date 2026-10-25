@@ -1,0 +1,114 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.isuret.polos.AetherOnePi.domain.AnalysisResult;
+import de.isuret.polos.AetherOnePi.domain.Rate;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.hotbits.IHotbitsClient;
+import de.isuret.polos.AetherOnePi.service.AnalysisService;
+import de.isuret.polos.AetherOnePi.utils.AetherOnePiProcessingConfiguration;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * Goldwert-Harness: faehrt den ORIGINAL-Bytecode von
+ * AnalysisService.analyseRateList (AetherOnePi 2.2.0, aus Radiworks/decompiled
+ * extrahiert) mit einer deterministischen Zwei-Stufen-Entropie und
+ * serialisiert das Ergebnis als JSON.
+ *
+ * Aufruf (aus tools/gold, cwd = ein temp-Leerordner):
+ *   java -cp "<Radiworks-Root>;tools/gold-classes" GoldHarness <rateCount> <prefix> [masterSeed]
+ *
+ * Zwei-Stufen-Entropie wie im Original (Hotbit als Seed eines zweiten PRNG):
+ *   Ziehung(bound) = new Random(master.nextInt()).nextInt(bound)
+ * Der Master-Seed ist fixiert (Default 20260829) — der Python-Port repliziert
+ * die identische Sequenz mit JavaRandom-Emulation.
+ */
+public class GoldHarness implements IHotbitsClient {
+
+    private final Random master;
+
+    public GoldHarness(long masterSeed) {
+        this.master = new Random(masterSeed);
+    }
+
+    @Override
+    public boolean getBoolean() {
+        return new Random(master.nextInt()).nextBoolean();
+    }
+
+    @Override
+    public int getInteger(int bound) {
+        return new Random(master.nextInt()).nextInt(bound);
+    }
+
+    @Override
+    public int getInteger(Integer min, Integer max) {
+        return new Random(master.nextInt()).nextInt(max - min + 1) + min;
+    }
+
+    public static void main(String[] args) throws Exception {
+        int rateCount = Integer.parseInt(args[0]);
+        String prefix = args.length > 1 ? args[1] : "R";
+        long masterSeed = args.length > 2 ? Long.parseLong(args[2]) : 20260829L;
+        boolean includeGeneralVitality = false;
+        int maxHits = 100;
+        for (int index = 3; index < args.length; index++) {
+            if ("--rest".equals(args[index])) {
+                includeGeneralVitality = true;
+            } else {
+                maxHits = Integer.parseInt(args[index]);
+            }
+        }
+        if (maxHits != 100 && maxHits != 1000) {
+            throw new IllegalArgumentException("maxHits muss 100 oder 1000 sein");
+        }
+        AetherOnePiProcessingConfiguration.loadSettings("Settings")
+                .setBoolean("analysis.very.high.max.hit", maxHits == 1000);
+
+        List<Rate> rates = new ArrayList<>();
+        for (int i = 0; i < rateCount; i++) {
+            Rate rate = new Rate();
+            rate.setName(String.format("%s%04d", prefix, i));
+            rates.add(rate);
+        }
+
+        AnalysisService service = new AnalysisService();
+        service.setHotbitsClient(new GoldHarness(masterSeed));
+        AnalysisResult result = service.analyseRateList(rates);
+        if (includeGeneralVitality) {
+            result.setGeneralVitality(service.checkGeneralVitality());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("masterSeed", masterSeed);
+        out.put("rateCount", rateCount);
+        out.put("prefix", prefix);
+        out.put("oracleVersion", "original-java-analysis-v2");
+        out.put("javaVersion", System.getProperty("java.version"));
+        out.put("mode", "seeded");
+        out.put("maxHits", maxHits);
+        out.put("includesGeneralVitality", includeGeneralVitality);
+        out.put("numberOfTrials", result.getNumberOfTrials());
+        out.put("generalVitality", result.getGeneralVitality());
+        List<Map<String, Object>> rateObjects = new ArrayList<>();
+        for (RateObject ro : result.getRateObjects()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("energeticValue", ro.getEnergeticValue());
+            m.put("nameOrRate", ro.getNameOrRate());
+            m.put("url", ro.getUrl());
+            m.put("gv", ro.getGv());
+            m.put("recurring", ro.getRecurring());
+            m.put("recurringGeneralVitality", ro.getRecurringGeneralVitality());
+            m.put("level", ro.getLevel());
+            m.put("potency", ro.getPotency());
+            m.put("resonateCounter", ro.getResonateCounter());
+            rateObjects.add(m);
+        }
+        out.put("rateObjects", rateObjects);
+        System.out.println(mapper.writeValueAsString(out));
+    }
+}

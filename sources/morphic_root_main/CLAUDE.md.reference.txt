@@ -1,0 +1,171 @@
+# CLAUDE.md - Schnellreferenz für KI-Assistenten (z. B. Claude Code CLI)
+
+**Zuletzt aktualisiert:** 2026-07-07
+**Aktive Initiative:** Radi144-UI/UX-Konsolidierung der Operator Workbench + radiquant4-Plattform-Vorbereitung
+**Status:** radiquant4-Alignment-Layer vollständig (9/9 Tasks). UI/UX-Konsolidierungsplan in Arbeit.
+
+---
+
+## 🚨 ALLERWICHTIGSTER HINWEIS: ARBEITSORT
+
+**Nicht hier im Repo-Root (`C:\morphic_v1`) weiterarbeiten!**
+
+Die aktive Entwicklung läuft im Git-Worktree:
+
+```powershell
+cd C:\morphic_v1\.worktrees\operator-workbench-phase1
+git branch --show-current   # muss "operator-workbench-phase1" zeigen
+```
+
+Grund: Der Root-Checkout (`master`) hat eigene, veraltete uncommittete Änderungen an
+`apps/web/static/app.js`/`index.html` aus einer früheren Session, die **nichts** mit der aktuellen
+Arbeit zu tun haben. Nicht anfassen, nicht committen, ohne vorher mit `git diff` zu prüfen, was das ist.
+
+**Sofort lesen, in dieser Reihenfolge:**
+1. `PROJECT_MEMORY/00_CURRENT_STATE.md` ← Golden Record, exakter Fortschritt pro Task
+2. `docs/superpowers/plans/2026-07-07-operator-workbench-radi144-uiux-consolidation.md` ← aktiver Plan
+3. `docs/deep-audit-2026-07-07/SITUATION_KONSOLIDIERT_BRANCHES_UI_ANALYSELAUF.md` ← Branch-/Bug-Historie
+
+---
+
+## 🎯 AKTUELLER STATUS (2026-07-07)
+
+- **radiquant4-Alignment:** alle 9 Tasks abgeschlossen und verifiziert (Standard-Output-Adapter,
+  Operator-Context/Ownership, Entitlement-Stub, Quantum-Pfad, deterministischer Seed, Substep-Mapping,
+  DSGVO-Härtung, Design-Tokens, Tests) — siehe `docs/superpowers/plans/2026-07-05-morphic-v1-radiquant4-alignment.md`.
+- **Operator Workbench:** 10-Phasen-Wizard mit 12-Substep-Timeline (Radi144-Visual-Alignment), im
+  Worktree `operator-workbench-phase1`, Commit `bcfcd2f` als letzter stabiler Meilenstein.
+- **Laufende Arbeit:** 8 vom Nutzer gemeldete UI/UX-Lücken werden nach TDD-Plan behoben
+  (`2026-07-07-operator-workbench-radi144-uiux-consolidation.md`). WIP-Commit `3a957a3`:
+  Task 1 (Review-Cards/Auto-Advance-Bugfix) und Task 3 (Fokushistorie) fertig, Task 2/4/5/6 teilweise,
+  Task 7/8/9 offen. **Nächster Schritt: fehlende CSS-Klassen ergänzen** (siehe `00_CURRENT_STATE.md`
+  Abschnitt "Sofort notwendig").
+
+---
+
+## 📁 PROJEKTSTRUKTUR (Kernbereiche)
+
+```
+morphic_v1/                                   (master — Referenz/Docs, NICHT aktiv editieren)
+├── .worktrees/
+│   └── operator-workbench-phase1/            ← ★ HIER ARBEITEN (Branch operator-workbench-phase1)
+│       ├── apps/cli/                         CLI: main.py (Entry-Point) + commands/*.py
+│       │   └── workflow/                     12-Step-Orchestrator + substep_manifest.py
+│       ├── apps/web/                         FastAPI Operator Workbench
+│       │   ├── static/                       index.html, app.js, app.css, workbench-*.js
+│       │   ├── contracts.py                  Pydantic Request/Response-Schemas
+│       │   ├── hardware_truth.py             Hardware-Klassifikation (components = Dict!)
+│       │   └── harmonization.py              Harmonisierungs-Service-Adapter
+│       ├── core/compliance/                  Runtime Manifest, platform_export, operator_context
+│       ├── core/realtime/                    seed_generator, emf_profile
+│       ├── services/harmonization_worker.py  Impuls/Pause-Zyklus-Backend (Lücke, Task 7)
+│       └── tests/                            262+ Tests
+├── docs/
+│   ├── deep-audit-2026-07-07/                Aktuellste Tiefenanalyse + Branch-Forensik
+│   ├── deep-audit-2026-07-05/                radiquant4-Kontrakt-Referenz
+│   └── superpowers/plans/                    Alle Umsetzungspläne (chronologisch datiert)
+└── PROJECT_MEMORY/00_CURRENT_STATE.md        ← IMMER ZUERST LESEN
+```
+
+---
+
+## 🔧 WICHTIGE BEFEHLE (im Worktree ausführen!)
+
+```powershell
+cd C:\morphic_v1\.worktrees\operator-workbench-phase1
+
+# Tests — IMMER das Projekt-.venv verwenden, nie ein anderes venv auf PATH
+$env:PYTHONUTF8="1"
+& C:\morphic_v1\.venv\Scripts\python.exe -m pytest tests -q
+
+# Server starten
+$env:OPENBLAS_NUM_THREADS="1"
+& C:\morphic_v1\.venv\Scripts\python.exe -m uvicorn apps.web.main:app --host 127.0.0.1 --port 8000
+
+# JS-Syntax-Check
+node --check apps/web/static/app.js
+
+# CLI-Smoke
+& C:\morphic_v1\.venv\Scripts\python.exe -m apps.cli.main scan groups-overview --json
+```
+
+**Radi144-Referenz zum visuellen Abgleich:** `http://localhost:8090/user_workflow.html` (separater
+Server, nicht Teil dieses Repos).
+
+**Bekanntes Umgebungsproblem:** Host oft mit nur 3-4 GB freiem RAM → `OpenBLAS error: Memory allocation
+still failed` bei `import numpy` möglich. Kein Code-Bug; `OPENBLAS_NUM_THREADS=1` setzen, ggf. andere
+Programme schließen.
+
+---
+
+## 📊 FORTSCHRITT NACH INITIATIVE
+
+| Initiative | Status | Referenz |
+|---|---|---|
+| CLI `main.py`-Refactoring (9.543→72 Zeilen) | ✅ abgeschlossen (historisch, 2026-07-02) | Git-Historie `master` |
+| radiquant4-Alignment (9 Tasks) | ✅ abgeschlossen (2026-07-06) | `docs/superpowers/plans/2026-07-05-morphic-v1-radiquant4-alignment.md` |
+| Operator Workbench 10-Phasen-Rebuild | ✅ abgeschlossen (2026-07-06/07) | Worktree-Commit `bcfcd2f` |
+| Radi144-UI/UX-Konsolidierung (8 Lücken) | 🟡 in Arbeit | `docs/superpowers/plans/2026-07-07-operator-workbench-radi144-uiux-consolidation.md`, Worktree-Commit `3a957a3` |
+
+---
+
+## 🔄 MIGRATIONSABLAUF-PATTERN (weiterhin gültig für CLI-Refactoring-artige Arbeit)
+
+1. **Find:** `grep -n "^def function_name" apps/cli/main.py`
+2. **Import:** Abhängigkeiten prüfen (`grep function_name main.py -B 50 | grep "^import\|^from"`)
+3. **Copy:** Vollständig nach `commands/*.py` inkl. Helper-Funktionen und Constants
+4. **Test:** `python -m apps.cli.main COMMAND --help`
+5. **Remove:** Erst nach erfolgreichem Test aus `main.py` löschen
+6. **Commit:** `git commit -m "migrate: FUNCTION_NAME from main.py to COMMAND.py"`
+
+## � TDD-PATTERN (für die aktuelle UI/UX-Konsolidierung, siehe Plan-Doc)
+
+1. Test zuerst schreiben (Backend-Änderungen), Fehlschlag bestätigen
+2. Implementieren, Test grün bekommen
+3. Für reine Frontend-Änderungen (HTML/CSS/JS ohne Backend-Contract): manuelle Verifikation gemäß
+   Verifikationsplan im Plan-Dokument (Abschnitt 4), da JS aktuell ohne Test-Runner läuft
+4. Nach jedem Task: volle Suite (`pytest tests -q`) + `node --check` auf geänderten JS-Dateien
+5. Commit mit klarer Task-Referenz (siehe Commit `3a957a3` als Vorlage für WIP-Commit-Stil)
+
+---
+
+## 🚨 KRITISCHE PUNKTE
+
+### ⚠️ WENN CONTEXT VERLOREN GEHT:
+1. **KEINE PANIK**
+2. **IMMER ZUERST LESEN:** `PROJECT_MEMORY/00_CURRENT_STATE.md`
+3. **Dann:** `cd .worktrees/operator-workbench-phase1`, `git log --oneline -5`, `git status`
+4. **Dann:** Plan-Dokument lesen, an der markierten Stelle weitermachen
+
+### ⚠️ DEPLOYMENT/AUSFÜHRUNG:
+- Nur `python -m apps.cli.main` verwenden (nicht `python apps/cli/main.py`)
+- Tests/Server: **immer** `C:\morphic_v1\.venv\Scripts\python.exe` explizit verwenden, nicht das
+  bare `python`/`uvicorn`-Kommando (kann auf ein anderes, numpy-loses venv im PATH zeigen —
+  siehe `docs/deep-audit-2026-07-07/SITUATION_KONSOLIDIERT_BRANCHES_UI_ANALYSELAUF.md`)
+- Aktiver Branch für Code-Änderungen: `operator-workbench-phase1` (im Worktree), **nicht** `master`
+
+### ⚠️ ENCODING:
+- Windows CP1252 kann UTF-8 nicht lesen → `PYTHONIOENCODING=utf-8`, `PYTHONUTF8=1` setzen
+- Keine `\u2011` (non-breaking hyphen) in Docstrings/Strings
+
+### ⚠️ CONTRACT-FALLSTRICKE (bereits einmal zum Bug geführt):
+- `hardware_truth.py`: `components` ist ein **Dict** (keyed by Komponenten-Id), kein Array —
+  Frontend muss `Object.values()` verwenden (bereits gefixt in `workbench-render.js`, aber bei
+  neuen Konsumenten dieses Payloads beachten)
+- `main_symptom` (Contract-Feld) ist **nicht** rein dokumentarisch — `launcher.py:58-68` kombiniert
+  es mit `focus` und beeinflusst dadurch die Analyse
+
+---
+
+## 📞 KONTAKT-POINTS
+
+Wenn etwas unklar ist:
+1. `PROJECT_MEMORY/00_CURRENT_STATE.md` (aktueller Zustand, Task-fuer-Task-Fortschritt)
+2. `docs/superpowers/plans/2026-07-07-operator-workbench-radi144-uiux-consolidation.md` (Plan mit
+   Datei:Zeile-Belegen für jede offene Lücke)
+3. `docs/deep-audit-2026-07-07/SITUATION_KONSOLIDIERT_BRANCHES_UI_ANALYSELAUF.md` (Branch-Historie,
+   falls Verwirrung über welcher Branch/Worktree der richtige ist)
+
+---
+
+**Zuletzt aktualisiert:** 2026-07-07 (Vorbereitung für nahtlose Fortsetzung via Claude Code CLI)

@@ -1,0 +1,67 @@
+# Python environments and caches
+.venv/
+build_env/
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+
+# Local Hermes/session scratch artifacts
+.hermes*.txt
+
+# Runtime/generated outputs
+Analysen/
+data/runtime/
+dev_results.txt
+debug_output.txt
+focus_history.txt
+last_session.json
+
+# Local user/session state that can contain client/anamnesis/focus data
+data/session_templates.json
+data/.focus_temp.txt
+temp_group.json
+_temp_db_list.txt
+
+# Local deployment secrets / environment overrides
+deploy/server.env
+
+# Legacy one-off root diagnostics/repair scripts; keep outside initial baseline
+check_bom.py
+check_bom_v2.py
+check_output.py
+check_palettes_bom.py
+debug_export.py
+debug_gui.py
+debug_imports.py
+debug_test.py
+diag_check.py
+fix_encoding.py
+fix_encoding_bom.py
+inspect_history.py
+reproduce_issue.py
+test_audio.py
+test_date.py
+test_engine.py
+test_pdf.py
+verify_config.py
+verify_execution.py
+verify_fix.py
+verify_fix_v2.py
+verify_umlaut_flow.py
+
+# Legacy generated documentation utility with hard-coded historical Windows path
+# and stale analysis claims; rewrite separately before any future baseline inclusion.
+generate_analysis_pdf.py
+
+# Legacy in-repo restore/packaging scripts superseded by external ShadowCopies
+create_restore_point.py
+create_restore.ps1
+finalize_project.py
+
+# Restore/snapshot artifacts
+RestorePoints/
+restore_points/

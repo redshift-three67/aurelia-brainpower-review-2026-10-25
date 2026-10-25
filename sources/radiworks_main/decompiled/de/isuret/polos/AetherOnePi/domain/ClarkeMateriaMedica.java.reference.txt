@@ -1,0 +1,21 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import de.isuret.polos.AetherOnePi.domain.Symptom2Remedies;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ClarkeMateriaMedica {
+    private List<Symptom2Remedies> clinicalSymptoms = new ArrayList<Symptom2Remedies>();
+
+    public List<Symptom2Remedies> getClinicalSymptoms() {
+        return this.clinicalSymptoms;
+    }
+
+    public void setClinicalSymptoms(List<Symptom2Remedies> clinicalSymptoms) {
+        this.clinicalSymptoms = clinicalSymptoms;
+    }
+}
+

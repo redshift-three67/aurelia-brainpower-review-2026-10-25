@@ -1,0 +1,34 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+
+public class SessionScreen
+implements IDrawableElement {
+    private AetherOneUI p;
+
+    public SessionScreen(AetherOneUI p) {
+        this.p = p;
+    }
+
+    @Override
+    public void draw() {
+        if (this.p.getEssentielQuestion() != null) {
+            this.p.fill(255);
+            this.p.text(this.p.getEssentielQuestion(), 50.0f, 150.0f);
+        }
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return "SESSION";
+    }
+}
+

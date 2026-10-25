@@ -1,0 +1,88 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Rate {
+    private Long id;
+    private String name;
+    private String groupName;
+    private String sourceName;
+    private String signature;
+    private String description;
+    private String jsonObject;
+    private byte[] base64File;
+    private List<Rate> subRates = new ArrayList<Rate>();
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGroupName() {
+        return this.groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getSourceName() {
+        return this.sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getJsonObject() {
+        return this.jsonObject;
+    }
+
+    public void setJsonObject(String jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
+    public byte[] getBase64File() {
+        return this.base64File;
+    }
+
+    public void setBase64File(byte[] base64File) {
+        this.base64File = base64File;
+    }
+
+    public List<Rate> getSubRates() {
+        return this.subRates;
+    }
+}
+

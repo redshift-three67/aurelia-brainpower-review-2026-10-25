@@ -1,0 +1,34 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+public class AnalysisData {
+    private String intention;
+    private String rateList;
+
+    public AnalysisData() {
+    }
+
+    public String getIntention() {
+        return this.intention;
+    }
+
+    public void setIntention(String intention) {
+        this.intention = intention;
+    }
+
+    public String getRateList() {
+        return this.rateList;
+    }
+
+    public void setRateList(String rateList) {
+        this.rateList = rateList;
+    }
+
+    public AnalysisData(String intention, String rateList) {
+        this.intention = intention;
+        this.rateList = rateList;
+    }
+}
+

@@ -1,0 +1,170 @@
+# CLAUDE.md - Schnellreferenz für KI-Assistenten
+
+**Zuletzt aktualisiert:** 2026-07-02  
+**Phase:** 3 - main.py Refactoring (~99% abgeschlossen)  
+**Status:** ✅ 153/153 Tests grün | Repository bereinigt | 9 Commits
+
+---
+
+## 🎯 AKTUELLER STATUS
+
+### main.py Refactoring: FAST FERTIG
+- main.py: 72 Zeilen (war 9.543) → -99.2%
+- Alle großen Funktionen zu commands/*.py migriert
+- Neue Module: workflow/, web/, compliance/
+
+### Test-Status: 153 passed, 0 failed
+### Git: master, bereinigt, 9 logische Commits
+
+---
+
+## 📁 PROJEKTSTRUKTUR
+
+```
+Morphic_Engine_V1/
+├── apps/cli/
+│   ├── main.py              (72 Zeilen)     # Entry-Point + Delegation
+│   ├── commands/
+│   │   ├── field.py         (4245 Zeilen)   # top3-scan, field-test, multiplex
+│   │   ├── scan.py          (2276 Zeilen)   # groups-overview, hw-diag, analyze
+│   │   ├── trend.py         (235 Zeilen)    # analyze_trends, client_trends
+│   │   ├── sources.py       (216 Zeilen)    # source registry
+│   │   ├── synergy.py       (185 Zeilen)    # synergy analysis
+│   │   ├── harmonize.py     (77 Zeilen)     # harmonize clients
+│   │   ├── descriptions.py  (68 Zeilen)     # description generator
+│   │   ├── privacy.py       (60 Zeilen)     # GDPR/privacy
+│   │   └── health.py        (24 Zeilen)     # health check
+│   └── workflow/                            # 12-Step Workflow-Orchestrator
+├── apps/web/                                # FastAPI Web-App
+├── core/
+│   ├── compliance/                          # Runtime Manifest + Safety
+│   ├── quantum_synergy/                     # Grover-Search (qiskit optional)
+│   └── ...
+├── tools/                                   # Report-Tools, simple_pdf, etc.
+├── tests/                                   # 153 Tests, 34 Dateien
+├── PROJECT_MEMORY/
+│   ├── 00_CURRENT_STATE.md                  ← IMMER ZUERST LESEN
+│   └── ...
+└── CLAUDE.md                                ← DIESE DATEI
+```
+
+**WICHTIG:** PROJECT_MEMORY/00_CURRENT_STATE.md ist der "Golden Record" bei Context-Loss!
+**Test-Status:** 153 passed, 0 failed
+
+---
+
+## 🔧 WICHTIGE BEFEHLE
+
+### Projekt-Status prüfen
+```bash
+cat PROJECT_MEMORY/00_CURRENT_STATE.md
+```
+
+### Aktuelle Änderungen
+```bash
+cat PROJECT_MEMORY/02_CHANGES_LOG.md | head -50
+```
+
+### Git Log anschauen
+```bash
+git log --oneline -10
+```
+
+### Commands testen
+```bash
+python -m apps.cli.main scan groups-overview --json
+python -m apps.cli.main scan hw-diagnostics
+python -m apps.cli.main scan top3-scan --help
+```
+
+---
+
+## 🔄 MIGRATIONSABLAUF (Pattern)
+
+1. **Find:** Funktion in main.py Zeilen identifizieren
+   ```bash
+   grep -n "^def function_name" apps/cli/main.py
+   ```
+
+2. **Import:** Abhängigkeiten prüfen
+   ```bash
+   grep "function_name" apps/cli/main.py -B 50 | grep "^import\|^from"
+   ```
+
+3. **Copy:** Funktion nach commands/*.py kopieren
+   ```
+   - Zielfile auswählen (scan.py, trend.py, etc.)
+   - Vollständig mit Helper-Funktionen
+   - Alle Constants mitnehmenhm
+   ```
+
+4. **Test:** Befehl testen
+   ```bash
+   python -m apps.cli.main COMMAND --help
+   python -m apps.cli.main COMMAND [args...]
+   ```
+
+5. **Remove:** Aus main.py löschen
+   ```
+   - Nur nach erfolgreichem Test!
+   - Ggf. Keep-List überprüfen
+   ```
+
+6. **Commit:** Mit aussagekräftiger Message
+   ```bash
+   git add -A
+   git commit -m "migrate: FUNCTION_NAME from main.py to COMMAND.py"
+   ```
+
+---
+
+## 📊 FORTSCHRITT
+
+| Phase | Status | Details |
+|-------|--------|---------|
+| Phase 1 | ✅ DONE | Cleanup (venv + imports + 79 Skripte entfernt) |
+| Phase 2 | ✅ DONE | Dependencies (pyproject.toml + requirements.txt aufgeräumt) |
+| Phase 3 | ✅ ~99% | main.py 72 Zeilen (war 9543), alle großen Funktionen migriert |
+| Phase 4 | ⏳ Ausstehend | Test-Abdeckung erweitern (aktuell 153 Tests in 34 Dateien) |
+| Phase 5 | ⏳ Ausstehend | DB-Konsolidierung |
+
+---
+
+## 🚨 KRITISCHE PUNKTE
+
+### ⚠️ WENN CONTEXT GROWS TOO LARGE:
+1. **KEINE PANIK** - Das ist erwartbar
+2. **IMMER ZUERST LESEN:** `PROJECT_MEMORY/00_CURRENT_STATE.md`
+3. **Dann:** Normale Arbeit fortsetzen
+
+### ⚠️ DEPLOYMENT HINWEISE:
+- Nur `python -m apps.cli.main` verwenden (nicht `python apps/cli/main.py`)
+- Tests: `& .\.venv\Scripts\python.exe -m pytest tests/`
+- Git Branch: `master`
+
+### ⚠️ ENCODING ISSUES:
+- Windows CP1252 kann UTF-8 nicht lesen
+- Export: `PYTHONIOENCODING=utf-8`, `PYTHONUTF8=1`
+- Docstrings: Kein `\u2011` (non-breaking hyphen)
+
+---
+
+##  REPOSITORY STATUS
+
+- **Active Branch:** `master`
+- **Letzter Commit:** `4207215` (docs: analysis documents)
+- **Test-Status:** 153 passed, 0 failed
+- **Git Hooks:** ✅ Aktiviert
+
+---
+
+## 📞 KONTAKT-POINTS
+
+Wenn etwas unklar ist:
+1. Prüfe `PROJECT_MEMORY/00_CURRENT_STATE.md` (aktueller Zustand)
+2. Prüfe `PROJECT_MEMORY/03_DECISIONS.md` (Begründungen)
+3. Starte mit **dieser Datei** neu (CLAUDE.md)
+
+---
+
+**Zuletzt manuell aktualisiert:** 2026-07-02

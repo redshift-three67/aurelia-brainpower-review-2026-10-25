@@ -1,0 +1,107 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import org.dizitart.no2.objects.Id;
+
+public class AnalysisResult
+implements Serializable {
+    @Id
+    private UUID id;
+    private List<RateObject> rateObjects = new ArrayList<RateObject>();
+    private Integer generalVitality;
+    private Integer numberOfTrials;
+
+    public AnalysisResult(AnalysisResult r) {
+        this.id = UUID.randomUUID();
+        for (RateObject rateObject : r.rateObjects) {
+            this.rateObjects.add(new RateObject(rateObject));
+        }
+    }
+
+    public AnalysisResult() {
+    }
+
+    @JsonIgnore
+    public AnalysisResult sort() {
+        Collections.sort(this.rateObjects, new Comparator<RateObject>(this){
+
+            @Override
+            public int compare(RateObject o1, RateObject o2) {
+                if (o2.getEnergeticValue().equals(o1.getEnergeticValue())) {
+                    return o1.getNameOrRate().compareTo(o2.getNameOrRate());
+                }
+                return o2.getEnergeticValue().compareTo(o1.getEnergeticValue());
+            }
+        });
+        return this;
+    }
+
+    @JsonIgnore
+    public AnalysisResult shorten(Integer maxSize) {
+        while (this.rateObjects.size() > maxSize) {
+            this.rateObjects.remove(this.rateObjects.size() - 1);
+        }
+        return this;
+    }
+
+    public UUID getId() {
+        return this.id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public List<RateObject> getRateObjects() {
+        return this.rateObjects;
+    }
+
+    public void setRateObjects(List<RateObject> rateObjects) {
+        this.rateObjects = rateObjects;
+    }
+
+    public Integer getGeneralVitality() {
+        return this.generalVitality;
+    }
+
+    public void setGeneralVitality(Integer generalVitality) {
+        this.generalVitality = generalVitality;
+    }
+
+    public Integer getNumberOfTrials() {
+        return this.numberOfTrials;
+    }
+
+    public void setNumberOfTrials(Integer numberOfTrials) {
+        this.numberOfTrials = numberOfTrials;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder("--- ANALYSIS ---\n");
+        sb.append("General Vitality: ").append(this.generalVitality).append("\n");
+        if (this.numberOfTrials != null) {
+            sb.append("Number of trials: ").append(this.numberOfTrials).append("\n");
+        }
+        for (RateObject rateObject : this.rateObjects) {
+            sb.append(rateObject.getNameOrRate());
+            if (rateObject.getGv() >= this.generalVitality) {
+                sb.append(" >> ");
+            } else {
+                sb.append(" < ");
+            }
+            sb.append(rateObject.getGv()).append("\n");
+        }
+        return sb.toString();
+    }
+}
+

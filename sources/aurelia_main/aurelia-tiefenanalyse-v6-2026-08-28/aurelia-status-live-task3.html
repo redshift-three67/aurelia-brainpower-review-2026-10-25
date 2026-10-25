@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURELIA · Task-3-Review-Pfad (Mermaid)</title>
+<style>
+  :root{
+    --bg:#f3efe6; --card:#fffdf8; --border:#e3dbc9; --ink:#1f2a24; --ink2:#5b6b62;
+    --sage:#2c4a3e; --sage-soft:#eae9e0; --good:#15803d; --warn:#ca8a04; --crit:#6b1024;
+    --mono:ui-monospace,'Cascadia Code',Consolas,monospace;
+    --sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;padding:24px}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1{font-size:1.35rem}
+  .sub{color:var(--ink2);font-size:.84rem;margin-top:4px}
+  .back{display:inline-block;margin-top:10px;font-size:.8rem;color:var(--sage);text-decoration:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;background:var(--card)}
+  section{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:16px}
+  h2{font-size:1rem;margin-bottom:10px;color:var(--sage)}
+  h2 small{color:var(--ink2);font-weight:400;font-size:.74rem;margin-left:8px}
+  .note{font-size:.78rem;color:var(--ink2);margin-top:10px}
+  .mermaid{background:#fffdf8;border-radius:8px;padding:10px;display:flex;justify-content:center}
+  .mermaid svg{max-width:100%;height:auto}
+  footer{color:var(--ink2);font-size:.74rem;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AURELIA — Task-3-Review-Pfad (28.08.)</h1>
+  <p class="sub">Mermaid-Unterseite zum Status-Live · der heutige Review-Bogen mit allen Wendepunkten</p>
+  <a class="back" href="aurelia-status-live.html">← zurück zum Status-Live</a>
+
+  <section>
+    <h2>Zustandsmaschine <small>E3 = Spec-Review · E4 = Quality-Review · alle Übergänge mit Evidenz</small></h2>
+    <pre class="mermaid">
+stateDiagram-v2
+  [*] --> Implementiert: TDD-Korrekturen P1-01/P1-02/Q-01 committed · String/Type-Bypass als Overlay (Hash 32c0b5b4/ce9e3a6d)
+  Implementiert --> SpecReviewFAIL: E3 · unabhängige Instanz · 3 Findings (P1 fehlende gequotet-= Abdeckung · 2× P2)
+  SpecReviewFAIL --> Korrekturschleife: Betreiberfreigabe Schritte 1–3
+  Korrekturschleife --> SpecReviewPASS: +1 Test, 2 Fixture-Gruppen, Plan-Allowlisten · 33/33 · Zähne-Beweis per Mutation
+  SpecReviewPASS --> QualityReview: Re-Review PASS (scoped) · Vorbedingung erfüllt
+  QualityReview --> Konsolidierungsstopp: 3 Findings bestätigt (P1 Terminatoren · P2 --flag= · P2 quadratisch 512 KiB≈29 s) · 1 widerlegt (NEW-04, dynamisch)
+  Konsolidierungsstopp --> OptionB: Betreiberentscheidung
+  OptionB --> Amendiert: Overlap-Design + -Plan · neuer Digest c8a54422…
+  Amendiert --> TDDLauf: ⏳ wartet auf namentliche Freigabe
+  TDDLauf --> DoppeltPASS: Spec- + Quality-Review des Umbaus (Plan Task 8/9)
+  DoppeltPASS --> Task4: T3 abgeschlossen · T4 eligible
+  note right of SpecReviewFAIL
+    E3 §4: NEW-01 gequotet+= war vor b84b72a
+    die EINZIGE benannte Erkennung
+  end note
+  note right of QualityReview
+    E4: NEW-03 gemessen ×4 pro Verdopplung
+    450/1787/7190/28907 ms (64→512 KiB)
+  end note
+  note right of Konsolidierungsstopp
+    QUALITY-ROUTING §4: systemischer Befund
+    stoppt zur Konsolidierung
+  end note
+    </pre>
+  </section>
+
+  <section>
+    <h2>Warum Option B? <small>die drei Findings teilen eine Wurzel, die der Overlap-Umbau ersetzt</small></h2>
+    <pre class="mermaid">
+flowchart LR
+  W["Wurzel: Lookahead-Mechanismus<br/>im Ist-Regex (mjs:17-31)"]
+  F1["NEW-01 · P1<br/>Terminatorklasse zu eng<br/>Stringliteral/JSON/URL → 0"]
+  F2["NEW-02 · P2<br/>--flag=-Form verloren"]
+  F3["NEW-03 · P2<br/>quadratisches Backtracking<br/>kein Timeout auf classifyBlob"]
+  OV["Overlap-Umbau (amendiert)<br/>lineare Head-Enumeration<br/>+ bounded Value-Parser<br/>+ JS-seitiger Namenscheck"]
+  OK["löst alle drei strukturell<br/>§11: O(n+c+a) · 5-s-Timeouts"]
+  R["NEW-04 · ZURÜCKGEWIESEN<br/>.Member-Kandidat existiert (.txt→1)<br/>und wird per AST echt unterdrückt"]
+  W --> F1
+  W --> F2
+  W --> F3
+  F1 --> OV
+  F2 --> OV
+  F3 --> OV
+  OV --> OK
+  classDef root fill:#f0dfe2,stroke:#6b1024,color:#6b1024
+  classDef finding fill:#fae3d8,stroke:#b23c0c,color:#7a2d0e
+  classDef fix fill:#e3ebe7,stroke:#2c4a3e,color:#1f2a24,stroke-width:2px
+  classDef ok fill:#e4f2e8,stroke:#15803d,color:#14532d
+  classDef rejected fill:#eceae3,stroke:#5b6b62,color:#5b6b62,stroke-dasharray:4 3
+  class W root
+  class F1,F2,F3 finding
+  class OV fix
+  class OK ok
+  class R rejected
+    </pre>
+    <p class="note">Vertragskonflikt aufgelöst: Das Overlap-Design testete trailing-quote/bracket/paren ursprünglich als erwartet 0 — die Amendierung (§7.2, §12) stellt sie auf 1 und nimmt `:` in VALUE_CHAR auf (URL-Werte). Öffnende Trenner (`[`, `(`) bleiben Nichtterminatoren (erwartet 0).</p>
+  </section>
+
+  <footer>Statischer Snapshot aus <code>aurelia-tiefenanalyse-v6-2026-08-28/</code> · Evidenz: E3/E4 + repro_quality_findings_2026-08-28.mjs · Mermaid via CDN (Internet nötig)</footer>
+</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+</body>
+</html>

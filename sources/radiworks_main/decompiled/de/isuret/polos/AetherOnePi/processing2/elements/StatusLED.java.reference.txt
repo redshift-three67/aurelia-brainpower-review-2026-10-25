@@ -1,0 +1,97 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+
+public class StatusLED
+implements IDrawableElement {
+    private AetherOneUI p;
+    private String tabName;
+    private String text;
+    private boolean on = false;
+    private float x;
+    private float y;
+
+    public StatusLED(AetherOneUI p, String tabName, String text, float x, float y) {
+        this.p = p;
+        this.tabName = tabName;
+        this.text = text;
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public void draw() {
+        this.p.noStroke();
+        if (this.on) {
+            this.p.fill(0.0f, 240.0f, 0.0f);
+        } else {
+            this.p.fill(80);
+        }
+        this.p.rect(this.x, this.y, 20.0f, 10.0f);
+        this.p.fill(255);
+        this.p.textFont(this.p.getGuiElements().getFonts().get("default"), 14.0f);
+        this.p.text(this.text, this.x + 24.0f, this.y + 10.0f);
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return this.tabName;
+    }
+
+    public AetherOneUI getP() {
+        return this.p;
+    }
+
+    public void setP(AetherOneUI p) {
+        this.p = p;
+    }
+
+    public String getTabName() {
+        return this.tabName;
+    }
+
+    public void setTabName(String tabName) {
+        this.tabName = tabName;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public boolean isOn() {
+        return this.on;
+    }
+
+    public void setOn(boolean on) {
+        this.on = on;
+    }
+
+    public float getX() {
+        return this.x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return this.y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+}
+

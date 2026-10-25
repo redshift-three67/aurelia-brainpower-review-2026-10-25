@@ -1,0 +1,577 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.processing2.elements;
+
+import de.isuret.polos.AetherOnePi.domain.RateObject;
+import de.isuret.polos.AetherOnePi.domain.ResonanceObject;
+import de.isuret.polos.AetherOnePi.processing2.AetherOneUI;
+import de.isuret.polos.AetherOnePi.processing2.elements.IDrawableElement;
+import de.isuret.polos.AetherOnePi.sound.Binaural;
+import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Random;
+
+public class BroadcastElement
+implements IDrawableElement {
+    public static final int WIDTH = 320;
+    public static final int HEIGHT = 180;
+    private static final String[] ADDITIONAL_RATES = new String[]{"ENERGY", "FIRE", "POWER", "WOOD", "GROUNDING", "EARTH", "RHYTHM", "METAL", "WATER", "DEEPNESS", "DO NO HARM!", "UNITY", "LOVE", "BALANCE"};
+    private AetherOneUI p;
+    private String tabName;
+    private final Integer multiplier;
+    private Integer seconds;
+    private String signature;
+    private String target;
+    private Long start;
+    private Random random;
+    private SecureRandom random2;
+    private Integer movingWaveAmount = 0;
+    private Integer offsetX = 0;
+    private Integer offsetY = 0;
+    private Float progress;
+    private Integer counterCheckGV = 500;
+    private Boolean counterCheck = false;
+    private static Long lastBroadcast = null;
+    private boolean stop = false;
+    private Binaural binaural = null;
+    private boolean playingSound = false;
+    private boolean dynamicAdjustments = false;
+
+    public BroadcastElement(AetherOneUI p, String tabName, int seconds, String signature, Integer multiplier) {
+        this.p = p;
+        this.seconds = seconds;
+        this.signature = signature;
+        this.tabName = tabName;
+        this.multiplier = multiplier != null ? multiplier : Integer.valueOf(1);
+        try {
+            this.random2 = SecureRandom.getInstanceStrong();
+        }
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        Long now = Calendar.getInstance().getTimeInMillis();
+        if (lastBroadcast != null && now < lastBroadcast + 500L) {
+            return;
+        }
+        this.start();
+        this.random = new Random(this.start);
+        File hotbitsFolder = new File("hotbits");
+        if (hotbitsFolder.listFiles().length > 100) {
+            this.random = new Random(p.getHotbitsClient().getInteger(0, 100000));
+        }
+        p.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        if (!p.getSettings().getBoolean("play.binaural.sound", false).booleanValue()) {
+            this.playingSound = true;
+        }
+        this.dynamicAdjustments = p.getSettings().getBoolean("dynamic.adjustments", false);
+    }
+
+    public void start() {
+        this.start = Calendar.getInstance().getTimeInMillis();
+    }
+
+    public void draw(int x, int y, int width, int height) {
+        this.paintSignatureCharacter(x, y, width, height);
+    }
+
+    @Override
+    public void draw() {
+        if (this.seconds == null) {
+            return;
+        }
+        if (this.signature == null) {
+            return;
+        }
+        if (this.random.nextInt(13) >= 12) {
+            this.paintSignatureCharacter();
+        } else if (this.random.nextInt(21) >= 20) {
+            int max = this.random.nextInt(1000) + 1;
+            if (max > 90) {
+                this.paintOverlay();
+            }
+            for (int x = 0; x > max; ++x) {
+                this.paintOneLayer();
+            }
+        } else if (this.random.nextInt(33) >= 32) {
+            this.paintOverlay();
+            int max = this.random.nextInt(10000) + 1;
+            if (max > 9000) {
+                this.paintSignatureText();
+            }
+            for (int x = 0; x > max; ++x) {
+                this.paintOneLayer();
+            }
+        } else if (this.random.nextInt(54) >= 53) {
+            this.paintOverlay(20);
+        } else if (this.random.nextInt(89) >= 89) {
+            this.paintOverlay(50);
+        }
+        this.paintOneLayer();
+        this.paintProgressBar();
+        this.playBinauralSound();
+    }
+
+    @Override
+    public void setDrawOrderByType(int i) {
+        this.offsetX = 40;
+        this.offsetY = 120;
+        if (i >= 4) {
+            this.offsetX = this.offsetX + (i - 4) * 320;
+            this.offsetY = this.offsetY + 180;
+        } else if (i > 0) {
+            this.offsetX = this.offsetX + i * 320;
+        }
+    }
+
+    @Override
+    public String getAssignedTabName() {
+        return this.tabName;
+    }
+
+    public void calcuateProgress() {
+        float sec = Float.valueOf(this.seconds.intValue()).floatValue();
+        float wid = 320.0f;
+        float millisAfterStart = Calendar.getInstance().getTimeInMillis() - this.start;
+        float delta = 100.0f / wid / sec;
+        this.progress = Float.valueOf(millisAfterStart * delta);
+        if (Calendar.getInstance().getTimeInMillis() > this.start + 1000L * (long)this.seconds.intValue()) {
+            this.stop = true;
+        }
+    }
+
+    public void paintProgressBar() {
+        this.calcuateProgress();
+        this.p.noStroke();
+        this.p.fill(255.0f, 0.0f, 0.0f, 50.0f);
+        this.p.rect(0 + this.offsetX, 0 + this.offsetY, this.progress.floatValue(), 3.0f);
+    }
+
+    private void paintOverlay() {
+        this.paintOverlay(5);
+    }
+
+    private void paintOverlay(int alpha) {
+        this.choseRandomColorAlpha(alpha);
+        this.p.rect(0 + this.offsetX, 0 + this.offsetY, 320.0f, 180.0f);
+    }
+
+    private void paintOneLayer() {
+        int hotbitsForBroadcastingRandomNumber;
+        int x;
+        int max;
+        this.paintPoint();
+        if (this.random2.nextInt(33) >= 32) {
+            max = this.random.nextInt(100) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintPoint();
+            }
+        }
+        this.paintBezier(54, 53);
+        if (this.random2.nextInt(54) >= 53) {
+            max = this.random.nextInt(100) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintSignatureCharacter();
+            }
+            max = this.random.nextInt(1000) + 1;
+            for (x = 0; x > max; ++x) {
+                this.paintPoint();
+            }
+        }
+        this.paintBezier(89, 88);
+        if (this.random2.nextInt(89) >= 88) {
+            this.paintSignatureCharacter();
+            this.partialInvert(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320), this.random.nextInt(180));
+        }
+        this.paintLine(144, 143);
+        this.paintArc(144, 143);
+        this.paintBezier(144, 143);
+        this.paintRectangle(144, 143, 4);
+        this.paintEllipse(144, 143, 4);
+        this.paintRectangle(233, 232, 10);
+        this.paintEllipse(233, 232, 10);
+        this.paintRectangle(377, 373, 20);
+        this.paintEllipse(377, 373, 20);
+        this.paintRectangle(610, 609, 40);
+        this.paintEllipse(610, 609, 40);
+        this.paintRectangle(987, 986, 80);
+        this.paintEllipse(987, 986, 80);
+        this.paintTriangle(987, 986);
+        this.paintPolygon(987, 986);
+        this.paintRadionicCard(3, 2);
+        this.paintRadionicCardWave(3, 2);
+        if (this.random2.nextInt(6765 + this.multiplier) >= 6764 + this.multiplier) {
+            this.movingWaveAmount = 1;
+            boolean foundResonatedRate = false;
+            ResonanceObject resonanceObject = new ResonanceObject();
+            RateObject r = new RateObject();
+            r.setNameOrRate(this.signature);
+            resonanceObject.setRateObject(r);
+            this.p.getResonanceList().add(resonanceObject);
+            for (RateObject rateObject : this.p.getResonatedList()) {
+                if (!rateObject.getNameOrRate().equals(this.signature)) continue;
+                foundResonatedRate = true;
+                rateObject.setResonateCounter(rateObject.getResonateCounter() + 1);
+            }
+            if (!foundResonatedRate) {
+                RateObject rateObject = new RateObject();
+                rateObject.setNameOrRate(this.signature);
+                rateObject.setResonateCounter(1);
+                this.p.getResonatedList().add(rateObject);
+            }
+        }
+        if ((hotbitsForBroadcastingRandomNumber = this.random.nextInt(100)) >= 98) {
+            File hotbitsFolder = new File("hotbits");
+            this.p.text(ADDITIONAL_RATES[this.p.getHotbitsClient().getInteger(0, ADDITIONAL_RATES.length - 1)], (float)(this.p.getHotbitsClient().getInteger(320) + this.offsetX), (float)(this.p.getHotbitsClient().getInteger(180) + this.offsetY));
+            int hotbitsCacheSize = hotbitsFolder.listFiles().length;
+            if (hotbitsCacheSize > 10000) {
+                this.choseRandomColorAlpha();
+                this.p.rect(10 + this.offsetX, 10 + this.offsetY, 10.0f, 10.0f);
+                this.p.text(hotbitsForBroadcastingRandomNumber, (float)(30 + this.offsetX), (float)(10 + this.offsetY));
+                this.choseRandomColorAlpha();
+                hotbitsForBroadcastingRandomNumber = this.p.getHotbitsClient().getInteger(0, 1000);
+                this.p.text(hotbitsForBroadcastingRandomNumber, (float)(30 + this.offsetX), (float)(30 + this.offsetY));
+                if (hotbitsForBroadcastingRandomNumber >= 998) {
+                    this.movingWaveAmount = 1;
+                    this.random = new Random(this.p.getHotbitsClient().getInteger(0, 100000));
+                }
+            }
+            if (hotbitsCacheSize > 20000) {
+                this.random = new Random(this.p.getHotbitsClient().getInteger(0, 10000000));
+            }
+        }
+    }
+
+    private void paintRadionicCard(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.p.noFill();
+            this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.p.ellipse(160 + this.offsetX, 90 + this.offsetY, 176.0f, 176.0f);
+            this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.p.ellipse(160 + this.offsetX, 90 + this.offsetY, 166.0f, 166.0f);
+            this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+            this.p.ellipse(160 + this.offsetX, 90 + this.offsetY, 156.0f, 156.0f);
+            if (this.random.nextInt(5) == 1) {
+                this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+                this.lineAngle(160, 90, this.random.nextInt(360), 78.0f);
+            }
+        }
+    }
+
+    private void paintRadionicCardWave(int i, int i2) {
+        if (this.movingWaveAmount == 0) {
+            return;
+        }
+        if (this.movingWaveAmount > 2584) {
+            this.movingWaveAmount = 0;
+            return;
+        }
+        this.movingWaveAmount = this.movingWaveAmount + 4;
+        this.p.noFill();
+        this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.p.ellipse(160 + this.offsetX, 90 + this.offsetY, 176 - this.movingWaveAmount, 176 - this.movingWaveAmount);
+        this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.p.ellipse(160 + this.offsetX, 90 + this.offsetY, 176 + this.movingWaveAmount, 176 + this.movingWaveAmount);
+        Collections.sort(this.p.getResonatedList(), new Comparator<RateObject>(this){
+
+            @Override
+            public int compare(RateObject o1, RateObject o2) {
+                return o2.getResonateCounter().compareTo(o1.getResonateCounter());
+            }
+        });
+    }
+
+    private void playBinauralSound() {
+        if (!this.playingSound && this.movingWaveAmount > 0) {
+            this.playingSound = true;
+            if (this.binaural == null) {
+                int leftFreq = 50 + this.p.getHotbitsClient().getInteger(500);
+                int rightFreq = leftFreq + this.p.getHotbitsClient().getInteger(50);
+                this.binaural = new Binaural(leftFreq, rightFreq, 0.1f + (float)this.p.getHotbitsClient().getInteger(10) * 0.1f);
+            }
+            new Thread(){
+
+                @Override
+                public void run() {
+                    BroadcastElement.this.binaural.play(3);
+                    BroadcastElement.this.binaural.shutdown();
+                    BroadcastElement.this.binaural = null;
+                    BroadcastElement.this.playingSound = false;
+                }
+            }.start();
+        }
+    }
+
+    private void lineAngle(int x, int y, float angle, float length) {
+        this.p.line((float)(x + this.offsetX) + AetherOneUI.cos(angle) * length, (float)(y + this.offsetY) - AetherOneUI.sin(angle) * length, (float)(x + this.offsetX) + AetherOneUI.cos(angle) * length / 2.0f, (float)(y + this.offsetY) - AetherOneUI.sin(angle) * length / 2.0f);
+    }
+
+    private void partialInvert(int x, int y, int w, int h) {
+        try {
+            this.p.loadPixels();
+            int xx = 0;
+            int yy = 0;
+            for (int i = 0; i < 57600; ++i) {
+                if (++xx >= 320) {
+                    xx = 0;
+                    ++yy;
+                }
+                if (xx < x || xx > x + w || yy < y || yy > y + h) continue;
+                float red = this.p.red(this.p.pixels[i]);
+                float green = this.p.green(this.p.pixels[i]);
+                float blue = this.p.blue(this.p.pixels[i]);
+                red = 255.0f - red;
+                green = 255.0f - green;
+                blue = 255.0f - blue;
+                this.p.pixels[i] = this.p.color(red, green, blue);
+            }
+            this.p.updatePixels();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void paintPoint() {
+        this.paintPoint(this.offsetX, this.offsetY, 320, 180);
+    }
+
+    private void paintPoint(int offsetX, int offsetY, int width, int height) {
+        this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.p.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.p.point(this.random.nextInt(width) + offsetX, this.random.nextInt(height) + offsetY);
+    }
+
+    private void paintLine(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.line(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY);
+        }
+    }
+
+    private void paintArc(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.noFill();
+            this.p.arc(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, 60.0f, 60.0f, 1.5707964f, (float)Math.PI);
+            this.p.arc(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, 70.0f, 70.0f, (float)Math.PI, (float)Math.PI + 0.7853982f);
+            this.p.arc(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, 80.0f, 80.0f, (float)Math.PI + 0.7853982f, (float)Math.PI * 2);
+        }
+    }
+
+    private void paintBezier(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.noFill();
+            this.p.bezier(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY);
+        }
+    }
+
+    private void paintRectangle(int i, int i2, int i3) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.rect(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, i3, i3);
+        }
+    }
+
+    private void paintEllipse(int i, int i2, int i3) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.ellipse(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, i3, i3);
+        }
+    }
+
+    private void paintTriangle(int i, int i2) {
+        if (this.random.nextInt(i) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.triangle(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY, this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY);
+        }
+    }
+
+    private void paintPolygon(int i1, int i2) {
+        if (this.random.nextInt(i1) >= i2) {
+            this.choseRandomColorAlpha();
+            this.p.beginShape();
+            for (int c = 0; c < this.random.nextInt(50) + 3; ++c) {
+                this.p.vertex(this.random.nextInt(320) + this.offsetX, this.random.nextInt(180) + this.offsetY);
+            }
+            this.p.endShape();
+        }
+    }
+
+    private void choseRandomColorAlpha(int alpha) {
+        this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), alpha);
+        this.p.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), alpha);
+    }
+
+    private void choseRandomColorAlpha() {
+        this.p.stroke(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+        this.p.fill(this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255), this.random.nextInt(255));
+    }
+
+    private void paintSignatureCharacter() {
+        this.paintPoint();
+        this.paintSignatureCharacter(this.offsetX, this.offsetY, 320, 180);
+    }
+
+    private void paintSignatureCharacter(int offsetX, int offsetY, int width, int height) {
+        this.paintPoint(offsetX, offsetY, width, height);
+        for (int c = 0; c < this.random.nextInt(9) + 1; ++c) {
+            int pos = this.random.nextInt(this.signature.length());
+            String one = this.signature.substring(pos, pos + 1);
+            this.p.textSize(20 + this.random.nextInt(this.multiplier));
+            this.p.text(one, (float)(this.random.nextInt(width) + offsetX), (float)(this.random.nextInt(height) + offsetY));
+            this.p.textSize(12.0f);
+        }
+    }
+
+    private void paintSignatureText() {
+        this.paintPoint();
+        this.p.text(this.signature, (float)(this.random.nextInt(320) + this.offsetX), (float)(this.random.nextInt(180) + this.offsetY));
+    }
+
+    public AetherOneUI getP() {
+        return this.p;
+    }
+
+    public void setP(AetherOneUI p) {
+        this.p = p;
+    }
+
+    public String getTabName() {
+        return this.tabName;
+    }
+
+    public void setTabName(String tabName) {
+        this.tabName = tabName;
+    }
+
+    public Integer getSeconds() {
+        return this.seconds;
+    }
+
+    public void setSeconds(Integer seconds) {
+        this.seconds = seconds;
+    }
+
+    public String getSignature() {
+        return this.signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getTarget() {
+        return this.target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public Long getStart() {
+        return this.start;
+    }
+
+    public void setStart(Long start) {
+        this.start = start;
+    }
+
+    public Random getRandom() {
+        return this.random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    public Integer getMovingWaveAmount() {
+        return this.movingWaveAmount;
+    }
+
+    public Integer getOffsetX() {
+        return this.offsetX;
+    }
+
+    public void setOffsetX(Integer offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public Integer getOffsetY() {
+        return this.offsetY;
+    }
+
+    public void setOffsetY(Integer offsetY) {
+        this.offsetY = offsetY;
+    }
+
+    public Float getProgress() {
+        return this.progress;
+    }
+
+    public void setProgress(Float progress) {
+        this.progress = progress;
+    }
+
+    public Integer getCounterCheckGV() {
+        return this.counterCheckGV;
+    }
+
+    public void setCounterCheckGV(Integer counterCheckGV) {
+        this.counterCheckGV = counterCheckGV;
+    }
+
+    public Boolean getCounterCheck() {
+        return this.counterCheck;
+    }
+
+    public void setCounterCheck(Boolean counterCheck) {
+        this.counterCheck = counterCheck;
+    }
+
+    public static Long getLastBroadcast() {
+        return lastBroadcast;
+    }
+
+    public static void setLastBroadcast(Long lastBroadcast) {
+        BroadcastElement.lastBroadcast = lastBroadcast;
+    }
+
+    public boolean isStop() {
+        return this.stop;
+    }
+
+    public void setStop(boolean stop) {
+        this.stop = stop;
+    }
+
+    public Binaural getBinaural() {
+        return this.binaural;
+    }
+
+    public void setBinaural(Binaural binaural) {
+        this.binaural = binaural;
+    }
+
+    public boolean isPlayingSound() {
+        return this.playingSound;
+    }
+
+    public void setPlayingSound(boolean playingSound) {
+        this.playingSound = playingSound;
+    }
+
+    public boolean isDynamicAdjustments() {
+        return this.dynamicAdjustments;
+    }
+
+    public void setDynamicAdjustments(boolean dynamicAdjustments) {
+        this.dynamicAdjustments = dynamicAdjustments;
+    }
+}
+

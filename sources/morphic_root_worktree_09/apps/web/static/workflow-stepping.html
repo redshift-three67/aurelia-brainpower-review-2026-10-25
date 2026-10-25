@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Morphic Engine V1 – 12-Schritt-Systemmodell</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23102133'/%3E%3Cpath d='M14 43V21h7l11 13 11-13h7v22h-7V31L32 44 21 31v12z' fill='%236ee7d8'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/workflow-stepping.css">
+  <script src="/static/workflow-stepping.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#workflow-content">Zum Inhalt</a>
+  <header class="workflow-header">
+    <p class="eyebrow">Morphic Engine V1 · Systemdokumentation</p>
+    <h1>12-Schritt-Systemmodell</h1>
+    <p>Interaktives Erklaermodell des separaten CLI-Orchestrators <code>field workflow-scan</code>.</p>
+    <div class="path-notice"><strong>Wichtige Abgrenzung:</strong> Die Operator Workbench startet <code>scan top3-scan</code> und zeigt dort ausschließlich dessen reale Web-Scan-Stages. Diese Seite ist kein Live-Trace des Web-Scans.</div>
+  </header>
+  <nav class="workflow-nav" id="workflow-nav" aria-label="12-Schritt-Systemmodell"></nav>
+  <main id="workflow-content" class="workflow-main">
+    <div class="workflow-progress">
+      <span>Fortschritt</span>
+      <div class="progress-track"><div id="workflow-progress" class="progress-fill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="8"></div></div>
+      <strong id="workflow-progress-label">1 / 12</strong>
+    </div>
+    <section id="workflow-panel-1" class="workflow-panel active" data-step="0"><h2>1. System-Initialisierung</h2><p>Runtime, Hardware-Truth und Entropiequellen initialisieren. Der Schritt beschreibt den Orchestrator und nimmt keine produktiven Web-Aktionen vor.</p></section>
+    <section id="workflow-panel-2" class="workflow-panel" data-step="1"><h2>2. Eingabe und Profil</h2><p>Klienten- und Analyseparameter validieren. Unterstützt werden Top-N 3, 5, 7 oder 9 sowie Level 1 bis 4.</p></section>
+    <section id="workflow-panel-3" class="workflow-panel" data-step="2"><h2>3. Klienten-Signatur</h2><p>Deterministische Signatur aus den freigegebenen Klientenparametern ableiten.</p></section>
+    <section id="workflow-panel-4" class="workflow-panel" data-step="3"><h2>4. Fokus und Intention</h2><p>Fokus und Hauptsymptom werden als wirksame Eingaben gewichtet.</p></section>
+    <section id="workflow-panel-5" class="workflow-panel" data-step="4"><h2>5. EMF und Modifikatoren</h2><p>Gemessene Hardware- und Realtime-Werte transparent als reale Nutzung oder Software-Fallback klassifizieren.</p></section>
+    <section id="workflow-panel-6" class="workflow-panel" data-step="5"><h2>6. Amplifier-Matching</h2><p>Optionale Verstärker-Metadaten gegen den berechneten Kontext abgleichen.</p></section>
+    <section id="workflow-panel-7" class="workflow-panel" data-step="6"><h2>7. Farbpaletten-Generierung</h2><p>Deterministische Darstellungsparameter für Berichte vorbereiten.</p></section>
+    <section id="workflow-panel-8" class="workflow-panel" data-step="7"><h2>8. Matrix-Suche</h2><p>Profile aus dem aktuellen Registry-Bestand screenen, Top-N wählen und vollständig analysieren.</p></section>
+    <section id="workflow-panel-9" class="workflow-panel" data-step="8"><h2>9. Quantum-Synergy</h2><p>Quantum-Pfad verwenden, wenn verfügbar; ansonsten den ausgewiesenen klassischen Fallback nutzen.</p></section>
+    <section id="workflow-panel-10" class="workflow-panel" data-step="9"><h2>10. Post-Processing</h2><p>Resonanz-, Synergy-, Remedy-, Deutungs- und Trenddaten konsolidieren.</p></section>
+    <section id="workflow-panel-11" class="workflow-panel" data-step="10"><h2>11. Export und Berichte</h2><p>HTML, JSON, TXT und – wenn erzeugt – PDF im tenantgebundenen Report-Root ablegen.</p></section>
+    <section id="workflow-panel-12" class="workflow-panel" data-step="11"><h2>12. Harmonisierung</h2><p>Optionaler, separater Harmonisierungsjob mit expliziter Reportbindung, 21-Minuten-Faktor sowie Impuls-/Pause-Zyklus.</p></section>
+    <div class="workflow-controls">
+      <button id="workflow-prev" type="button">Zurueck</button>
+      <a href="/">Zur Operator Workbench</a>
+      <button id="workflow-next" type="button">Weiter</button>
+    </div>
+  </main>
+</body>
+</html>

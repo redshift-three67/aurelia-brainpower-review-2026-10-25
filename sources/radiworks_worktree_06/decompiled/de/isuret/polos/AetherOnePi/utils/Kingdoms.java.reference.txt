@@ -1,0 +1,21 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package de.isuret.polos.AetherOnePi.utils;
+
+import de.isuret.polos.AetherOnePi.utils.WonderfulPlantsFamily;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Kingdoms {
+    private List<WonderfulPlantsFamily> plants = new ArrayList<WonderfulPlantsFamily>();
+
+    public List<WonderfulPlantsFamily> getPlants() {
+        return this.plants;
+    }
+
+    public void setPlants(List<WonderfulPlantsFamily> plants) {
+        this.plants = plants;
+    }
+}
+

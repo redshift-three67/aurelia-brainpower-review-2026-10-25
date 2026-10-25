@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AURELIA · Gates &amp; E6-Abnahmepfad</title><style>:root{--bg:#f3efe6;--card:#fffdf8;--line:#e3dbc9;--ink:#1f2a24;--muted:#5b6b62;--accent:#2c4a3e;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);line-height:1.5}.wrap{max-width:1100px;margin:auto;padding:24px}h1{margin:0;font-size:1.4rem}h2{font-size:1rem;color:var(--accent)}.sub,.note,footer{color:var(--muted);font-size:.86rem}.back{display:inline-block;margin-top:12px;color:var(--accent);text-decoration:none}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-top:16px}.mermaid{background:var(--card);overflow:auto}.mermaid svg{max-width:100%;height:auto}</style></head>
+<body><main class="wrap"><h1>AURELIA — G0-SRV-Gates &amp; E6-Abnahmepfad</h1><p class="sub">Stand 2026-09-09, 09:17 CEST · lokale E6-Evidenz ist von Server-Gates getrennt</p><a class="back" href="aurelia-status-live.html">← zurück zum Status-Live</a>
+<section class="card"><h2>G0-SRV-Gatefolge</h2><pre class="mermaid">
+flowchart TD
+ G0["G0-SRV-0\nBackup-/Restore-Nachweis\noffen"] --> G1["G0-SRV-1 bis 12\nsequenziell gesperrt"] --> P["Produktarbeit nach G0-SRV-12\nerst dann freigabefähig"]
+ classDef wait fill:#f7eed2,stroke:#ca8a04,color:#7a5306
+ classDef locked fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+ class G0 wait
+ class G1,P locked
+</pre><p class="note">0/13 bestanden. E6 nutzt nur eine lokale Windows-Dev-Runtime und setzt kein Server-Gate.</p></section>
+<section class="card"><h2>E6-Abnahmepfad</h2><pre class="mermaid">
+flowchart LR
+ A["Vertrag + TDD\nPASS"] --> B["Spec + Quality/Security\nPASS"] --> C["lokale Runtime\nHost-Timeout nach 11 PNGs"] --> D["E6 Ergebnis\nunbestimmt"] --> E["separate Betreiberentscheidung\nkein Auto-Retry"] --> F["vollständige 14er Matrix\noder sichtbarer Blocker"]
+ classDef done fill:#e4f2e8,stroke:#15803d,color:#14532d
+ classDef warn fill:#f7eed2,stroke:#ca8a04,color:#7a5306,stroke-width:2px
+ classDef open fill:#fffdf8,stroke:#e3dbc9,color:#5b6b62
+ class A,B done
+ class C,D warn
+ class E,F open
+</pre><p class="note">Ein E6-PASS verlangt 14 eindeutige erwartete Beobachtungen, keinen Fehler und das aggregierte Verdict. Diese Bedingungen sind nicht erfüllt.</p></section>
+<footer>Mermaid wird über CDN geladen; statischer Snapshot, keine Gate-Entscheidung.</footer></main><script type="module">import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';mermaid.initialize({startOnLoad:true,theme:'neutral'});</script></body></html>
